@@ -1,0 +1,14 @@
+x
+
+impl AsTriPrim for BasicRectangle {
+    fn as_triangles(&self) -> Vec<Box<TriPrim>> {
+        let bl = <Vec3<f64> as Zero>::zero();
+        let br = Vec3::<f64>::new(self.length, 0.0, 0.0);
+        let tl = Vec3::<f64>::new(self.height, 0.0, 0.0);
+        let tr = br + tl;
+        let mut bl_tri: Vec<Vec3<f64>> = vec![bl, br, tl];
+        let mut tr_tri: Vec<Vec3<f64>> = vec![br, tr, tl];
+        bl_tri = bl_tri.into_iter().map(|x| {x + self.pos.into()}).collect();
+
+    }
+}

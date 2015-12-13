@@ -1,0 +1,36 @@
+#version 400 core
+
+in float width_vs[];
+in float height_vs[];
+in vec3 position_vs[];
+in mat2 rotation_vs[];
+
+out vec2 rect_position; // Coordinates Inside the Rectangle
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 4) out;
+
+void main() {
+  vec2 half_width = vec2(width_vs[0] / 2.0, 0.0);
+  vec2 half_height = vec2(0.0, height_vs[0] / 2.0);
+  gl_Position = Transform( - half_width - half_height, postion_vs[0], rotation_vs[0]);
+  rect_position = gl_Position.xy;
+  EmitVertex();
+  gl_Position = Transform( half_width - half_height, postion_vs[0], rotation_vs[0]);
+  rect_position = gl_Position.xy;
+  EmitVertex();
+  gl_Position = Transform( - half_width + half_height, postion_vs[0], rotation_vs[0]);
+  rect_position = gl_Position.xy;
+  EmitVertex();
+  gl_Position = Transform( half_width + half_height, postion_vs[0], rotation_vs[0]);
+  rect_position = gl_Position.xy;
+  EmitVertex();
+
+  EndPrimitive();
+}
+
+vec4 Transform(in vec2 corner, in vec3 position, in mat2 rotation)
+{
+  vec2 rotated_corner = rotation * corner;
+  return position + vec3(rotated_corner.xy, 0.0, 1.0);
+}
