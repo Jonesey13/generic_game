@@ -20,6 +20,12 @@ impl HandlerBasic {
 }
 
 impl Handler for HandlerBasic {
+    fn init(&mut self) {
+        self.renderer.init();
+        self.input_handler.init();
+        self.game.init();
+    }
+
     fn update_input(&mut self) {
         self.input_handler.receive_input();
         self.input_handler.pass_on_input(self.game.get_input());

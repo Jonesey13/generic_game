@@ -10,9 +10,9 @@ mod handlerbasic;
 mod games;
 
 fn main() {
-    let renderer: Box<rendering::Renderer> = Box::new(rendering::RendererStub);
+    let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((800, 600)));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
-    let game: Box<games::Game> = Box::new(games::GameStub);
+    let game: Box<games::Game> = Box::new(games::rectangle_game::RectangleGame);
     let mut handler: Box<Handler> = Box::new(handlerbasic::HandlerBasic::new(renderer, input_handler, game));
 
     handler.init();

@@ -1,15 +1,19 @@
+use super::rectangle::RectangleVertex;
+use super::shaders::Shaders;
+use glium::index::PrimitiveType;
+
 pub trait Renderable {
     fn get_shaders(&self) -> Shaders { Shaders::None }
+    fn get_vertex(&self) -> RenderVertex { RenderVertex::None }
+    fn get_primitive_type(&self) -> PrimitiveType { PrimitiveType::Points }
 }
 
+#[allow(dead_code)]
 pub struct RenderableStub;
 
 impl Renderable for RenderableStub {}
 
-pub enum Shaders {
+pub enum RenderVertex {
     None,
-    VertexFragment(&'static str, &'static str),
-    VertexGeometryFragment(&'static str, &'static str, &'static str),
-    VertexTesselationFragment(&'static str, &'static str, &'static str, &'static str),
-    VertexTesselationGeometryFragment(&'static str, &'static str, &'static str, &'static str, &'static str),
+    Rect(RectangleVertex),
 }

@@ -1,17 +1,19 @@
-#version 400 Core
+#version 410 core
 
-in float width;
+in float length;
 in float height;
-in vec3 position;
-in mat2 rotation;
+in mat2 rot;
+in vec3 pos;
 
-out float width_vs;
+out float length_vs;
 out float height_vs;
-out vec3 position_vs;
-out mat2 rotation_vs;
+out mat2 rot_vs;
+out vec3 pos_vs;
 
-void main() {
-  width_vs = width;
+void main()
+{
+  length_vs = length;
   height_vs = height;
-  rotation_vs = rotation;
+  rot_vs = rot;
+  pos_vs = pos;
 }
