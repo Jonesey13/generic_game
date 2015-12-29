@@ -1,4 +1,4 @@
-pub mod rectangle_game;
+pub mod primitive_test_game;
 use rendering::renderables::Renderable;
 
 /// Game

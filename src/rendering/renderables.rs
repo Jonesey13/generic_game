@@ -1,4 +1,6 @@
 use super::rectangle::RectangleVertex;
+use super::circle::CircleVertex;
+use super::text::RenderText;
 use super::shaders::Shaders;
 use glium::index::PrimitiveType;
 
@@ -16,4 +18,6 @@ impl Renderable for RenderableStub {}
 pub enum RenderVertex {
     None,
     Rect(RectangleVertex),
+    Circ(CircleVertex),
+    Text(Box<RenderText>)
 }

@@ -3,6 +3,7 @@ extern crate nalgebra as na;
 extern crate num;
 #[macro_use]
 extern crate glium;
+extern crate glium_text;
 
 mod rendering;
 mod input;
@@ -12,7 +13,7 @@ mod games;
 fn main() {
     let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((800, 600)));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
-    let game: Box<games::Game> = Box::new(games::rectangle_game::RectangleGame);
+    let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame);
     let mut handler: Box<Handler> = Box::new(handlerbasic::HandlerBasic::new(renderer, input_handler, game));
 
     handler.init();

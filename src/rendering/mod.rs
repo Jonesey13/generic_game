@@ -1,5 +1,7 @@
 pub mod renderables;
 pub mod rectangle;
+pub mod circle;
+pub mod text;
 pub mod shaders;
 pub mod glium_renderer;
 mod conversion_tools;
