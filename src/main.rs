@@ -4,6 +4,7 @@ extern crate num;
 #[macro_use]
 extern crate glium;
 extern crate glium_text;
+extern crate backtrace;
 
 mod rendering;
 mod input;
