@@ -4,11 +4,13 @@ in float length;
 in float height;
 in mat2 rot;
 in vec3 pos;
+in vec4 color;
 
 out float length_vs;
 out float height_vs;
 out mat2 rot_vs;
 out vec3 pos_vs;
+out vec4 color_vs;
 
 void main()
 {
@@ -16,4 +18,5 @@ void main()
   height_vs = height;
   rot_vs = rot;
   pos_vs = pos;
+  color_vs = color;
 }

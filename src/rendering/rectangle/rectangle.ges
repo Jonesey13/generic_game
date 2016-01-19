@@ -1,14 +1,16 @@
 #version 410 core
 
-layout(points) in;
-layout(triangle_strip, max_vertices = 4) out;
-
 in float length_vs[];
 in float height_vs[];
 in vec3 pos_vs[];
 in mat2 rot_vs[];
+in vec4 color_vs[];
 
 out vec2 rect_pos; // Coordinates Inside the Rectangle
+out vec4 color_ges;
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 4) out;
 
 vec4 Transform(in vec2 corner, in vec3 pos, in mat2 rot);
 
@@ -18,29 +20,22 @@ void main()
   vec2 half_height = vec2(0.0, height_vs[0] / 2.0);
   gl_Position = Transform( - half_length - half_height, pos_vs[0], rot_vs[0]);
   rect_pos =  gl_Position.xy;
+  color_ges = color_vs[0];
   EmitVertex();
   gl_Position = Transform( half_length - half_height, pos_vs[0], rot_vs[0]);
   rect_pos =  gl_Position.xy;
+  color_ges = color_vs[0];
   EmitVertex();
   gl_Position = Transform( - half_length + half_height, pos_vs[0], rot_vs[0]);
   rect_pos = gl_Position.xy;
+  color_ges = color_vs[0];
   EmitVertex();
   gl_Position = Transform( half_length + half_height, pos_vs[0], rot_vs[0]);
   rect_pos = gl_Position.xy;
+  color_ges = color_vs[0];
   EmitVertex();
 
   EndPrimitive();
-
-  // gl_Position = vec4(-0.5, -0.5, 1.0, 1.0);
-  // EmitVertex();
-  // gl_Position = vec4(-0.5, 0.5, 1.0, 1.0);
-  // EmitVertex();
-  // gl_Position = vec4(0.5, -0.5, 1.0, 1.0);
-  // EmitVertex();
-  // gl_Position = vec4(0.5, 0.5, 1.0, 1.0);
-  // EmitVertex();
-
-  // EndPrimitive();
 }
 
 vec4 Transform(in vec2 corner, in vec3 pos, in mat2 rot)

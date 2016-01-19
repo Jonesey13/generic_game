@@ -1,4 +1,4 @@
-use na::Vec3;
+use na::{Vec3, Vec4};
 use super::renderables::{Renderable, RenderVertex};
 use super::shaders::Shaders;
 use glium;
@@ -9,6 +9,7 @@ use super::conversion_tools::*;
 pub struct Circle {
     pub radius: f64,
     pub pos: Vec3<f64>,
+    pub color: Vec4<f64>
 }
 
 impl Renderable for Circle {
@@ -33,15 +34,17 @@ impl Renderable for Circle {
 pub struct CircleVertex {
     pub radius: f32,
     pub pos: [f32; 3],
+    pub color: [f32; 4]
 }
 
-implement_vertex!(CircleVertex, radius, pos);
+implement_vertex!(CircleVertex, radius, pos, color);
 
 impl From<Circle> for CircleVertex {
     fn from(rect: Circle) -> Self {
         CircleVertex {
             radius: rect.radius as f32,
             pos: vec3_64_to_32(*rect.pos.as_ref()),
+            color: vec4_64_to_32(*rect.color.as_ref())
         }
     }
 }

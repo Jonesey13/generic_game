@@ -1,11 +1,13 @@
 #version 410 core
 
-layout(quads, equal_spacing) in;
-
 in float radius_cs[];
 in vec3 pos_cs[];
+in vec4 color_cs[];
 
 out vec2 circle_param;
+out vec4 color_es;
+
+layout(quads, equal_spacing) in;
 
 vec3 circle_pos(vec2 uv);
 
@@ -13,6 +15,7 @@ vec3 circle_pos(vec2 uv);
 
 void main() {
   circle_param = gl_TessCoord.xy;
+  color_es = color_cs[0];
   gl_Position = vec4( circle_pos(circle_param), 1.0);
 }
 

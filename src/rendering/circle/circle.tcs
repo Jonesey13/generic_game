@@ -2,11 +2,13 @@
 
 in float radius_vs[];
 in vec3 pos_vs[];
+in vec4 color_vs[];
 
 layout(vertices = 4) out;
 
 out float radius_cs[];
 out vec3 pos_cs[];
+out vec4 color_cs[];
 
 uniform int tess_level_outer = 20;
 uniform int tess_level_inner = 20;
@@ -14,6 +16,7 @@ uniform int tess_level_inner = 20;
 void main() {
   radius_cs[gl_InvocationID] = radius_vs[0];
   pos_cs[gl_InvocationID] = pos_vs[0];
+  color_cs[gl_InvocationID] = color_vs[0];
   gl_TessLevelOuter[0] = tess_level_outer;
   gl_TessLevelOuter[1] = tess_level_outer;
   gl_TessLevelOuter[2] = tess_level_outer;
