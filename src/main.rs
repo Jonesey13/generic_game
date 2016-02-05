@@ -1,20 +1,26 @@
+#![allow(dead_code)]
+#![allow(unused_imports)]
 extern crate multiinput;
 extern crate nalgebra as na;
 extern crate num;
 #[macro_use]
 extern crate glium;
 extern crate glium_text;
-extern crate backtrace;
+extern crate time;
 
 mod rendering;
 mod input;
 mod handlerbasic;
 mod games;
+mod collision;
+mod clock;
 
 fn main() {
     let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((800, 600)));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
-    let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame);
+    let game: Box<games::Game> = Box::new(games::pong::builder::PongBuilder::init().build_game());
+    //let game: Box<games::Game> = Box::new(games::input_test_game::InputTestGame::new());
+    //let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame);
     let mut handler: Box<Handler> = Box::new(handlerbasic::HandlerBasic::new(renderer, input_handler, game));
 
     handler.init();
@@ -24,7 +30,6 @@ fn main() {
         handler.update_logic();
     }
 }
-
 
 /// Handler
 pub trait Handler {

@@ -2,7 +2,7 @@ use na::{Vec2, Vec4, Mat2, Diag, ToHomogeneous};
 use glium;
 use glium_text;
 use super::conversion_tools::mat4_64_to_32;
-use super::renderables::{Renderable, RenderVertex};
+use super::renderables::{Renderable, RenderType};
 
 pub static OPEN_SANS: &'static[u8] = include_bytes!("OpenSans.ttf");
 
@@ -32,9 +32,6 @@ impl RenderText for PlainText {
     }
 }
 
-impl<T> Renderable for T where
-    T: Clone + RenderText + 'static {
-    fn get_vertex(&self) -> RenderVertex {
-        RenderVertex::Text(Box::new(self.clone()))
-    }
+impl Renderable for PlainText {
+        fn get_type(&self) -> RenderType { RenderType::Txt(self.clone()) }
 }

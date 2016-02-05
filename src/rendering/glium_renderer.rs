@@ -1,10 +1,12 @@
 use super::Renderer;
 use super::shaders::make_program_from_shaders;
-use super::rectangle::RectangleVertex;
-use super::circle::CircleVertex;
+use super::rectangle::{Rectangle, RectangleVertex};
+use super::circle::{Circle, CircleVertex};
+use super::text::PlainText;
 use super::text::RenderText;
 use super::text::OPEN_SANS;
-use super::renderables::{Renderable, RenderVertex};
+use super::renderables::{Renderable, RenderType};
+use super::render_by_shaders::RenderByShaders;
 use glium_text;
 use glium;
 use glium::Frame;
@@ -15,14 +17,14 @@ use glium::{DisplayBuild, Surface, DrawParameters, Depth, DepthTest, Program};
 pub struct GliumRenderer<'a> {
     display: Box<GlutinFacade>,
     draw_params: DrawParameters<'a>,
-    rect_buffer: Option<Buffer<RectangleVertex>>,
-    circ_buffer: Option<Buffer<CircleVertex>>,
-    text_processor: TextProcessor
+    rect_buffer: Buffer<Rectangle>,
+    circ_buffer: Buffer<Circle>,
+    text_processor: TextProcessor<PlainText>
 }
 
 impl<'a> GliumRenderer<'a> {
     pub fn new(res: (u32, u32)) -> GliumRenderer<'a> {
-        let display = Box::new(glium::glutin::WindowBuilder::new().with_dimensions(res.0,res.1).build_glium().unwrap());
+        let display = Box::new(glium::glutin::WindowBuilder::new().with_dimensions(res.0, res.1).build_glium().unwrap());
         let draw_params = DrawParameters {
             depth: Depth { test: DepthTest::IfLessOrEqual, write: true,..Default::default()},
             ..Default::default()
@@ -30,92 +32,96 @@ impl<'a> GliumRenderer<'a> {
         GliumRenderer {
             display: display.clone(),
             draw_params: draw_params,
-            rect_buffer: None,
-            circ_buffer: None,
+            rect_buffer: create_buffer::<Rectangle>(&display),
+            circ_buffer: create_buffer::<Circle>(&display),
             text_processor: TextProcessor::new(OPEN_SANS, 120, display),
         }
+    }
+
+    fn flush_buffers(&mut self) {
+        self.rect_buffer.vertices = None;
+        self.circ_buffer.vertices = None;
+        self.text_processor.text_objects = None;
     }
 }
 
 impl<'a> Renderer for GliumRenderer<'a> {
     fn load_renderables(&mut self, renderables: Vec<Box<Renderable>>) {
         for renderable in renderables {
-            match renderable.get_vertex() {
-                RenderVertex::Rect(vertex) => load_vertex(vertex, &mut self.rect_buffer, renderable, &self.display),
-                RenderVertex::Circ(vertex) => load_vertex(vertex, &mut self.circ_buffer, renderable, &self.display),
-                RenderVertex::Text(text_box) => self.text_processor.push_text(text_box),
-                _ => (),
+            match renderable.get_type() {
+                RenderType::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
+                RenderType::Circ(circle) => self.circ_buffer.load_renderable(circle),
+                RenderType::Txt(text) => self.text_processor.push_text(text)
             }
         }
     }
 
     fn render(&mut self) {
-
         let mut target = self.display.draw();
         target.clear_color(0.0, 0.0, 0.0, 1.0);
         target.clear_depth(1.0);
-        draw_at_target(&mut target, self.rect_buffer.take(), &self.display, &self.draw_params);
-        draw_at_target(&mut target, self.circ_buffer.take(), &self.display, &self.draw_params);
-        draw_text_at_target(&mut target, &mut self.text_processor);
-
+        self.rect_buffer.draw_at_target(&mut target, &self.display, &self.draw_params);
+        self.circ_buffer.draw_at_target(&mut target, &self.display, &self.draw_params);
+        self.text_processor.draw_text_at_target(&mut target);
         target.finish().unwrap();
+        self.flush_buffers();
     }
 }
 
 #[derive(Debug)]
-struct Buffer<T> {
-    vertices: Vec<T>,
+struct Buffer<T: RenderByShaders> {
+    vertices: Option<Vec<T::Vertex>>,
     program: Program,
     primitive_type: PrimitiveType,
 }
 
-impl<T> Buffer<T> {
+impl<T: RenderByShaders> Buffer<T> {
     pub fn new(program: Program, primitive_type: PrimitiveType) -> Self {
         Buffer {
-            vertices: Vec::new(),
+            vertices: None,
             program: program,
             primitive_type: primitive_type,
         }
     }
-    pub fn push_vertex(&mut self, vertex: T) {
-        self.vertices.push(vertex);
+
+
+    pub fn load_renderable(&mut self, renderable: T) {
+        if let Some(ref mut vertices) = self.vertices {
+            vertices.push(renderable.get_vertex());
+        }
+        else {
+            self.vertices = Some(vec![renderable.get_vertex()]);
+        };
+    }
+
+    pub fn draw_at_target(&mut self, target: &mut Frame, display: &GlutinFacade, draw_params: &DrawParameters) {
+        if let Some(vertices) = self.vertices.take() {
+            let vertex_buffer = glium::VertexBuffer::new(display, &vertices).unwrap();
+            target.draw(&vertex_buffer,
+                        &glium::index::NoIndices(self.primitive_type),
+                        &self.program,
+                        &glium::uniforms::EmptyUniforms,
+                        draw_params).unwrap();
+        }
     }
 }
 
-fn load_vertex<T>(vertex: T, buffer: &mut Option<Buffer<T>>, renderable: Box<Renderable>, display: &GlutinFacade) {
-    if let Some(ref mut buff) = *buffer {
-        buff.push_vertex(vertex);
-    }
-    else {
-        *buffer = Some(Buffer::new(
-            make_program_from_shaders(renderable.get_shaders(), display),
-            renderable.get_primitive_type()));
-        if let Some(ref mut buffer) = *buffer { buffer.push_vertex(vertex);};
-    };
-}
-
-fn draw_at_target<T: glium::vertex::Vertex>(target: &mut Frame, buffer: Option<Buffer<T>>, display: &GlutinFacade, draw_params: &DrawParameters) {
-    if let Some(buffer) = buffer {
-        let vertex_buffer = glium::VertexBuffer::new(display, &buffer.vertices).unwrap();
-        target.draw(&vertex_buffer,
-                    &glium::index::NoIndices(buffer.primitive_type),
-                    &buffer.program,
-                    &glium::uniforms::EmptyUniforms,
-                    draw_params).unwrap();
+fn create_buffer<T: RenderByShaders>(display: &GlutinFacade) -> Buffer<T>
+{
+    Buffer {
+        vertices: None,
+        program: make_program_from_shaders(T::get_shaders(), display),
+        primitive_type: T::get_primitive_type(),
     }
 }
 
-struct TextBuffer {
-    pub buffer: Vec<Box<RenderText>>,
-}
-
-struct TextProcessor {
-    text_objects: Option<TextBuffer>,
+struct TextProcessor<T: RenderText> {
+    text_objects: Option<Vec<T>>,
     txt_sys: glium_text::TextSystem,
     font_text: glium_text::FontTexture
 }
 
-impl TextProcessor {
+impl<T: RenderText> TextProcessor<T> {
     pub fn new(font_string: &'static[u8], font_size: u32, display: Box<GlutinFacade>) -> Self {
         let font = match glium_text::FontTexture::new(&*display, font_string, font_size) {
             Ok(fnt) => fnt,
@@ -130,21 +136,21 @@ impl TextProcessor {
         }
     }
 
-    pub fn push_text(&mut self, text: Box<RenderText>) {
+    pub fn push_text(&mut self, text: T) {
         if let Some(ref mut buffer) = self.text_objects {
-            buffer.buffer.push(text);
+            buffer.push(text);
         }
         else {
-            self.text_objects = Some(TextBuffer{ buffer: vec![text]});
+            self.text_objects = Some(vec![text]);
         }
     }
-}
 
-fn draw_text_at_target(target: &mut Frame, processor: &mut TextProcessor) {
-    let buffer = processor.text_objects.take();
-    if let Some(buffer) = buffer {
-        for mut render_text in buffer.buffer {
-            render_text.render(target, &processor.txt_sys, &processor.font_text);
+    pub fn draw_text_at_target(&mut self, target: &mut Frame) {
+        let buffer = self.text_objects.take();
+        if let Some(buffer) = buffer {
+            for mut render_text in buffer {
+                render_text.render(target, &self.txt_sys, &self.font_text);
+            }
         }
     }
 }

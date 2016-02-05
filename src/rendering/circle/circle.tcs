@@ -10,7 +10,7 @@ out float radius_cs[];
 out vec3 pos_cs[];
 out vec4 color_cs[];
 
-uniform int tess_level_outer = 20;
+uniform int tess_level_outer = 100;
 uniform int tess_level_inner = 20;
 
 void main() {

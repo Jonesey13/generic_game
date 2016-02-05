@@ -1,5 +1,7 @@
 use na::{Vec3, Vec4};
-use super::renderables::{Renderable, RenderVertex};
+use num::Zero;
+use super::renderables::{Renderable, RenderType};
+use super::render_by_shaders::RenderByShaders;
 use super::shaders::Shaders;
 use glium;
 use glium::index::PrimitiveType;
@@ -13,7 +15,13 @@ pub struct Circle {
 }
 
 impl Renderable for Circle {
-    fn get_shaders(&self) -> Shaders {
+    fn get_type(&self) -> RenderType { RenderType::Circ(self.clone()) }
+}
+
+impl RenderByShaders for Circle {
+    type Vertex = CircleVertex;
+
+    fn get_shaders() -> Shaders {
         Shaders::VertexTesselationFragment(
             include_str!("circle.vs"),
             include_str!("circle.tcs"),
@@ -21,11 +29,9 @@ impl Renderable for Circle {
             include_str!("circle.fs"))
     }
 
-    fn get_vertex(&self) -> RenderVertex {
-        RenderVertex::Circ(self.clone().into())
-    }
+    fn get_vertex(&self) -> Self::Vertex { self.clone().into() }
 
-    fn get_primitive_type(&self) -> PrimitiveType {
+    fn get_primitive_type() -> PrimitiveType {
         glium::index::PrimitiveType::Patches{ vertices_per_patch: 1 }
     }
 }

@@ -1,6 +1,7 @@
 use multiinput::manager::{RawInputManager, DeviceType, DeviceStats};
 use multiinput::event::{RawEvent, KeyId, State, MouseButton};
 use std::collections::HashMap;
+use games::GameInput;
 use super::InputHandler;
 
 pub struct MultiInput {
@@ -51,6 +52,31 @@ impl InputHandler for MultiInput {
                 _ => (),
             }
         }
+    }
+
+    fn pass_on_input<'a>(&self, game_input: Option<&'a mut GameInput>) {
+        if let Some(input) = game_input {
+            if let Some(kbd) = input.get_kbd_inp() {
+                for index in 0..self.raw_states.device_stats.number_of_keyboards {
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Escape)) {
+                        kbd.escape = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Left)) {
+                        kbd.left = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Right)) {
+                        kbd.right = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Up)) {
+                        kbd.up = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Down)) {
+                        kbd.down = val;
+                    }
+                }
+            }
+        }
+
     }
 
     fn escape_key_pressed(&self) -> bool {

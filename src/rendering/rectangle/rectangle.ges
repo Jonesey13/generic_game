@@ -41,6 +41,6 @@ void main()
 vec4 Transform(in vec2 corner, in vec3 pos, in mat2 rot)
 {
   vec2 rotated_corner = rot * corner;
-  vec3 translated = pos + vec3(rotated_corner.xy, 1.0);
+  vec3 translated = pos + vec3(rotated_corner.xy, 0.0);
   return vec4(translated.xyz, 1.0);
 }

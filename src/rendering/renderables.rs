@@ -1,23 +1,14 @@
-use super::rectangle::RectangleVertex;
-use super::circle::CircleVertex;
-use super::text::RenderText;
-use super::shaders::Shaders;
-use glium::index::PrimitiveType;
+use super::rectangle::Rectangle;
+use super::circle::Circle;
+use super::text::PlainText;
 
 pub trait Renderable {
-    fn get_shaders(&self) -> Shaders { Shaders::None }
-    fn get_vertex(&self) -> RenderVertex { RenderVertex::None }
-    fn get_primitive_type(&self) -> PrimitiveType { PrimitiveType::Points }
+    fn get_type(&self) -> RenderType;
 }
 
-#[allow(dead_code)]
-pub struct RenderableStub;
-
-impl Renderable for RenderableStub {}
-
-pub enum RenderVertex {
-    None,
-    Rect(RectangleVertex),
-    Circ(CircleVertex),
-    Text(Box<RenderText>)
+#[derive(Clone)]
+pub enum RenderType {
+    Rect(Rectangle),
+    Circ(Circle),
+    Txt(PlainText)
 }

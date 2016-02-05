@@ -1,5 +1,7 @@
-use na::{Vec3, Vec4, Rot2};
-use super::renderables::{Renderable, RenderVertex};
+use na::{Vec1, Vec3, Vec4, Rot2};
+use num::Zero;
+use super::renderables::{Renderable, RenderType};
+use super::render_by_shaders::RenderByShaders;
 use super::shaders::Shaders;
 use super::conversion_tools::*;
 
@@ -13,16 +15,20 @@ pub struct Rectangle {
 }
 
 impl Renderable for Rectangle {
-    fn get_shaders(&self) -> Shaders {
+    fn get_type(&self) -> RenderType { RenderType::Rect(self.clone()) }
+}
+
+impl RenderByShaders for Rectangle {
+    type Vertex = RectangleVertex;
+
+    fn get_shaders() -> Shaders {
         Shaders::VertexGeometryFragment(
             include_str!("rectangle.vs"),
             include_str!("rectangle.ges"),
             include_str!("rectangle.fs"))
     }
 
-    fn get_vertex(&self) -> RenderVertex {
-        RenderVertex::Rect(self.clone().into())
-    }
+    fn get_vertex(&self) -> Self::Vertex { self.clone().into() }
 }
 
 #[derive(Copy, Clone, Debug)]
