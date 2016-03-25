@@ -1,9 +1,10 @@
 use na::{Vec1, Vec2, Vec3, Vec4, Rot2};
 use super::paddle::Paddle;
-use super::line::Line;
+use geometry::line::Line;
+use geometry::con_poly;
 use rendering;
 use collision;
-use collision::{Collidable, CollObj, CollResults, con_poly};
+use collision::{Collidable, CollObj, CollResults};
 use std::f64::consts::PI;
 use super::FOREGROUND_LAYER;
 
@@ -36,7 +37,7 @@ impl Player {
             slide_pos: 0.5,
             paddle: paddle,
             line: line,
-            coll_results: CollResults::new(),
+            coll_results: CollResults::no_collision(),
             prev: None
         }
     }
@@ -47,6 +48,17 @@ impl Player {
 
     pub fn get_position(&self) -> Vec2<f64> {
         self.line.get_point(self.slide_pos)
+    }
+
+    pub fn get_current_poly(&self) -> con_poly::ConPoly {
+        con_poly::ConPoly::new_from_rect(self.paddle.width, self.paddle.length, self.get_position())
+    }
+
+    pub fn get_previous_poly(&self) -> con_poly::ConPoly {
+        if let Some(ref prev_player) = self.prev {
+            return con_poly::ConPoly::new_from_rect(prev_player.paddle.width, prev_player.paddle.length, prev_player.get_position());
+        }
+        self.get_current_poly()
     }
 
     /// Convention: roatation angle 0 = Vertical Paddle on Left Side
@@ -75,14 +87,7 @@ impl Collidable for Player {
     type Data = super::PongObject;
 
     fn get_collision_object(&self) -> CollObj {
-        let new_con_poly = con_poly::ConPoly::new_from_rect(self.paddle.width, self.paddle.length, self.get_position());
-
-        if let Some(ref prev_player) = self.prev {
-            let old_con_poly = con_poly::ConPoly::new_from_rect(prev_player.paddle.width, prev_player.paddle.length, prev_player.get_position());
-            return CollObj::ConPoly(new_con_poly, Some(old_con_poly))
-        }
-
-        return CollObj::ConPoly(new_con_poly, None)
+        CollObj::ConPoly(self.get_current_poly(), self.get_previous_poly())
     }
 
     fn get_collision_results(&self) -> CollResults<Self::Data> {
@@ -92,4 +97,6 @@ impl Collidable for Player {
     fn set_collision_results(&mut self, new_results: CollResults<Self::Data>) {
         self.coll_results = new_results;
     }
+
+    fn get_collision_data(&self) -> Self::Data { super::PongObject::Player }
 }

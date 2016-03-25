@@ -5,7 +5,7 @@ use super::ball::Ball;
 use super::player::Player;
 use super::paddle::Paddle;
 use super::board::Board;
-use super::line::Line;
+use geometry::line::Line;
 use collision::Collider;
 
 pub struct PongBuilder {

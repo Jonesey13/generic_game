@@ -1,7 +1,6 @@
 pub mod ball;
 pub mod player;
 pub mod paddle;
-pub mod line;
 pub mod board;
 pub mod builder;
 

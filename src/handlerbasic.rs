@@ -37,6 +37,7 @@ impl Handler for HandlerBasic {
         self.clocks.input_clock.start();
         self.input_handler.receive_input();
         self.input_handler.pass_on_input(self.game.get_input());
+        self.input_handler.flush_input();
         self.game.update_input();
         self.clocks.input_clock.end();
     }

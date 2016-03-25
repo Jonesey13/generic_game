@@ -6,7 +6,8 @@ use super::InputHandler;
 
 pub struct MultiInput {
     pub raw_states: RawStates,
-    raw_manager: RawInputManager
+    raw_manager: RawInputManager,
+    escape_key_flag: bool
 }
 
 #[derive(Default)]
@@ -15,6 +16,14 @@ pub struct RawStates {
     pub mouse_button_states: HashMap<MouseAndButton, bool>,
     pub mouse_move_states: HashMap<usize, (i32, i32)>,
     device_stats: DeviceStats,
+}
+
+impl RawStates {
+    pub fn flush(&mut self) {
+        self.key_states.clear();
+        self.mouse_button_states.clear();
+        self.mouse_move_states.clear();
+    }
 }
 
 #[derive(Eq, PartialEq, Hash)]
@@ -34,6 +43,7 @@ impl MultiInput {
         MultiInput {
             raw_states: raw_states,
             raw_manager: raw_manager,
+            escape_key_flag: false,
         }
     }
 }
@@ -50,6 +60,12 @@ impl InputHandler for MultiInput {
                 RawEvent::MouseMoveEvent(num, x, y)
                     => {raw_states.mouse_move_states.insert(num, (x, y));},
                 _ => (),
+            }
+        }
+
+        for index in 0..raw_states.device_stats.number_of_keyboards {
+            if let Some(&state) = raw_states.key_states.get(&Key(index, KeyId::Escape)) {
+                self.escape_key_flag = state;
             }
         }
     }
@@ -75,17 +91,39 @@ impl InputHandler for MultiInput {
                     }
                 }
             }
-        }
 
+
+            if let Some(mouse) = input.get_mouse_inp() {
+                mouse.movement = (0, 0);
+                for index in 0..self.raw_states.device_stats.number_of_mice {
+                    if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Left)) {
+                        mouse.left = val;
+                    }
+                    if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Right)) {
+                        mouse.left = val;
+                    }
+                    if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Middle)) {
+                        mouse.middle = val;
+                    }
+                    if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Button4)) {
+                        mouse.button4 = val;
+                    }
+                    if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Button5)) {
+                        mouse.button5 = val;
+                    }
+                    if let Some(&val) = self.raw_states.mouse_move_states.get(&index) {
+                        mouse.movement = val;
+                    }
+                }
+            }
+        }
+    }
+
+    fn flush_input(&mut self) {
+        self.raw_states.flush();
     }
 
     fn escape_key_pressed(&self) -> bool {
-        for index in 0..self.raw_states.device_stats.number_of_keyboards {
-            if let Some(&true) = self.raw_states.key_states.get(&Key(index, KeyId::Escape)) {
-                return true;
-            }
-        }
-        return false;
-
+        self.escape_key_flag
     }
 }
