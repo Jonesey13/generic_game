@@ -1,3 +1,4 @@
+
 use multiinput::manager::{RawInputManager, DeviceType, DeviceStats};
 use multiinput::event::{RawEvent, KeyId, State, MouseButton};
 use std::collections::HashMap;
@@ -88,6 +89,9 @@ impl InputHandler for MultiInput {
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Down)) {
                         kbd.down = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::R)) {
+                        kbd.r = val;
                     }
                 }
             }

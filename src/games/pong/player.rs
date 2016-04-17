@@ -51,12 +51,12 @@ impl Player {
     }
 
     pub fn get_current_poly(&self) -> con_poly::ConPoly {
-        con_poly::ConPoly::new_from_rect(self.paddle.width, self.paddle.length, self.get_position())
+        con_poly::ConPoly::new_from_rect(self.paddle.width, self.paddle.length, self.get_position(), self.get_rotation())
     }
 
     pub fn get_previous_poly(&self) -> con_poly::ConPoly {
         if let Some(ref prev_player) = self.prev {
-            return con_poly::ConPoly::new_from_rect(prev_player.paddle.width, prev_player.paddle.length, prev_player.get_position());
+            return con_poly::ConPoly::new_from_rect(prev_player.paddle.width, prev_player.paddle.length, prev_player.get_position(), prev_player.get_rotation());
         }
         self.get_current_poly()
     }

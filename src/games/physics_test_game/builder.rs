@@ -1,27 +1,25 @@
-use na::Vec2;
+use na::{Vec2, Rot2};
 use num::Zero;
 use super::{PhysicsTestGame, PhysicsTestGameInput};
 use super::coll_circle::CollCircle;
+use super::coll_rect::CollRect;
+use super::BLUE;
 use collision::Collider;
 
 pub struct PhysicsTestBuilder {
-    circle1_rad: f64,
-    circle1_pos: Vec2<f64>,
-    circle1_vel: Vec2<f64>,
-    circle2_rad: f64,
-    circle2_pos: Vec2<f64>,
-    circle2_vel: Vec2<f64>,
+    curr_circ : Option<CollCircle>,
+    circles: Vec<CollCircle>,
+    curr_rect: Option<CollRect>,
+    rects: Vec<CollRect>
 }
 
 impl Default for PhysicsTestBuilder {
     fn default() -> Self {
         PhysicsTestBuilder {
-            circle1_rad: 0.1,
-            circle1_pos: Vec2::new(-0.5, 0.0),
-            circle1_vel: Vec2::new(0.5, 0.0),
-            circle2_rad: 0.1,
-            circle2_pos: Vec2::new(0.5, 0.0),
-            circle2_vel: Vec2::new(-0.5, 0.0),
+            curr_circ: None,
+            circles: Vec::new(),
+            curr_rect: None,
+            rects: Vec::new()
         }
     }
 }
@@ -31,16 +29,63 @@ impl PhysicsTestBuilder {
         Self::default()
     }
 
+    fn clear_currents(&mut self) {
+        self.curr_circ = None;
+        self.curr_rect = None;
+    }
+
+    fn push_existing(&mut self) {
+        if let Some(ref old_circ) = self.curr_circ {
+            self.circles.push(old_circ.clone());
+        }
+        if let Some(ref old_rect) = self.curr_rect {
+            self.rects.push(old_rect.clone());
+        }
+        self.clear_currents();
+    }
+
+    pub fn add_circle<'a> (&'a mut self, pos: Vec2<f64>, rad: f64) -> &'a mut Self {
+        self.push_existing();
+        self.curr_circ = Some(CollCircle::new(pos, rad, BLUE));
+        self
+    }
+
+    pub fn add_rect<'a> (&'a mut self, pos: Vec2<f64>, length: f64, height: f64, rot: Rot2<f64>) -> &'a mut Self {
+        self.push_existing();
+        self.curr_rect = Some(CollRect::new(pos, length, height, rot, BLUE));
+        self
+    }
+
+    pub fn with_velocity<'a> (&'a mut self, vel: Vec2<f64>) -> &'a mut Self {
+        if let Some(ref mut circ) = self.curr_circ {
+            circ.set_velocity(vel);
+        }
+        if let Some(ref mut rect) = self.curr_rect {
+            rect.set_velocity(vel);
+        }
+        self
+    }
+
+    pub fn player_controlled<'a> (&'a mut self) -> &'a mut Self {
+        if let Some(ref mut circ) = self.curr_circ {
+            circ.toggle_player_control();
+        }
+        if let Some(ref mut rect) = self.curr_rect {
+            rect.toggle_player_control();
+        }
+        self
+    }
+
     pub fn build_game(&mut self) -> PhysicsTestGame {
-        let mut circle1 = CollCircle::new(self.circle1_pos, self.circle1_rad, super::BLUE);
-        circle1.toggle_player_control();
-        let mut circle2 = CollCircle::new(self.circle2_pos, self.circle2_rad, super::BLUE);
-        circle2.set_velocity(self.circle2_vel);
+        self.push_existing();
 
         PhysicsTestGame {
-            circles: vec![circle1, circle2],
+            circles: self.circles.clone(),
+            rects: self.rects.clone(),
             collider: Collider,
-            external_input: Default::default()
+            external_input: Default::default(),
+            mouse_mov: Vec2::zero(),
+            mouse_speed: 0.01
         }
     }
 }

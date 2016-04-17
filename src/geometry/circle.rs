@@ -1,5 +1,6 @@
 use na::Vec2;
 use std::fmt;
+use geometry::line::Line;
 
 #[derive(Copy, Clone)]
 pub struct Circle{
@@ -15,11 +16,18 @@ impl Circle {
         }
     }
 
-    pub fn shift_by(&self, move_vec: Vec2<f64>) -> Circle {
-        Circle {
-            rad: self.rad,
-            center: self.center + move_vec
-        }
+    pub fn shift_by(&mut self, shift: Vec2<f64>) {
+        self.center = self.center + shift;
+    }
+
+    pub fn shifted_by(&self, shift: Vec2<f64>) -> Circle {
+        let mut out = self.clone();
+        out.shift_by(shift);
+        out
+    }
+
+    pub fn get_movement_line(&self, other: &Circle) -> Line {
+        Line::new(self.center, other.center)
     }
 }
 
