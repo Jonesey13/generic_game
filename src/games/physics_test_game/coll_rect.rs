@@ -135,16 +135,13 @@ impl CollRect {
             Some(CollDetails::ConPoly(ConPolyInfo::LineInfo(index, _))) => self.get_current_rect().get_normal(index),
             _ => panic!("unreachable!")
         };
-        println!("Collision Direction: {:?}", coll_dir);
         let speed = self.get_speed();
-        println!("Speed: {}", speed);
         self.set_velocity(coll_dir * -speed);
         if let Some(ref prev) = self.prev.clone() {
             let collision_time = self.get_collision_time().unwrap();
             let next_position = self.get_pos().clone();
             self.set_pos(prev.pos + (next_position - prev.pos) * collision_time);
         }
-        println!("New Speed: {}", self.get_speed());
     }
 }
 

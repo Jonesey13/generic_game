@@ -1,3 +1,5 @@
+pub mod debug;
+
 use std::iter::{Zip, Cycle, Skip};
 
 pub fn sequential_pairs_circular<I: Iterator> (it: I) -> Zip<I, Skip<Cycle<I>>>

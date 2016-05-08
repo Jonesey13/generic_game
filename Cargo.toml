@@ -12,3 +12,6 @@ env_logger = "*"
 nalgebra = "*"
 num = "*"
 time = "*"
+
+[dependencies.bitflags]
+version = "*"

@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
+#![feature(set_stdio)]
 extern crate multiinput;
 extern crate nalgebra as na;
 extern crate num;
@@ -7,6 +8,8 @@ extern crate num;
 extern crate glium;
 extern crate glium_text;
 extern crate time;
+#[macro_use]
+extern crate bitflags;
 
 mod rendering;
 mod input;
@@ -18,8 +21,17 @@ mod geometry;
 mod utils;
 
 use na::{Vec2, Vec1, Rot2};
+use utils::debug::*;
+use std::env;
+use std::io::*;
 
 fn main() {
+    env::set_var("RUST_BACKTRACE", "1");
+    utils::debug::set_flags(DEBUGALL);
+    debug(&format!("Starting Up - Date: {}", time::now_utc().ctime()));
+    let error_writer = Box::new(ErrorWriter::new());
+    set_panic(error_writer);
+
     let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((1000, 800)));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     //let game: Box<games::Game> = Box::new(games::pong::builder::PongBuilder::init().build_game());

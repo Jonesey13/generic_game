@@ -122,7 +122,6 @@ impl CollCircle {
             Some(CollDetails::Circ(dir)) => dir,
             other => panic!("Invalid Collision Details for Circ: {:?}", other)
         };
-        println!("Circle Collided: {:?}", coll_dir);
         let speed = self.get_speed();
         self.set_velocity(coll_dir * -speed);
         if let Some(ref prev) = self.prev.clone() {

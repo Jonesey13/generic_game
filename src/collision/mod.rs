@@ -4,6 +4,7 @@ use std::cmp::Ordering::{Equal, Less, Greater};
 use geometry;
 use geometry::{circle, con_poly, line, HasAngle, DualSoln};
 use na::{normalize, Vec2, dot};
+use utils::debug::*;
 
 pub trait Collidable {
     type Data: Clone;
@@ -205,7 +206,6 @@ fn circ_poly_coll_sides(circ_next: circle::Circle, circ_prev: circle::Circle,
         if let (DualSoln::Two(line_pos, time), true, true)
             = (side_coll_soln, side_coll_soln.both_within_zero_one(), dot(&circle_mov_dir, &normal) < 0.0) {
             side_solns.push(Some((line_pos, time)));
-            println!("Side Solution found: side: {}, line_pos: {}, time: {}", ind, line_pos, time);
         }
         else {
             side_solns.push(None);
@@ -228,7 +228,6 @@ fn circ_poly_coll_sides(circ_next: circle::Circle, circ_prev: circle::Circle,
         (index, Some((line_pos, t))) => {
             let circ_details = CollDetails::Circ(poly_prev.get_normal(index) * -1.0);
             let poly_details = CollDetails::ConPoly(ConPolyInfo::LineInfo(index, line_pos));
-            println!("Collision Time: {}", t);
             Some((circ_details, poly_details, t))
         }
     }

@@ -30,7 +30,7 @@ pub struct PongGame {
 }
 
 #[derive(Clone)]
-enum PongObject {
+pub enum PongObject {
     Ball,
     Player
 }

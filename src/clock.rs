@@ -1,6 +1,5 @@
-const CLOCK_PRINT_FLAG: bool = true;
-
 use time;
+use utils::debug::*;
 
 pub struct Clock {
     name: String,
@@ -29,9 +28,7 @@ impl Clock {
             let total_cycles = self.cycle_history.len();
             let longest_cycle = self.cycle_history.iter().fold(0.0, |acc: f64, &x|{ acc.max(x) });
 
-            if CLOCK_PRINT_FLAG {
-                println!("Clock {}: Clocks per second: {}, Longest Clock: {}", self.name, total_cycles, longest_cycle);
-            }
+            debug_clock(&format!("Clock {}: Clocks per second: {}, Longest Clock: {}", self.name, total_cycles, longest_cycle));
             self.cycle_history.clear();
         }
     }
