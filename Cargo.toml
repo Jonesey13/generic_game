@@ -4,12 +4,10 @@ version = "0.1.0"
 authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 
 [dependencies]
-multiinput = {version = "*", path = "C:/Users/Jonesey13/Projects/multiinput"}
+multi-input = "*"
 glium = "*"
-glium_text =  {version = "*", path = "C:/Users/Jonesey13/Projects/glium_text"}
-log = "*"
-env_logger = "*"
-nalgebra = "*"
+glium_text = "*"
+nalgebra = "0.7.0"
 num = "*"
 time = "*"
 

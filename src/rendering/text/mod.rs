@@ -33,5 +33,5 @@ impl RenderText for PlainText {
 }
 
 impl Renderable for PlainText {
-        fn get_type(&self) -> RenderType { RenderType::Txt(self.clone()) }
+    fn get_type(&self) -> RenderType { RenderType::Txt(self.clone()) }
 }

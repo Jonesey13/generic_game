@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 #![feature(set_stdio)]
-extern crate multiinput;
+extern crate multi_input;
 extern crate nalgebra as na;
 extern crate num;
 #[macro_use]
@@ -38,7 +38,7 @@ fn main() {
     let game: Box<games::Game> = Box::new(
         games::physics_test_game::builder::PhysicsTestBuilder::init()
             .add_rect(Vec2::new(0.5, 0.0), 0.2, 0.2, Rot2::new(Vec1::new(0.0))).with_velocity(Vec2::new(-0.25, 0.0))
-            .add_circle(Vec2::new(-0.5, 0.0), 0.1).player_controlled()
+            .add_rect(Vec2::new(-0.5, 0.0), 0.2, 0.2, Rot2::new(Vec1::new(0.0))).with_velocity(Vec2::new(0.25, 0.0))
             .build_game());
     //let game: Box<games::Game> = Box::new(games::input_test_game::InputTestGame::new());
     //let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame);

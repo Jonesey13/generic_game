@@ -49,17 +49,60 @@ impl ConPoly {
         self.corners.iter().cloned().zip(corners_it_shift).map(|(beg, end)| {-get_normal_2d(end - beg)}).collect()
     }
 
-    pub fn get_side(&self, index: usize) -> Line {
-        let beg = self.corners[index];
-        let end = self.corners.iter().cloned().cycle().skip(1).nth(index).unwrap();
-        Line::new(beg, end)
+    pub fn get_normal(&self, index: usize) -> Vec2<f64> {
+        self.normals()[index]
     }
 
-    pub fn get_normal(&self, index: usize) -> Vec2<f64> {
-        -get_normal_2d(self.get_side(index).get_direction())
+    pub fn sides(&self) -> Vec<Line> {
+        self.sides_iter().map(|(beg, end)| {Line::new_ref(beg, end)}).take(self.total_sides()).collect()
+    }
+
+    pub fn get_side(&self, index: usize) -> Option<Line> {
+        self.sides_iter().nth(index).and_then(|(beg, end)| {Some(Line::new_ref(beg, end))})
+    }
+
+    fn sides_iter<'a>(&'a self) -> Box<Iterator<Item=(&'a Vec2<f64>, &'a Vec2<f64>)> + 'a> {
+        let corners_it_shift = self.corners.iter().cycle().skip(1);
+        Box::new(self.corners.iter().zip(corners_it_shift).map(|(beg, end)| {(beg, end)}))
+    }
+
+    /// Given a corner on the ConPoly, get the two adjacent sides as lines
+    pub fn get_adjacent_sides(&self, corner_index: usize) -> Option<(Line, usize, Line, usize)> {
+        let indices = match corner_index {
+            0 => [self.total_sides() - 1, corner_index],
+            _ => [corner_index - 1, corner_index],
+        };
+        match (self.get_side(indices[0]), self.get_side(indices[1])) {
+            (Some(val1), Some(val2)) => Some((val1, indices[0], val2, indices[1])),
+            _ => None
+        }
     }
 
     pub fn total_sides(&self) -> usize {
         self.corners.len()
     }
+
+    pub fn get_corner_lines(&self, poly2: &ConPoly) -> Vec<Line> {
+        self.corners.iter().cloned()
+        .zip(poly2.corners.iter().cloned())
+        .map(|(beg, end)| { Line::new(beg, end) })
+        .collect()
+    }
+
+    pub fn get_shift(&self, other: &ConPoly) -> Vec2<f64> {
+        other.corners[0] - self.corners[0]
+    }
+
+    pub fn get_at_time(&self, other: &ConPoly, time: f64) -> ConPoly {
+        let mut out = self.clone();
+        let shift = self.get_shift(&other);
+        out.shift_by(shift * time);
+        out
+    }
+}
+
+#[test]
+fn lazy_evaluation_test() {
+    let new_poly = ConPoly::new_from_rect(1.0, 1.0, Vec2::zero(), Rot2::new(Vec1::zero()));
+    panic!("Third side is {:?}", new_poly.get_side(3))
 }

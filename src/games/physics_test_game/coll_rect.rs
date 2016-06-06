@@ -5,6 +5,7 @@ use geometry::{circle, con_poly, average_vec2};
 use rendering;
 use num::Zero;
 use super::RED;
+use utils::debug::*;
 
 pub struct CollRect {
     pub length: f64,
@@ -133,9 +134,12 @@ impl CollRect {
         let coll_dir = match self.get_collision_details() {
             Some(CollDetails::ConPoly(ConPolyInfo::CornerInfo(_, dir))) => dir,
             Some(CollDetails::ConPoly(ConPolyInfo::LineInfo(index, _))) => self.get_current_rect().get_normal(index),
+            Some(CollDetails::ConPoly(ConPolyInfo::SideInfo(index))) => self.get_current_rect().get_normal(index),
             _ => panic!("unreachable!")
         };
         let speed = self.get_speed();
+
+        debug_coll(&format!("Rectangle Collision with coll_details = {:?}", self.get_collision_details()));
         self.set_velocity(coll_dir * -speed);
         if let Some(ref prev) = self.prev.clone() {
             let collision_time = self.get_collision_time().unwrap();

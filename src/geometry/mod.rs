@@ -9,17 +9,17 @@ const EPSILON: f64 = 0.0000001;
 
 /// For the line beg <=> t=0 and end <=> t=1
 /// Results are expressed as points on the line parameterised in t
-pub fn line_circle_intersect (line: line::Line, circ: circle::Circle) -> DualSoln {
+pub fn line_circle_intersect (line: &line::Line, circ: &circle::Circle) -> DualSoln {
     let shifted_line = line.shift_by(circ.center * -1.0);
-    line_center_circle_intersect(shifted_line, circ.rad)
+    line_center_circle_intersect(&shifted_line, circ.rad)
 }
 
 /// Circle is assumed to be centered on the origin
 /// For the line beg <=> t=0 and end <=> t=1
 /// Results are expressed as points on the line parameterised in t
-pub fn line_center_circle_intersect (line: line::Line, circ_rad: f64) -> DualSoln {
-    let a = line.get_direction().sqnorm();
-    let b = 2.0 * dot(&line.beg, &line.get_direction());
+pub fn line_center_circle_intersect (line: &line::Line, circ_rad: f64) -> DualSoln {
+    let a = line.get_diff().sqnorm();
+    let b = 2.0 * dot(&line.beg, &line.get_diff());
     let c = line.beg.sqnorm() - circ_rad * circ_rad;
     solve_quadratic(a, b, c)
 }
@@ -88,9 +88,9 @@ fn in_zero_one_strict(x: f64) -> bool { x > 0.0 + EPSILON && x < 1.0 - EPSILON}
 /// For the line beg <=> t=0 and end <=> t=1
 /// For the two values in the DualSoln the first float corresponds to a point on
 /// the first line and the second float the second line
-pub fn line_line_intersect_2d(line1: line::Line, line2: line::Line) -> DualSoln {
-    let dir1 = line1.get_direction();
-    let dir2 = line2.get_direction();
+pub fn line_line_intersect_2d(line1: &line::Line, line2: &line::Line) -> DualSoln {
+    let dir1 = line1.get_diff();
+    let dir2 = line2.get_diff();
     let normal1 = line1.get_normal();
     let normal2 = line2.get_normal();
     if dot(&dir1, &normal2) != 0.0 {
@@ -125,6 +125,6 @@ impl FromAngle for Vec2<f64> {
 fn line_line_intersect() {
     let line1 = line::Line::new(Vec2::new(-0.5, 0.0), Vec2::new(0.5, 0.0));
     let line2 = line::Line::new(Vec2::new(0.3, 1.0), Vec2::new(0.3, -1.0));
-    let soln = line_line_intersect_2d(line1, line2);
+    let soln = line_line_intersect_2d(&line1, &line2);
     assert!(soln.both_within_zero_one(), "soln: {:?}", soln)
 }

@@ -2,7 +2,7 @@ use na::Vec2;
 use std::fmt;
 use geometry::line::Line;
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 pub struct Circle{
     pub rad: f64,
     pub center: Vec2<f64>

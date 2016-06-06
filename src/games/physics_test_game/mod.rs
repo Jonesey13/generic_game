@@ -56,16 +56,16 @@ impl Game for PhysicsTestGame {
         for rect in &mut self.rects {
             rect.set_prev();
 
-            if self.external_input.kbd.left {
-                rect.rotate_by(Rot2::new(Vec1::new(-t_step)));
-            }
-            if self.external_input.kbd.right {
-                rect.rotate_by(Rot2::new(Vec1::new(t_step)));
-            }
-
             if rect.is_player_controlled()
             {
                 rect.shift_by(self.mouse_mov);
+
+                if self.external_input.kbd.left {
+                    rect.rotate_by(Rot2::new(Vec1::new(-t_step)));
+                }
+                if self.external_input.kbd.right {
+                    rect.rotate_by(Rot2::new(Vec1::new(t_step)));
+                }
             }
             else {
                 rect.update_pos(t_step);
