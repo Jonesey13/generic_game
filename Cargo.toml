@@ -6,7 +6,6 @@ authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 [dependencies]
 multi-input = "*"
 glium = "*"
-glium_text = "*"
 nalgebra = "0.7.0"
 num = "*"
 time = "*"

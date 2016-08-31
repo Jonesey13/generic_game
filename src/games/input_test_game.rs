@@ -5,7 +5,6 @@ use num::Zero;
 use rendering::renderables::Renderable;
 use rendering::rectangle::Rectangle;
 use rendering::circle::Circle;
-use rendering::text::PlainText;
 use input::keyboard::KeyboardInput;
 
 #[allow(dead_code)]
