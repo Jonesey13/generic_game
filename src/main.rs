@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
+
 #![feature(set_stdio)]
-extern crate multi_input;
+extern crate multiinput;
 extern crate nalgebra as na;
 extern crate num;
 #[macro_use]
@@ -29,7 +30,7 @@ fn main() {
     utils::debug::set_flags(DEBUGALL);
     debug(&format!("Starting Up - Date: {}", time::now_utc().ctime()));
     let error_writer = Box::new(ErrorWriter::new());
-    set_panic(error_writer);
+    set_panic(Some(error_writer));
 
     let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((1000, 800)));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());

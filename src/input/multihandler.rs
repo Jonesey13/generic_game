@@ -1,5 +1,5 @@
-use multi_input::manager::{RawInputManager, DeviceType, DeviceStats};
-use multi_input::event::{RawEvent, KeyId, State, MouseButton};
+use multiinput::manager::{RawInputManager, DeviceType, DeviceStats};
+use multiinput::event::{RawEvent, KeyId, State, MouseButton};
 use std::collections::HashMap;
 use games::GameInput;
 use super::InputHandler;

@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 
 [dependencies]
-multi-input = "*"
+multiinput = "0.0.2"
 glium = "*"
 nalgebra = "0.7.0"
 num = "*"
