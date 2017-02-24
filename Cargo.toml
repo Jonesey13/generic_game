@@ -9,6 +9,9 @@ glium = "*"
 nalgebra = "0.7.0"
 num = "*"
 time = "*"
+unicode_normalization = "*"
+rusttype = "*"
+arrayvec = "*"
 
 [dependencies.bitflags]
 version = "*"
