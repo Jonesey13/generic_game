@@ -58,6 +58,9 @@ impl<'a> RenderText<'a> for PlainText {
         };
         
         let glyphs = layout_paragraph(font, rt_scale, width, &self.content);
+        for glyph in &glyphs {
+            cache.queue_glyph(0, glyph.clone());
+        }
         
         cache.cache_queued(|rect, data| {
             cache_tex.main_level().write(glium::Rect {
@@ -82,6 +85,14 @@ impl<'a> RenderText<'a> for PlainText {
         let vertex_buffer = glium::VertexBuffer::new(
             display,
             &vertices).unwrap();
+
+        target.draw(&vertex_buffer,
+                    glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList),
+                    &program, &uniforms,
+                    &glium::DrawParameters {
+                        blend: glium::Blend::alpha_blending(),
+                        ..Default::default()
+                    }).unwrap();
 
     }
 
@@ -151,7 +162,7 @@ impl Renderable for PlainText {
 }
 
 #[derive(Copy, Clone)]
-struct TextVertex {
+pub struct TextVertex {
     position: [f32; 2],
     tex_coords: [f32; 2],
     colour: [f32; 4]
@@ -172,7 +183,7 @@ impl<'a, T: RenderText<'a>> TextProcessor<'a, T> {
         let dpi_factor = display.get_window().unwrap().hidpi_factor();
 
         let (cache_width, cache_height) = (512 * dpi_factor as u32, 512 * dpi_factor as u32);
-        let mut cache = rusttype::gpu_cache::Cache::new(cache_width, cache_height, 0.1, 0.1);
+        let cache = rusttype::gpu_cache::Cache::new(cache_width, cache_height, 0.1, 0.1);
         let cache_tex = glium::texture::Texture2d::with_format(
             &*display,
             glium::texture::RawImage2d {
