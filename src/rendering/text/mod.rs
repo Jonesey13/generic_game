@@ -37,6 +37,7 @@ pub trait RenderText<'a> {
         &self,
         screen_width: u32,
         screen_height: u32,
+        position: [f32; 2],
         glyphs:  Vec<PositionedGlyph<'a>>,
         cache: &rusttype::gpu_cache::Cache
     ) -> Vec<TextVertex>;
@@ -80,7 +81,12 @@ impl<'a> RenderText<'a> for PlainText {
             tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest)
         };
 
-        let vertices = self.build_vertex_buffer(width, height, glyphs, cache);
+        let vertices = self.build_vertex_buffer(
+            width,
+            height,
+            [self.position.x as f32 ,self.position.y as f32],
+            glyphs,
+            cache);
 
         let vertex_buffer = glium::VertexBuffer::new(
             display,
@@ -100,6 +106,7 @@ impl<'a> RenderText<'a> for PlainText {
         &self,
         screen_width: u32,
         screen_height: u32,
+        position: [f32; 2],
         glyphs:  Vec<PositionedGlyph<'a>>,
         cache: &rusttype::gpu_cache::Cache
     ) -> Vec<TextVertex>
@@ -108,16 +115,16 @@ impl<'a> RenderText<'a> for PlainText {
                      self.color.y as f32,
                      self.color.z as f32,
                      self.color.w as f32];
-        let origin = point(0.0, 0.0);
+        let origin = point(position[0], position[1]);
         glyphs.iter().flat_map(|g| {
             if let Ok(Some((uv_rect, screen_rect))) = cache.rect_for(0, g) {
                 let gl_rect = Rect {
                     min: origin
-                        + (vector(screen_rect.min.x as f32 / screen_width as f32 - 0.5,
-                                  1.0 - screen_rect.min.y as f32 / screen_height as f32 - 0.5)) * 2.0,
+                        + (vector(screen_rect.min.x as f32 / screen_width as f32,
+                                  - screen_rect.min.y as f32 / screen_height as f32)),
                     max: origin
-                        + (vector(screen_rect.max.x as f32 / screen_width as f32 - 0.5,
-                                  1.0 - screen_rect.max.y as f32 / screen_height as f32 - 0.5)) * 2.0
+                        + (vector(screen_rect.max.x as f32 / screen_width as f32,
+                                  - screen_rect.max.y as f32 / screen_height as f32))
                 };
                 arrayvec::ArrayVec::<[TextVertex; 6]>::from([
                     TextVertex {
