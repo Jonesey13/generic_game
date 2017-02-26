@@ -1,5 +1,6 @@
 pub mod renderables;
 pub mod rectangle;
+pub mod text;
 pub mod circle;
 pub mod shaders;
 pub mod glium_renderer;

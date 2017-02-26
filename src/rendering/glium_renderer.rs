@@ -2,6 +2,7 @@ use super::Renderer;
 use super::shaders::make_program_from_shaders;
 use super::rectangle::{Rectangle, RectangleVertex};
 use super::circle::{Circle, CircleVertex};
+use super::text::{RenderText, TextProcessor, PlainText};
 use super::renderables::{Renderable, RenderType};
 use super::render_by_shaders::RenderByShaders;
 use glium;
@@ -9,12 +10,14 @@ use glium::Frame;
 use glium::backend::glutin_backend::GlutinFacade;
 use glium::index::PrimitiveType;
 use glium::{DisplayBuild, Surface, DrawParameters, Depth, DepthTest, Program};
+use rusttype;
 
 pub struct GliumRenderer<'a> {
     display: Box<GlutinFacade>,
     draw_params: DrawParameters<'a>,
     rect_buffer: Buffer<Rectangle>,
     circ_buffer: Buffer<Circle>,
+    text_processor: TextProcessor<'a, PlainText>,
 }
 
 impl<'a> GliumRenderer<'a> {
@@ -32,12 +35,14 @@ impl<'a> GliumRenderer<'a> {
             draw_params: draw_params,
             rect_buffer: create_buffer::<Rectangle>(&display),
             circ_buffer: create_buffer::<Circle>(&display),
+            text_processor: TextProcessor::new(display),
         }
     }
 
     fn flush_buffers(&mut self) {
         self.rect_buffer.vertices = None;
         self.circ_buffer.vertices = None;
+        self.text_processor.text_objects = None;
     }
 }
 
@@ -47,6 +52,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
             match renderable.get_type() {
                 RenderType::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
                 RenderType::Circ(circle) => self.circ_buffer.load_renderable(circle),
+                RenderType::Text(text) => self.text_processor.push_text(text)
             }
         }
     }
@@ -57,6 +63,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
         target.clear_depth(1.0);
         self.rect_buffer.draw_at_target(&mut target, &self.display, &self.draw_params);
         self.circ_buffer.draw_at_target(&mut target, &self.display, &self.draw_params);
+        self.text_processor.draw_text_at_target(&mut target, &self.display);
         target.finish().unwrap();
         self.flush_buffers();
     }

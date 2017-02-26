@@ -9,7 +9,7 @@ glium = "*"
 nalgebra = "0.7.0"
 num = "*"
 time = "*"
-unicode_normalization = "*"
+unicode-normalization = "*"
 rusttype = "*"
 arrayvec = "*"
 

@@ -10,6 +10,9 @@ extern crate glium;
 extern crate time;
 #[macro_use]
 extern crate bitflags;
+extern crate unicode_normalization;
+extern crate rusttype;
+extern crate arrayvec;
 
 mod rendering;
 mod input;
@@ -35,13 +38,13 @@ fn main() {
     let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((1000, 800)));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     //let game: Box<games::Game> = Box::new(games::pong::builder::PongBuilder::init().build_game());
-    let game: Box<games::Game> = Box::new(
-        games::physics_test_game::builder::PhysicsTestBuilder::init()
-            .add_rect(Vec2::new(0.5, 0.0), 0.2, 0.2, Rot2::new(Vec1::new(0.0))).with_velocity(Vec2::new(-0.25, 0.0))
-            .add_rect(Vec2::new(-0.5, 0.0), 0.2, 0.2, Rot2::new(Vec1::new(0.0))).with_velocity(Vec2::new(0.25, 0.0))
-            .build_game());
+    //let game: Box<games::Game> = Box::new(
+        // games::physics_test_game::builder::PhysicsTestBuilder::init()
+        //     .add_rect(Vec2::new(0.5, 0.0), 0.2, 0.2, Rot2::new(Vec1::new(0.0))).with_velocity(Vec2::new(-0.25, 0.0))
+        //     .add_rect(Vec2::new(-0.5, 0.0), 0.2, 0.2, Rot2::new(Vec1::new(0.0))).with_velocity(Vec2::new(0.25, 0.0))
+        //     .build_game());
     //let game: Box<games::Game> = Box::new(games::input_test_game::InputTestGame::new());
-    //let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame);
+    let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame);
     let mut handler: Box<Handler> = Box::new(handlerbasic::HandlerBasic::new(renderer, input_handler, game));
 
     handler.init();

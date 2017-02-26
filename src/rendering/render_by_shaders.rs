@@ -8,3 +8,4 @@ pub trait RenderByShaders {
     fn get_primitive_type() -> PrimitiveType { PrimitiveType::Points }
     fn get_vertex(&self) -> Self::Vertex;
 }
+

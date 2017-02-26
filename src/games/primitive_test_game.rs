@@ -22,6 +22,7 @@ impl Game for PrimitiveTestGame {
             pos: Vec3::new(-0.25, -0.25, 0.1),
             color: Vec4::new(1.0, 0.0, 0.0, 1.0)
         };
+        
         vec![Box::new(rect), Box::new(circ)]
     }
 }
