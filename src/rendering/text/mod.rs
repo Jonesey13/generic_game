@@ -53,12 +53,13 @@ impl<'a> RenderText<'a> for PlainText {
               display: &glium::backend::glutin_backend::GlutinFacade)
     {
         let (width, height) = target.get_dimensions();
+        let dpi_factor = display.get_window().unwrap().hidpi_factor();
         let rt_scale = rusttype::Scale {
             x: self.scale.x as f32,
             y: self.scale.y as f32,
         };
         
-        let glyphs = layout_paragraph(font, rt_scale, width, &self.content);
+        let glyphs = layout_paragraph(font, 512 * dpi_factor as u32, 512 * dpi_factor as u32, &self.content);
         for glyph in &glyphs {
             cache.queue_glyph(0, glyph.clone());
         }
@@ -81,10 +82,9 @@ impl<'a> RenderText<'a> for PlainText {
             tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest)
         };
 
-        let vertices = self.build_vertex_buffer(
+        let vertices = self.get_vertices(
             width,
             height,
-            [self.position.x as f32 ,self.position.y as f32],
             glyphs,
             cache);
 
@@ -102,11 +102,10 @@ impl<'a> RenderText<'a> for PlainText {
 
     }
 
-    fn build_vertex_buffer(
+    fn get_vertices(
         &self,
         screen_width: u32,
         screen_height: u32,
-        position: [f32; 2],
         glyphs:  Vec<PositionedGlyph<'a>>,
         cache: &rusttype::gpu_cache::Cache
     ) -> Vec<TextVertex>
@@ -115,49 +114,25 @@ impl<'a> RenderText<'a> for PlainText {
                      self.color.y as f32,
                      self.color.z as f32,
                      self.color.w as f32];
-        let origin = point(position[0], position[1]);
-        glyphs.iter().flat_map(|g| {
+        let pos = [self.position.x as f32 ,self.position.y as f32];
+        glyphs.iter().filter_map(|g| {
             if let Ok(Some((uv_rect, screen_rect))) = cache.rect_for(0, g) {
-                let gl_rect = Rect {
-                    min: origin
-                        + (vector(screen_rect.min.x as f32 / screen_width as f32,
-                                  - screen_rect.min.y as f32 / screen_height as f32)),
-                    max: origin
-                        + (vector(screen_rect.max.x as f32 / screen_width as f32,
-                                  - screen_rect.max.y as f32 / screen_height as f32))
-                };
-                arrayvec::ArrayVec::<[TextVertex; 6]>::from([
-                    TextVertex {
-                        position: [gl_rect.min.x, gl_rect.max.y],
-                        tex_coords: [uv_rect.min.x, uv_rect.max.y],
-                        colour: color
-                    },
-                    TextVertex {
-                        position: [gl_rect.min.x,  gl_rect.min.y],
-                        tex_coords: [uv_rect.min.x, uv_rect.min.y],
-                        colour: color
-                    },
-                    TextVertex {
-                        position: [gl_rect.max.x,  gl_rect.min.y],
-                        tex_coords: [uv_rect.max.x, uv_rect.min.y],
-                        colour: color
-                    },
-                    TextVertex {
-                        position: [gl_rect.max.x,  gl_rect.min.y],
-                        tex_coords: [uv_rect.max.x, uv_rect.min.y],
-                        colour: color },
-                    TextVertex {
-                        position: [gl_rect.max.x, gl_rect.max.y],
-                        tex_coords: [uv_rect.max.x, uv_rect.max.y],
-                        colour: color
-                    },
-                    TextVertex {
-                        position: [gl_rect.min.x, gl_rect.max.y],
-                        tex_coords: [uv_rect.min.x, uv_rect.max.y],
-                        colour: color
-                    }])
+                let actual_length = (screen_rect.max.x - screen_rect.min.x) as f32 / screen_width as f32;
+                let actual_height = (screen_rect.max.y - screen_rect.min.y) as f32 / screen_height as f32;
+                
+                Some(TextVertex {
+                    length: actual_length,
+                    height: actual_height,
+                    position: pos,
+                    tex_length: uv_rect.max.x - uv_rect.min.x,
+                    tex_height: uv_rect.max.y - uv_rect.min.y,
+                    tex_position: [(uv_rect.max.x + uv_rect.min.x) / 2.0, (uv_rect.max.y - uv_rect.min.y) / 2.0],
+                    scale:,
+                    transform:,
+                    colour: color,
+                })
             } else {
-                arrayvec::ArrayVec::new()
+                None
             }
         }).collect()
     }
@@ -170,12 +145,18 @@ impl Renderable for PlainText {
 
 #[derive(Copy, Clone)]
 pub struct TextVertex {
+    length: f32,
+    height: f32,
     position: [f32; 2],
-    tex_coords: [f32; 2],
+    tex_length: f32,
+    tex_height: f32,
+    tex_positon: [f32; 2],
+    scale: [f32; 2],
+    transform: [[f32; 2]; 2],
     colour: [f32; 4]
 }
 
-implement_vertex!(TextVertex, position, tex_coords, colour);
+implement_vertex!(TextVertex, length, height, position, tex_length, tex_height, tex_position, scale, transform, colour);
 
 pub struct TextProcessor<'a, T: RenderText<'a>> {
     pub text_objects: Option<Vec<T>>,
@@ -245,25 +226,13 @@ fn get_text_shaders() -> shaders::Shaders {
 
 fn layout_paragraph<'a>(font: &'a Font,
                         scale: Scale,
-                        width: u32,
                         text: &str) -> Vec<PositionedGlyph<'a>> {
     use unicode_normalization::UnicodeNormalization;
     let mut result = Vec::new();
     let v_metrics = font.v_metrics(scale);
-    let advance_height = v_metrics.ascent - v_metrics.descent + v_metrics.line_gap;
     let mut caret = point(0.0, v_metrics.ascent);
     let mut last_glyph_id = None;
     for c in text.nfc() {
-        if c.is_control() {
-            match c {
-                '\r' => {
-                    caret = point(0.0, caret.y + advance_height);
-                }
-                '\n' => {},
-                _ => {}
-            }
-            continue;
-        }
         let base_glyph = if let Some(glyph) = font.glyph(c) {
             glyph
         } else {
@@ -273,14 +242,7 @@ fn layout_paragraph<'a>(font: &'a Font,
             caret.x += font.pair_kerning(scale, id, base_glyph.id());
         }
         last_glyph_id = Some(base_glyph.id());
-        let mut glyph = base_glyph.scaled(scale).positioned(caret);
-        if let Some(bb) = glyph.pixel_bounding_box() {
-            if bb.max.x > width as i32 {
-                caret = point(0.0, caret.y + advance_height);
-                glyph = glyph.into_unpositioned().positioned(caret);
-                last_glyph_id = None;
-            }
-        }
+        let glyph = base_glyph.scaled(scale).positioned(caret);
         caret.x += glyph.unpositioned().h_metrics().advance_width;
         result.push(glyph);
     }

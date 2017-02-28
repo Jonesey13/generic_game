@@ -1,4 +1,4 @@
-#version 140
+#version 410 core
 uniform sampler2D tex;
 in vec2 v_tex_coords;
 in vec4 v_colour;
