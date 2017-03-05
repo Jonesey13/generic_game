@@ -24,20 +24,13 @@ impl Game for PrimitiveTestGame {
             color: Vec4::new(1.0, 0.0, 0.0, 1.0)
         };
         let text = PlainText {
-            content: "omg!".to_string(),
+            content: "hello there!".to_string(),
             position: Vec2::new(-0.5, -0.5),
-            scale: Vec2::new(100.0, 100.0),
-            transform: *Rot2::new(Vec1::one()).submat(),
-            color: Vec4::new(1.0, 1.0, 1.0, 1.0)
-        };
-        let text2 = PlainText {
-            content: "wtf!".to_string(),
-            position: Vec2::new(0.5, -0.5),
-            scale: Vec2::new(100.0, 100.0),
+            scale: Vec2::new(1.0, 1.0),
             transform: *Rot2::new(Vec1::one()).submat(),
             color: Vec4::new(1.0, 1.0, 1.0, 1.0)
         };
         
-        vec![Box::new(rect), Box::new(circ), Box::new(text), Box::new(text2)]
+        vec![Box::new(rect), Box::new(circ), Box::new(text)]
     }
 }

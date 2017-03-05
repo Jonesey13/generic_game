@@ -1,9 +1,10 @@
 #version 410 core
 uniform sampler2D tex;
-in vec2 v_tex_coords;
-in vec4 v_colour;
+in vec2 tex_pos;
+in vec4 colour_ges;
+in vec4 rect_pos;
 out vec4 f_colour;
 
 void main() {
-  f_colour = v_colour * vec4(1.0, 1.0, 1.0, texture(tex, v_tex_coords).r);
+  f_colour = colour_ges * vec4(1.0, 1.0, 1.0, texture(tex, tex_pos).r);
 }
