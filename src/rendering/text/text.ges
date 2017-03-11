@@ -1,4 +1,7 @@
 #version 410 core
+uniform uint screen_width;
+uniform uint screen_height;
+uniform float aspect_ratio;
 
 in float length_vs[];
 in float height_vs[];
@@ -10,7 +13,7 @@ in vec2 scale_vs[];
 in mat2 transform_vs[];
 in vec4 colour_vs[];
 
-out vec2 rect_pos; // Coordinates Inside the Rectangle
+out vec2 rect_pos;
 out vec4 colour_ges;
 out vec2 tex_pos;
 
@@ -51,7 +54,7 @@ void main()
 vec4 Transform(in vec2 corner, in vec2 pos, in mat2 transform, in vec2 scale)
 {
   vec2 scaled_corner = scale * corner;
-  vec2 transformed_corner = transform * scaled_corner;
-  vec2 translated = pos + transformed_corner;
+  vec2 transformed_corner = transform * scaled_corner / vec2(screen_width, screen_height); 
+  vec2 translated = vec2(pos.x / aspect_ratio, pos.y) + transformed_corner;
   return vec4(translated.xy, 0.0, 1.0);
 }

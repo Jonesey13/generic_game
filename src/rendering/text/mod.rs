@@ -35,8 +35,6 @@ pub trait RenderText<'a> {
 
     fn get_vertices(
         &self,
-        screen_width: u32,
-        screen_height: u32,
         glyphs:  Vec<PositionedGlyph<'a>>,
         cache: &rusttype::gpu_cache::Cache
     ) -> Vec<TextVertex>;
@@ -74,12 +72,13 @@ impl<'a> RenderText<'a> for PlainText {
         }).unwrap();
         
         let uniforms = uniform! {
-            tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Linear)
+            tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Linear),
+            screen_width: width,
+            screen_height: height,
+            aspect_ratio: width as f32 / height as f32
         };
 
         let vertices = self.get_vertices(
-            width,
-            height,
             glyphs,
             cache);
 
@@ -99,8 +98,6 @@ impl<'a> RenderText<'a> for PlainText {
 
     fn get_vertices(
         &self,
-        screen_width: u32,
-        screen_height: u32,
         glyphs:  Vec<PositionedGlyph<'a>>,
         cache: &rusttype::gpu_cache::Cache
     ) -> Vec<TextVertex>
@@ -124,22 +121,22 @@ impl<'a> RenderText<'a> for PlainText {
             .fold([0.0, 0.0], |acc, rect| 
                 [acc[0] + rect[0], acc[1] + rect[1]]
             );
-        average_glyph_pos = [average_glyph_pos[0] / (glyph_positions.len() as f32 * screen_width as f32),
-                             average_glyph_pos[1] / (glyph_positions.len() as f32 * screen_height as f32)];
+        average_glyph_pos = [average_glyph_pos[0] / (glyph_positions.len() as f32),
+                             average_glyph_pos[1] / (glyph_positions.len() as f32)];
         
         let global_pos = [self.position.x as f32 ,self.position.y as f32];
         glyphs.iter().filter_map(|g| {
             if let Ok(Some((uv_rect, screen_rect))) = cache.rect_for(0, g) {
-                let actual_length = (screen_rect.max.x - screen_rect.min.x) as f32 / screen_width as f32;
-                let actual_height = (screen_rect.max.y - screen_rect.min.y) as f32 / screen_height as f32;
-                let screen_rect_pos = [(screen_rect.min.x + screen_rect.max.x) as f32 / (2.0 * screen_width as f32),
-                                       (screen_rect.min.y + screen_rect.max.y) as f32 / (2.0 * screen_height as f32)];
+                let actual_length = screen_rect.max.x - screen_rect.min.x;
+                let actual_height = screen_rect.max.y - screen_rect.min.y;
+                let screen_rect_pos = [(screen_rect.min.x + screen_rect.max.x) as f32 / 2.0,
+                                       (screen_rect.min.y + screen_rect.max.y) as f32 / 2.0];
                 let corrected_screen_rect_pos = [screen_rect_pos[0] - average_glyph_pos[0],
                                                  screen_rect_pos[1] - average_glyph_pos[1]];
                 
                 Some(TextVertex {
-                    length: actual_length,
-                    height: actual_height,
+                    length: actual_length as f32,
+                    height: actual_height as f32,
                     local_position: corrected_screen_rect_pos,
                     position: global_pos,
                     tex_coords_min: [uv_rect.min.x, uv_rect.min.y],

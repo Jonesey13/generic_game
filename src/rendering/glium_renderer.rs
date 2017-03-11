@@ -18,6 +18,7 @@ pub struct GliumRenderer<'a> {
     rect_buffer: Buffer<Rectangle>,
     circ_buffer: Buffer<Circle>,
     text_processor: TextProcessor<'a, PlainText>,
+    global_uniforms: GlobalUniforms
 }
 
 impl<'a> GliumRenderer<'a> {
@@ -36,6 +37,7 @@ impl<'a> GliumRenderer<'a> {
             rect_buffer: create_buffer::<Rectangle>(&display),
             circ_buffer: create_buffer::<Circle>(&display),
             text_processor: TextProcessor::new(display),
+            global_uniforms: Default::default()
         }
     }
 
@@ -43,6 +45,16 @@ impl<'a> GliumRenderer<'a> {
         self.rect_buffer.vertices = None;
         self.circ_buffer.vertices = None;
         self.text_processor.text_objects = None;
+    }
+
+    fn build_uniforms(&mut self, target: &glium::Frame) {
+        let (width, height) = target.get_dimensions();
+        self.global_uniforms =
+            GlobalUniforms {
+                screen_width: width,
+                screen_height: height,
+                aspect_ratio: width as f32 / height as f32
+            };
     }
 }
 
@@ -61,8 +73,9 @@ impl<'a> Renderer for GliumRenderer<'a> {
         let mut target = self.display.draw();
         target.clear_color(0.0, 0.0, 0.0, 1.0);
         target.clear_depth(1.0);
-        self.rect_buffer.draw_at_target(&mut target, &self.display, &self.draw_params);
-        self.circ_buffer.draw_at_target(&mut target, &self.display, &self.draw_params);
+        self.build_uniforms(&target);
+        self.rect_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &self.global_uniforms);
+        self.circ_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &self.global_uniforms);
         self.text_processor.draw_text_at_target(&mut target, &self.display);
         target.finish().unwrap();
         self.flush_buffers();
@@ -95,13 +108,19 @@ impl<T: RenderByShaders> Buffer<T> {
         };
     }
 
-    pub fn draw_at_target(&mut self, target: &mut Frame, display: &GlutinFacade, draw_params: &DrawParameters) {
+    pub fn draw_at_target<Unif: glium::uniforms::Uniforms> (
+        &mut self,
+        target: &mut Frame,
+        display: &GlutinFacade,
+        draw_params: &DrawParameters,
+        uniforms: &Unif,
+    ) {
         if let Some(vertices) = self.vertices.take() {
             let vertex_buffer = glium::VertexBuffer::new(display, &vertices).unwrap();
             target.draw(&vertex_buffer,
                         &glium::index::NoIndices(self.primitive_type),
                         &self.program,
-                        &glium::uniforms::EmptyUniforms,
+                        uniforms,
                         draw_params).unwrap();
         }
     }
@@ -113,5 +132,21 @@ fn create_buffer<T: RenderByShaders>(display: &GlutinFacade) -> Buffer<T>
         vertices: None,
         program: make_program_from_shaders(T::get_shaders(), display),
         primitive_type: T::get_primitive_type(),
+    }
+}
+
+#[derive(Copy, Clone, Default)]
+struct GlobalUniforms {
+    screen_width: u32,
+    screen_height: u32,
+    aspect_ratio: f32
+}
+
+impl glium::uniforms::Uniforms for GlobalUniforms {
+    fn visit_values<'a, F: FnMut(&str, glium::uniforms::UniformValue<'a>)>(&'a self, mut f: F) {
+
+        f("screen_width", glium::uniforms::UniformValue::UnsignedInt(self.screen_width));
+        f("screen_height", glium::uniforms::UniformValue::UnsignedInt(self.screen_height));
+        f("aspect_ratio", glium::uniforms::UniformValue::Float(self.aspect_ratio));
     }
 }
