@@ -6,7 +6,6 @@ use rusttype;
 use rusttype::Rect;
 use glium;
 use glium::Surface;
-use arrayvec;
 use std::borrow::Cow;
 use super::shaders;
 use super::conversion_tools::mat2_64_to_32;
@@ -36,7 +35,8 @@ pub trait RenderText<'a> {
     fn get_vertices(
         &self,
         glyphs:  Vec<PositionedGlyph<'a>>,
-        cache: &rusttype::gpu_cache::Cache
+        cache: &rusttype::gpu_cache::Cache,
+        glyph_scale: Scale
     ) -> Vec<TextVertex>;
 }
 
@@ -51,8 +51,10 @@ impl<'a> RenderText<'a> for PlainText {
     {
         let (width, height) = target.get_dimensions();
         let dpi_factor = display.get_window().unwrap().hidpi_factor();
+
+        let glyph_scale = Scale::uniform(256.0 * dpi_factor);
         
-        let glyphs = layout_paragraph(font, Scale::uniform(256.0 * dpi_factor), width, &self.content);
+        let glyphs = layout_paragraph(font, glyph_scale, &self.content);
         for glyph in &glyphs {
             cache.queue_glyph(0, glyph.clone());
         }
@@ -69,10 +71,11 @@ impl<'a> RenderText<'a> for PlainText {
                 height: rect.height(),
                 format: glium::texture::ClientFormat::U8
             });
-        }).unwrap();
+        },
+        1).unwrap();
         
         let uniforms = uniform! {
-            tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Linear),
+            tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
             screen_width: width,
             screen_height: height,
             aspect_ratio: width as f32 / height as f32
@@ -80,7 +83,8 @@ impl<'a> RenderText<'a> for PlainText {
 
         let vertices = self.get_vertices(
             glyphs,
-            cache);
+            cache,
+            glyph_scale);
 
         let vertex_buffer = glium::VertexBuffer::new(
             display,
@@ -98,8 +102,9 @@ impl<'a> RenderText<'a> for PlainText {
 
     fn get_vertices(
         &self,
-        glyphs:  Vec<PositionedGlyph<'a>>,
-        cache: &rusttype::gpu_cache::Cache
+        glyphs: Vec<PositionedGlyph<'a>>,
+        cache: &rusttype::gpu_cache::Cache,
+        glyph_scale: Scale
     ) -> Vec<TextVertex>
     {
         let color = [self.color.x as f32,
@@ -133,15 +138,18 @@ impl<'a> RenderText<'a> for PlainText {
                                        (screen_rect.min.y + screen_rect.max.y) as f32 / 2.0];
                 let corrected_screen_rect_pos = [screen_rect_pos[0] - average_glyph_pos[0],
                                                  screen_rect_pos[1] - average_glyph_pos[1]];
-                
+                let text_rect_width_clip = (uv_rect.max.x - uv_rect.min.x) * 0.00;
+                let text_rect_height_clip = (uv_rect.max.y - uv_rect.min.y) * 0.00;
+
+                println!("{:?}", uv_rect);
                 Some(TextVertex {
                     length: actual_length as f32,
                     height: actual_height as f32,
-                    local_position: corrected_screen_rect_pos,
+                    local_position: [corrected_screen_rect_pos[0], corrected_screen_rect_pos[1]],
                     position: global_pos,
-                    tex_coords_min: [uv_rect.min.x, uv_rect.min.y],
-                    tex_coords_max: [uv_rect.max.x, uv_rect.max.y],
-                    scale: [self.scale.x as f32, self.scale.y as f32],
+                    tex_coords_min: [uv_rect.min.x + text_rect_width_clip, uv_rect.min.y + text_rect_height_clip],
+                    tex_coords_max: [uv_rect.max.x - text_rect_width_clip, uv_rect.max.y - text_rect_height_clip],
+                    scale: [self.scale.x as f32 * 100.0 / glyph_scale.x, self.scale.y as f32 * 100.0/ glyph_scale.y],
                     transform: mat2_64_to_32(*self.transform.as_ref()),
                     colour: color,
                 })
@@ -182,6 +190,7 @@ pub struct TextProcessor<'a, T: RenderText<'a>> {
 
 impl<'a, T: RenderText<'a>> TextProcessor<'a, T> {
     pub fn new(display: Box<glium::backend::glutin_backend::GlutinFacade>) -> Self {
+        let (screen_width, screen_height) = display.get_window().unwrap().get_inner_size().unwrap();
         let dpi_factor = display.get_window().unwrap().hidpi_factor();
 
         let (cache_width, cache_height) = (512 * dpi_factor as u32, 512 * dpi_factor as u32);
@@ -189,7 +198,7 @@ impl<'a, T: RenderText<'a>> TextProcessor<'a, T> {
         let cache_tex = glium::texture::Texture2d::with_format(
             &*display,
             glium::texture::RawImage2d {
-                data: Cow::Owned(vec![128u8; cache_width as usize * cache_height as usize]),
+                data: Cow::Owned(vec![0u8; cache_width as usize * cache_height as usize]),
                 width: cache_width,
                 height: cache_height,
                 format: glium::texture::ClientFormat::U8
@@ -241,7 +250,6 @@ fn get_text_shaders() -> shaders::Shaders {
 
 fn layout_paragraph<'a>(font: &'a Font,
                         scale: Scale,
-                        width: u32,
                         text: &str) -> Vec<PositionedGlyph<'a>> {
     use unicode_normalization::UnicodeNormalization;
     let mut result = Vec::new();
@@ -269,14 +277,7 @@ fn layout_paragraph<'a>(font: &'a Font,
             caret.x += font.pair_kerning(scale, id, base_glyph.id());
         }
         last_glyph_id = Some(base_glyph.id());
-        let mut glyph = base_glyph.scaled(scale).positioned(caret);
-        if let Some(bb) = glyph.pixel_bounding_box() {
-            if bb.max.x > width as i32 {
-                caret = point(0.0, caret.y + advance_height);
-                glyph = glyph.into_unpositioned().positioned(caret);
-                last_glyph_id = None;
-            }
-        }
+        let glyph = base_glyph.scaled(scale).positioned(caret);
         caret.x += glyph.unpositioned().h_metrics().advance_width;
         result.push(glyph);
     }

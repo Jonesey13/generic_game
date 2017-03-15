@@ -25,9 +25,9 @@ impl Game for PrimitiveTestGame {
         };
         let text = PlainText {
             content: "hello there!".to_string(),
-            position: Vec2::new(-0.5, -0.5),
-            scale: Vec2::new(1.0, 1.0),
-            transform: *Rot2::new(Vec1::one()).submat(),
+            position: Vec2::new(0.0, 0.0),
+            scale: Vec2::new(5.0, 5.0),
+            transform: *Rot2::new(Vec1::new(1.0)).submat(),
             color: Vec4::new(1.0, 1.0, 1.0, 1.0)
         };
         

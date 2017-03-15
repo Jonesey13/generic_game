@@ -12,7 +12,6 @@ extern crate time;
 extern crate bitflags;
 extern crate unicode_normalization;
 extern crate rusttype;
-extern crate arrayvec;
 
 mod rendering;
 mod input;
@@ -35,7 +34,7 @@ fn main() {
     let error_writer = Box::new(ErrorWriter::new());
     set_panic(Some(error_writer));
 
-    let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((1000, 800)));
+    let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((1024, 1024)));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     //let game: Box<games::Game> = Box::new(games::pong::builder::PongBuilder::init().build_game());
     //let game: Box<games::Game> = Box::new(

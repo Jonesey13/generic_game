@@ -10,8 +10,7 @@ nalgebra = "0.7.0"
 num = "*"
 time = "*"
 unicode-normalization = "*"
-rusttype = "*"
-arrayvec = "*"
+rusttype = { git = "https://github.com/Jonesey13/rusttype.git" }
 
 [dependencies.bitflags]
 version = "*"

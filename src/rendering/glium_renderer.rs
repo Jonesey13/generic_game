@@ -23,7 +23,10 @@ pub struct GliumRenderer<'a> {
 
 impl<'a> GliumRenderer<'a> {
     pub fn new(res: (u32, u32)) -> GliumRenderer<'a> {
-        let display = Box::new(glium::glutin::WindowBuilder::new().with_dimensions(res.0, res.1).build_glium().unwrap());
+        let display = Box::new(glium::glutin::WindowBuilder::new()
+                               .with_dimensions(res.0, res.1)
+                               //.with_multisampling(4)
+                               .build_glium().unwrap());
         let draw_params = DrawParameters {
             depth: Depth {
                 test: DepthTest::IfLessOrEqual,
@@ -72,7 +75,6 @@ impl<'a> Renderer for GliumRenderer<'a> {
     fn render(&mut self) {
         let mut target = self.display.draw();
         target.clear_color(0.0, 0.0, 0.0, 1.0);
-        target.clear_depth(1.0);
         self.build_uniforms(&target);
         self.rect_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &self.global_uniforms);
         self.circ_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &self.global_uniforms);
