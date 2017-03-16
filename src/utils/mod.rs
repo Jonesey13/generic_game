@@ -1,4 +1,5 @@
 pub mod debug;
+pub mod vector_transforms;
 
 use std::iter::{Zip, Cycle, Skip};
 
