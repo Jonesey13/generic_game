@@ -80,6 +80,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
     fn render(&mut self) {
         let mut target = self.display.draw();
         target.clear_color(0.0, 0.0, 0.0, 1.0);
+        target.clear_depth(1.0);
         self.build_uniforms(&target);
         self.rect_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &self.global_uniforms);
         self.circ_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &self.global_uniforms);

@@ -44,14 +44,12 @@ implement_vertex!(RectangleVertex, length, height, rot, pos, color);
 
 impl From<Rectangle> for RectangleVertex {
     fn from(rect: Rectangle) -> Self {
-        let result = RectangleVertex {
+        RectangleVertex {
             length: rect.length as f32,
             height: rect.height as f32,
             rot: mat2_64_to_32(*rect.rot.matrix().as_ref()),
             pos: vec3_64_to_32(*rect.pos.as_ref()),
             color: vec4_64_to_32(*rect.color.as_ref())
-        };
-        println!("{:?}", result);
-        result
+        }
     }
 }

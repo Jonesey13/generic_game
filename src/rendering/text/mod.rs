@@ -141,7 +141,6 @@ impl<'a> RenderText<'a> for PlainText {
                 let text_rect_width_clip = (uv_rect.max.x - uv_rect.min.x) * 0.00;
                 let text_rect_height_clip = (uv_rect.max.y - uv_rect.min.y) * 0.00;
 
-                println!("{:?}", uv_rect);
                 Some(TextVertex {
                     length: actual_length as f32,
                     height: actual_height as f32,

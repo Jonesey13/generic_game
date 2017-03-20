@@ -31,6 +31,6 @@ impl Game for PrimitiveTestGame {
             color: Vector4::new(1.0, 1.0, 1.0, 1.0)
         };
         
-        vec![Box::new(rect), Box::new(circ)]
+        vec![Box::new(rect), Box::new(circ), Box::new(text)]
     }
 }
