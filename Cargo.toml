@@ -6,11 +6,11 @@ authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 [dependencies]
 multiinput = "0.0.2"
 glium = "*"
-nalgebra = "0.7.0"
+nalgebra = "*"
 num = "*"
 time = "*"
 unicode-normalization = "*"
-rusttype = { git = "https://github.com/Jonesey13/rusttype.git" }
+rusttype = { git = "https://github.com/Jonesey13/rusttype.git", rev = "a2fd94ff" }
 
 [dependencies.bitflags]
 version = "*"

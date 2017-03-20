@@ -1,6 +1,6 @@
 use super::Game;
 use super::GameInput;
-use na::{Vec1, Vec2, Vec3, Vec4, Rot2};
+use na::{Vector1, Vector2, Vector3, Vector4, Rotation2};
 use num::Zero;
 use rendering::renderables::Renderable;
 use rendering::rectangle::Rectangle;
@@ -9,16 +9,16 @@ use input::keyboard::KeyboardInput;
 
 #[allow(dead_code)]
 pub struct InputTestGame {
-    rect_pos: Vec2<f64>,
-    user_input: Vec2<isize>,
+    rect_pos: Vector2<f64>,
+    user_input: Vector2<isize>,
     external_input: InputGameInput
 }
 
 impl InputTestGame {
     pub fn new() -> Self {
         InputTestGame {
-            rect_pos: Vec2::zero(),
-            user_input: Vec2::zero(),
+            rect_pos: Vector2::zero(),
+            user_input: Vector2::zero(),
             external_input: InputGameInput::default()
         }
     }
@@ -39,9 +39,9 @@ impl Game for InputTestGame {
         let rect = Rectangle {
             length: 0.5,
             height: 0.5,
-            rot: Rot2::new(Vec1::zero()),
-            pos: Vec3::new(self.rect_pos.x, self.rect_pos.y, 0.0),
-            color: Vec4::new(0.0, 1.0, 0.0, 1.0)
+            rot: Rotation2::new(0.0),
+            pos: Vector3::new(self.rect_pos.x, self.rect_pos.y, 0.0),
+            color: Vector4::new(0.0, 1.0, 0.0, 1.0)
         };
 
         vec![Box::new(rect)]

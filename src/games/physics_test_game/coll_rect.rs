@@ -1,4 +1,4 @@
-use na::{Vec2, Vec3, Vec4, Norm, Rot2};
+use na::{Vector2, Vector3, Vector4, norm, Rotation2};
 use collision;
 use collision::{CollResults, Collidable, CollObj, CollDetails, ConPolyInfo};
 use geometry::{circle, con_poly, average_vec2};
@@ -10,10 +10,10 @@ use utils::debug::*;
 pub struct CollRect {
     pub length: f64,
     pub height: f64,
-    pub pos: Vec2<f64>,
-    pub color: Vec4<f64>,
-    pub velocity: Vec2<f64>,
-    pub rot: Rot2<f64>,
+    pub pos: Vector2<f64>,
+    pub color: Vector4<f64>,
+    pub velocity: Vector2<f64>,
+    pub rot: Rotation2<f64>,
     pub coll_results: CollResults<super::PhysicsTestObject>,
     pub prev: Option<Box<CollRect>>,
     pub player_controlled: bool
@@ -36,14 +36,14 @@ impl Clone for CollRect {
 }
 
 impl CollRect {
-    pub fn new(pos: Vec2<f64>, length: f64, height: f64, rot: Rot2<f64>, color: Vec4<f64>) -> CollRect {
+    pub fn new(pos: Vector2<f64>, length: f64, height: f64, rot: Rotation2<f64>, color: Vector4<f64>) -> CollRect {
         CollRect {
             length: length,
             height: height,
             pos: pos,
             rot: rot,
             color: color,
-            velocity: Vec2::zero(),
+            velocity: Vector2::zero(),
             coll_results: CollResults::no_collision(),
             prev: None,
             player_controlled: false,
@@ -55,32 +55,32 @@ impl CollRect {
             length: self.length,
             height: self.height,
             rot: self.rot,
-            pos: Vec3::new(self.pos.x, self.pos.y, 0.0),
+            pos: Vector3::new(self.pos.x, self.pos.y, 0.0),
             color: self.color
         }
     }
 
-    pub fn set_velocity(&mut self, velocity: Vec2<f64>) {
+    pub fn set_velocity(&mut self, velocity: Vector2<f64>) {
         self.velocity = velocity;
     }
 
-    pub fn get_velocity(&mut self) -> Vec2<f64> {
+    pub fn get_velocity(&mut self) -> Vector2<f64> {
         self.velocity
     }
 
-    pub fn set_direction(&mut self, dir: Vec2<f64>) {
+    pub fn set_direction(&mut self, dir: Vector2<f64>) {
         self.velocity = dir.normalize() * self.get_speed();
     }
 
-    pub fn set_pos(&mut self, pos: Vec2<f64>) {
+    pub fn set_pos(&mut self, pos: Vector2<f64>) {
         self.pos = pos;
     }
 
-    pub fn rotate_by(&mut self, rot: Rot2<f64>) {
+    pub fn rotate_by(&mut self, rot: Rotation2<f64>) {
         self.rot = rot * self.rot;
     }
 
-    pub fn get_pos(&mut self) -> Vec2<f64> {
+    pub fn get_pos(&mut self) -> Vector2<f64> {
         self.pos
     }
 
@@ -107,7 +107,7 @@ impl CollRect {
         self.pos = self.pos + self.velocity * t_step;
     }
 
-    pub fn shift_by(&mut self, mov: Vec2<f64>) {
+    pub fn shift_by(&mut self, mov: Vector2<f64>) {
         self.pos = self.pos + mov;
     }
 
@@ -130,7 +130,7 @@ impl CollRect {
     }
 
     fn resolve_collision(&mut self) {
-        self.color = RED;
+        self.color = RED.into();
         let coll_dir = match self.get_collision_details() {
             Some(CollDetails::ConPoly(ConPolyInfo::CornerInfo(_, dir))) => dir,
             Some(CollDetails::ConPoly(ConPolyInfo::LineInfo(index, _))) => self.get_current_rect().get_normal(index),

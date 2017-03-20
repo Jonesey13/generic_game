@@ -1,5 +1,5 @@
 use super::Game;
-use na::{Vec1, Vec2, Vec3, Vec4, Rot2, Mat2};
+use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, Matrix2};
 use num::{Zero, One} ;
 use rendering::renderables::Renderable;
 use rendering::rectangle::Rectangle;
@@ -14,23 +14,23 @@ impl Game for PrimitiveTestGame {
         let rect = Rectangle {
             length: 0.5,
             height: 0.5,
-            rot: Rot2::new(Vec1::zero()),
-            pos: Vec3::new(0.25, 0.25, 0.1),
-            color: Vec4::new(0.0, 1.0, 0.0, 1.0)
+            rot: Rotation2::new(0.0),
+            pos: Vector3::new(0.25, 0.25, 0.1),
+            color: Vector4::new(0.0, 1.0, 0.0, 1.0)
         };
         let circ = Circle {
             radius: 0.25,
-            pos: Vec3::new(-0.25, -0.25, 0.1),
-            color: Vec4::new(1.0, 0.0, 0.0, 1.0)
+            pos: Vector3::new(-0.25, -0.25, 0.1),
+            color: Vector4::new(1.0, 0.0, 0.0, 1.0)
         };
         let text = PlainText {
             content: "hello there!".to_string(),
-            position: Vec2::new(0.0, 0.0),
-            scale: Vec2::new(5.0, 5.0),
-            transform: *Rot2::new(Vec1::new(1.0)).submat(),
-            color: Vec4::new(1.0, 1.0, 1.0, 1.0)
+            position: Vector2::new(0.0, 0.0),
+            scale: Vector2::new(1.0, 1.0),
+            transform: *Rotation2::new(1.0).matrix(),
+            color: Vector4::new(1.0, 1.0, 1.0, 1.0)
         };
         
-        vec![Box::new(rect), Box::new(circ), Box::new(text)]
+        vec![Box::new(rect), Box::new(circ)]
     }
 }

@@ -11,6 +11,7 @@ pub trait Renderer {
     fn init(&mut self) {}
     fn load_renderables(&mut self, _: Vec<Box<renderables::Renderable>>) {}
     fn render(&mut self) {}
+    fn set_worldview(&mut self, _: [[f32; 4]; 4]) {}
 }
 
 #[allow(dead_code)]

@@ -1,4 +1,4 @@
-use na::{Vec2, Vec3, Vec4, Norm};
+use na::{Vector2, Vector3, Vector4, norm};
 use num::Zero;
 use geometry::circle;
 use collision::{Collidable, CollObj, CollResults};
@@ -6,10 +6,10 @@ use rendering;
 use super::FOREGROUND_LAYER;
 
 pub struct Ball {
-    position: Vec2<f64>,
+    position: Vector2<f64>,
     radius: f64,
-    color: Vec4<f64>,
-    velocity: Vec2<f64>,
+    color: Vector4<f64>,
+    velocity: Vector2<f64>,
     coll_results: CollResults<super::PongObject>,
     prev: Option<Box<Ball>>,
 }
@@ -28,12 +28,12 @@ impl Clone for Ball {
 }
 
 impl Ball {
-    pub fn new(pos: Vec2<f64>, rad: f64, color: Vec4<f64>) -> Ball {
+    pub fn new(pos: Vector2<f64>, rad: f64, color: Vector4<f64>) -> Ball {
         Ball {
             position: pos,
             radius: rad,
             color: color,
-            velocity: Vec2::zero(),
+            velocity: Vector2::zero(),
             coll_results: CollResults::no_collision(),
             prev: None
         }
@@ -42,20 +42,20 @@ impl Ball {
     pub fn render(&self) -> rendering::circle::Circle {
         rendering::circle::Circle {
             radius: self.radius,
-            pos: Vec3::new(self.position.x, self.position.y, FOREGROUND_LAYER),
+            pos: Vector3::new(self.position.x, self.position.y, FOREGROUND_LAYER),
             color: self.color
         }
     }
 
-    pub fn set_velocity(&mut self, velocity: Vec2<f64>) {
+    pub fn set_velocity(&mut self, velocity: Vector2<f64>) {
         self.velocity = velocity;
     }
 
-    pub fn get_velocity(&mut self) -> Vec2<f64> {
+    pub fn get_velocity(&mut self) -> Vector2<f64> {
         self.velocity
     }
 
-    pub fn set_direction(&mut self, dir: Vec2<f64>) {
+    pub fn set_direction(&mut self, dir: Vector2<f64>) {
         self.velocity = dir.normalize() * self.get_speed();
     }
 

@@ -3,7 +3,7 @@ pub mod coll_rect;
 pub mod builder;
 
 use collision::{Collider, Collidable, CollResults, CollDetails};
-use na::{Vec1, Vec2, Vec4, Rot2};
+use na::{Vector1, Vector2, Vector4, Rotation2};
 use self::coll_circle::CollCircle;
 use self::coll_rect::CollRect;
 use games::Game;
@@ -13,15 +13,15 @@ use input::mouse::MouseInput;
 use input::keyboard::KeyboardInput;
 use games::GameInput;
 
-pub const RED: Vec4<f64> = Vec4 { x: 1.0, y: 0.0, z: 0.0, w: 1.0};
-pub const BLUE: Vec4<f64> = Vec4 { x: 0.0, y: 0.0, z: 1.0, w: 1.0};
+pub const RED: Vector4<f64> = Vector4 { x: 1.0, y: 0.0, z: 0.0, w: 1.0};
+pub const BLUE: Vector4<f64> = Vector4 { x: 0.0, y: 0.0, z: 1.0, w: 1.0};
 
 pub struct PhysicsTestGame {
     walls: CollWall,
     generator: Generator,
     collider: Collider,
     external_input: PhysicsTestGameInput,
-    mouse_mov: Vec2<f64>,
+    mouse_mov: Vector2<f64>,
     mouse_speed: f64
 }
 
@@ -76,7 +76,7 @@ impl PhysicsTestGame {
 
     fn set_mouse(&mut self) {
         let ext_mouse_mov = self.external_input.mouse.movement;
-        self.mouse_mov = Vec2::new(ext_mouse_mov.0 as f64, -ext_mouse_mov.1 as f64) * self.mouse_speed;
+        self.mouse_mov = Vector2::new(ext_mouse_mov.0 as f64, -ext_mouse_mov.1 as f64) * self.mouse_speed;
     }
 }
 

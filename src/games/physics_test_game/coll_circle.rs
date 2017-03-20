@@ -1,4 +1,4 @@
-use na::{Vec2, Vec3, Vec4, Norm};
+use na::{Vector2, Vector3, Vector4, norm};
 use collision;
 use collision::{CollResults, Collidable, CollObj, CollDetails};
 use geometry::circle;
@@ -8,9 +8,9 @@ use super::RED;
 
 pub struct CollCircle {
     pub rad: f64,
-    pub pos: Vec2<f64>,
-    pub color: Vec4<f64>,
-    pub velocity: Vec2<f64>,
+    pub pos: Vector2<f64>,
+    pub color: Vector4<f64>,
+    pub velocity: Vector2<f64>,
     pub coll_results: CollResults<super::PhysicsTestObject>,
     pub prev: Option<Box<CollCircle>>,
     pub player_controlled: bool
@@ -31,12 +31,12 @@ impl Clone for CollCircle {
 }
 
 impl CollCircle {
-    pub fn new(pos: Vec2<f64>, rad: f64, color: Vec4<f64>) -> CollCircle {
+    pub fn new(pos: Vector2<f64>, rad: f64, color: Vector4<f64>) -> CollCircle {
         CollCircle {
             pos: pos,
             rad: rad,
             color: color,
-            velocity: Vec2::zero(),
+            velocity: Vector2::zero(),
             coll_results: CollResults::no_collision(),
             prev: None,
             player_controlled: false,
@@ -46,28 +46,28 @@ impl CollCircle {
     pub fn render(&self) -> rendering::circle::Circle {
         rendering::circle::Circle {
             radius: self.rad,
-            pos: Vec3::new(self.pos.x, self.pos.y, 0.0),
+            pos: Vector3::new(self.pos.x, self.pos.y, 0.0),
             color: self.color
         }
     }
 
-    pub fn set_velocity(&mut self, velocity: Vec2<f64>) {
+    pub fn set_velocity(&mut self, velocity: Vector2<f64>) {
         self.velocity = velocity;
     }
 
-    pub fn get_velocity(&mut self) -> Vec2<f64> {
+    pub fn get_velocity(&mut self) -> Vector2<f64> {
         self.velocity
     }
 
-    pub fn set_direction(&mut self, dir: Vec2<f64>) {
+    pub fn set_direction(&mut self, dir: Vector2<f64>) {
         self.velocity = dir.normalize() * self.get_speed();
     }
 
-    pub fn set_pos(&mut self, pos: Vec2<f64>) {
+    pub fn set_pos(&mut self, pos: Vector2<f64>) {
         self.pos = pos;
     }
 
-    pub fn get_pos(&mut self) -> Vec2<f64> {
+    pub fn get_pos(&mut self) -> Vector2<f64> {
         self.pos
     }
 
@@ -94,7 +94,7 @@ impl CollCircle {
         self.pos = self.pos + self.velocity * t_step;
     }
 
-    pub fn shift_by(&mut self, mov: Vec2<f64>) {
+    pub fn shift_by(&mut self, mov: Vector2<f64>) {
         self.pos = self.pos + mov;
     }
 
@@ -117,7 +117,7 @@ impl CollCircle {
     }
 
     fn resolve_collision(&mut self) {
-        self.color = RED;
+        self.color = RED.into();
         let coll_dir = match self.get_collision_details() {
             Some(CollDetails::Circ(dir)) => dir,
             other => panic!("Invalid Collision Details for Circ: {:?}", other)

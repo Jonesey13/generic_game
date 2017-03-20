@@ -1,4 +1,4 @@
-use na::{Vec3, Vec4};
+use na::{Vector3, Vector4};
 use num::Zero;
 use super::renderables::{Renderable, RenderType};
 use super::render_by_shaders::RenderByShaders;
@@ -10,8 +10,8 @@ use super::conversion_tools::*;
 #[derive(Copy, Clone)]
 pub struct Circle {
     pub radius: f64,
-    pub pos: Vec3<f64>,
-    pub color: Vec4<f64>
+    pub pos: Vector3<f64>,
+    pub color: Vector4<f64>
 }
 
 impl Renderable for Circle {

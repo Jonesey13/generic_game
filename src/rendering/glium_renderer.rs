@@ -10,6 +10,8 @@ use glium::Frame;
 use glium::backend::glutin_backend::GlutinFacade;
 use glium::index::PrimitiveType;
 use glium::{DisplayBuild, Surface, DrawParameters, Depth, DepthTest, Program};
+use na::Matrix4;
+use num::One;
 use rusttype;
 
 pub struct GliumRenderer<'a> {
@@ -18,7 +20,8 @@ pub struct GliumRenderer<'a> {
     rect_buffer: Buffer<Rectangle>,
     circ_buffer: Buffer<Circle>,
     text_processor: TextProcessor<'a, PlainText>,
-    global_uniforms: GlobalUniforms
+    global_uniforms: GlobalUniforms,
+    worldview: [[f32;4]; 4]
 }
 
 impl<'a> GliumRenderer<'a> {
@@ -40,7 +43,8 @@ impl<'a> GliumRenderer<'a> {
             rect_buffer: create_buffer::<Rectangle>(&display),
             circ_buffer: create_buffer::<Circle>(&display),
             text_processor: TextProcessor::new(display),
-            global_uniforms: Default::default()
+            global_uniforms: Default::default(),
+            worldview: *Matrix4::<f32>::one().as_ref()
         }
     }
 
@@ -56,7 +60,8 @@ impl<'a> GliumRenderer<'a> {
             GlobalUniforms {
                 screen_width: width,
                 screen_height: height,
-                aspect_ratio: width as f32 / height as f32
+                aspect_ratio: width as f32 / height as f32,
+                worldview: self.worldview
             };
     }
 }
@@ -81,6 +86,10 @@ impl<'a> Renderer for GliumRenderer<'a> {
         self.text_processor.draw_text_at_target(&mut target, &self.display);
         target.finish().unwrap();
         self.flush_buffers();
+    }
+    
+    fn set_worldview(&mut self, view_mat: [[f32; 4]; 4]) {
+        self.worldview = view_mat;
     }
 }
 
@@ -141,14 +150,15 @@ fn create_buffer<T: RenderByShaders>(display: &GlutinFacade) -> Buffer<T>
 struct GlobalUniforms {
     screen_width: u32,
     screen_height: u32,
-    aspect_ratio: f32
+    aspect_ratio: f32,
+    worldview: [[f32; 4]; 4]
 }
 
 impl glium::uniforms::Uniforms for GlobalUniforms {
     fn visit_values<'a, F: FnMut(&str, glium::uniforms::UniformValue<'a>)>(&'a self, mut f: F) {
-
         f("screen_width", glium::uniforms::UniformValue::UnsignedInt(self.screen_width));
         f("screen_height", glium::uniforms::UniformValue::UnsignedInt(self.screen_height));
         f("aspect_ratio", glium::uniforms::UniformValue::Float(self.aspect_ratio));
+        f("world_view", glium::uniforms::UniformValue::Mat4(self.worldview));
     }
 }

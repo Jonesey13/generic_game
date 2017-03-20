@@ -8,7 +8,7 @@ use self::ball::Ball;
 use self::player::Player;
 use self::board::Board;
 
-use na::{Vec2, Vec4};
+use na::{Vector2, Vector4};
 use collision;
 use collision::{Collider, Collidable, CollResults};
 use games;
@@ -17,10 +17,10 @@ use rendering::renderables::Renderable;
 
 pub const BACKGROUND_LAYER: f64 = 0.1;
 pub const FOREGROUND_LAYER: f64 = 0.0;
-pub const BOARD_COLOR: Vec4<f64> = Vec4 { x: 0.2, y: 0.2, z: 0.2, w: 1.0};
-pub const BALL_COLOR: Vec4<f64> = Vec4 { x: 1.0, y: 1.0, z: 1.0, w: 1.0};
-pub const RED: Vec4<f64> = Vec4 { x: 1.0, y: 0.0, z: 0.0, w: 1.0};
-pub const BLUE: Vec4<f64> = Vec4 { x: 0.0, y: 0.0, z: 1.0, w: 1.0};
+pub const BOARD_COLOR: [f64; 4] = [0.2, 0.2, 0.2, 1.0];
+pub const BALL_COLOR: [f64; 4] = [1.0, 1.0, 1.0, 1.0];
+pub const RED: [f64; 4] = [1.0, 0.0, 0.0, 1.0];
+pub const BLUE: [f64; 4] = [0.0, 0.0, 1.0, 1.0];
 
 pub struct PongGame {
     balls: Vec<Ball>,

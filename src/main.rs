@@ -22,7 +22,7 @@ mod clock;
 mod geometry;
 mod utils;
 
-use na::{Vec2, Vec1, Rot2};
+use na::{Vector2, Vector1, Rotation2};
 use utils::debug::*;
 use std::env;
 use std::io::*;
@@ -39,8 +39,8 @@ fn main() {
     //let game: Box<games::Game> = Box::new(games::pong::builder::PongBuilder::init().build_game());
     //let game: Box<games::Game> = Box::new(
         // games::physics_test_game::builder::PhysicsTestBuilder::init()
-        //     .add_rect(Vec2::new(0.5, 0.0), 0.2, 0.2, Rot2::new(Vec1::new(0.0))).with_velocity(Vec2::new(-0.25, 0.0))
-        //     .add_rect(Vec2::new(-0.5, 0.0), 0.2, 0.2, Rot2::new(Vec1::new(0.0))).with_velocity(Vec2::new(0.25, 0.0))
+        //     .add_rect(Vector2::new(0.5, 0.0), 0.2, 0.2, Rotation2::new(Vector1::new(0.0))).with_velocity(Vector2::new(-0.25, 0.0))
+        //     .add_rect(Vector2::new(-0.5, 0.0), 0.2, 0.2, Rotation2::new(Vector1::new(0.0))).with_velocity(Vector2::new(0.25, 0.0))
         //     .build_game());
     //let game: Box<games::Game> = Box::new(games::input_test_game::InputTestGame::new());
     let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame);

@@ -1,4 +1,4 @@
-use na::{Vec1, Vec2, Vec3, Vec4, Rot2};
+use na::{Vector1, Vector2, Vector3, Vector4, Rotation2};
 use super::paddle::Paddle;
 use geometry::line::Line;
 use geometry::con_poly;
@@ -46,7 +46,7 @@ impl Player {
         self.slide_pos = pos;
     }
 
-    pub fn get_position(&self) -> Vec2<f64> {
+    pub fn get_position(&self) -> Vector2<f64> {
         self.line.get_point(self.slide_pos)
     }
 
@@ -62,11 +62,11 @@ impl Player {
     }
 
     /// Convention: roatation angle 0 = Vertical Paddle on Left Side
-    pub fn get_rotation(&self) -> Rot2<f64> {
-        let dir: Vec2<f64> = self.line.end - self.line.beg;
+    pub fn get_rotation(&self) -> Rotation2<f64> {
+        let dir: Vector2<f64> = self.line.end - self.line.beg;
         let clockwise_angle = -dir.y.atan2(dir.x);
         let rot_angle = clockwise_angle + PI / 2.0;
-        Rot2::new(Vec1::new(rot_angle))
+        Rotation2::new(rot_angle)
     }
 
     pub fn render(&self) -> rendering::rectangle::Rectangle {
@@ -77,7 +77,7 @@ impl Player {
             length: length,
             height: height,
             rot: self.get_rotation(),
-            pos: Vec3::new(point_2d.x, point_2d.y, FOREGROUND_LAYER),
+            pos: Vector3::new(point_2d.x, point_2d.y, FOREGROUND_LAYER),
             color: self.paddle.color,
         }
     }

@@ -1,16 +1,16 @@
 use super::BACKGROUND_LAYER;
 use rendering::rectangle::Rectangle;
-use na::{Vec1, Vec2, Vec3, Vec4, Rot2};
+use na::{Vector1, Vector2, Vector3, Vector4, Rotation2};
 use num::Zero;
 
 pub struct Board {
     pub length: f64,
     pub width: f64,
-    pub color: Vec4<f64>,
+    pub color: Vector4<f64>,
 }
 
 impl Board {
-    pub fn new(length: f64, width: f64, color: Vec4<f64>) -> Board {
+    pub fn new(length: f64, width: f64, color: Vector4<f64>) -> Board {
         Board {
             length: length,
             width: width,
@@ -22,7 +22,7 @@ impl Board {
         Board {
             length: 0.0,
             width: 0.0,
-            color: Vec4::zero(),
+            color: Vector4::zero(),
         }
     }
 }
@@ -32,8 +32,8 @@ impl Board {
         Rectangle {
             length: self.length,
             height: self.width,
-            rot: Rot2::new(Vec1::zero()),
-            pos: Vec3::new(0.0, 0.0, BACKGROUND_LAYER),
+            rot: Rotation2::new(0.0),
+            pos: Vector3::new(0.0, 0.0, BACKGROUND_LAYER),
             color: self.color
         }
     }

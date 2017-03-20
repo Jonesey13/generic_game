@@ -2,7 +2,7 @@ pub mod line;
 pub mod circle;
 pub mod vect;
 pub mod con_poly;
-use na::{Vec2, Norm, dot};
+use na::{Vector2, norm, dot};
 use num::Zero;
 
 const EPSILON: f64 = 0.0000001;
@@ -18,9 +18,9 @@ pub fn line_circle_intersect (line: &line::Line, circ: &circle::Circle) -> DualS
 /// For the line beg <=> t=0 and end <=> t=1
 /// Results are expressed as points on the line parameterised in t
 pub fn line_center_circle_intersect (line: &line::Line, circ_rad: f64) -> DualSoln {
-    let a = line.get_diff().sqnorm();
+    let a = line.get_diff().norm_squared();
     let b = 2.0 * dot(&line.beg, &line.get_diff());
-    let c = line.beg.sqnorm() - circ_rad * circ_rad;
+    let c = line.beg.norm_squared() - circ_rad * circ_rad;
     solve_quadratic(a, b, c)
 }
 
@@ -36,8 +36,8 @@ pub fn solve_quadratic(a: f64, b: f64, c:f64) -> DualSoln {
     }
 }
 
-pub fn average_vec2(vecs: Vec<Vec2<f64>>) -> Vec2<f64> {
-    vecs.iter().fold(Vec2::zero(), |acc, &x| acc + x) / vecs.len() as f64
+pub fn average_vec2(vecs: Vec<Vector2<f64>>) -> Vector2<f64> {
+    vecs.iter().fold(Vector2::zero(), |acc, &x| acc + x) / vecs.len() as f64
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -105,7 +105,7 @@ pub trait HasAngle {
     fn get_angle(&self) -> f64;
 }
 
-impl HasAngle for Vec2<f64> {
+impl HasAngle for Vector2<f64> {
     fn get_angle(&self) -> f64 {
         self.y.atan2(self.x)
     }
@@ -115,16 +115,16 @@ pub trait FromAngle {
     fn from_angle(f64) -> Self;
 }
 
-impl FromAngle for Vec2<f64> {
+impl FromAngle for Vector2<f64> {
     fn from_angle(angle: f64) -> Self {
-        Vec2::new(angle.cos(), angle.sin())
+        Vector2::new(angle.cos(), angle.sin())
     }
 }
 
 #[test]
 fn line_line_intersect() {
-    let line1 = line::Line::new(Vec2::new(-0.5, 0.0), Vec2::new(0.5, 0.0));
-    let line2 = line::Line::new(Vec2::new(0.3, 1.0), Vec2::new(0.3, -1.0));
+    let line1 = line::Line::new(Vector2::new(-0.5, 0.0), Vector2::new(0.5, 0.0));
+    let line2 = line::Line::new(Vector2::new(0.3, 1.0), Vector2::new(0.3, -1.0));
     let soln = line_line_intersect_2d(&line1, &line2);
     assert!(soln.both_within_zero_one(), "soln: {:?}", soln)
 }

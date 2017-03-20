@@ -1,4 +1,4 @@
-use na::{Vec1, Vec2, Rot2, normalize};
+use na::{Vector1, Vector2, Rotation2, normalize};
 use num::Zero;
 use geometry::average_vec2;
 use geometry::line::Line;
@@ -9,15 +9,15 @@ use std::iter::{Repeat, repeat};
 /// A convex polygon for collision detection
 #[derive(Clone, Debug)]
 pub struct ConPoly {
-    pub corners: Vec<Vec2<f64>>, // defined anticlockwise
+    pub corners: Vec<Vector2<f64>>, // defined anticlockwise
 }
 
 impl ConPoly {
     /// Length <=> x-axis, Height <=> y-axis
-    pub fn new_from_rect(length:f64, height:f64, pos: Vec2<f64>, rot: Rot2<f64>) -> ConPoly {
-        let xshift = Vec2::<f64>::new(length, 0.0);
-        let yshift = Vec2::<f64>::new(0.0, height);
-        let bottom_left = Vec2::zero();
+    pub fn new_from_rect(length:f64, height:f64, pos: Vector2<f64>, rot: Rotation2<f64>) -> ConPoly {
+        let xshift = Vector2::<f64>::new(length, 0.0);
+        let yshift = Vector2::<f64>::new(0.0, height);
+        let bottom_left = Vector2::zero();
         let bottom_right = bottom_left + xshift;
         let top_right = bottom_left + xshift + yshift;
         let top_left = bottom_left + yshift;
@@ -32,24 +32,24 @@ impl ConPoly {
         }
     }
 
-    pub fn shift_by(&mut self, shift: Vec2<f64>) {
+    pub fn shift_by(&mut self, shift: Vector2<f64>) {
         for corner in self.corners.iter_mut() {
             *corner = *corner + shift;
         }
     }
 
-    pub fn shifted_by(&self, shift: Vec2<f64>) -> ConPoly {
+    pub fn shifted_by(&self, shift: Vector2<f64>) -> ConPoly {
         let mut out = self.clone();
         out.shift_by(shift);
         out
     }
 
-    pub fn normals(&self) -> Vec<Vec2<f64>> {
+    pub fn normals(&self) -> Vec<Vector2<f64>> {
         let corners_it_shift = self.corners.iter().cloned().cycle().skip(1);
         self.corners.iter().cloned().zip(corners_it_shift).map(|(beg, end)| {-get_normal_2d(end - beg)}).collect()
     }
 
-    pub fn get_normal(&self, index: usize) -> Vec2<f64> {
+    pub fn get_normal(&self, index: usize) -> Vector2<f64> {
         self.normals()[index]
     }
 
@@ -61,7 +61,7 @@ impl ConPoly {
         self.sides_iter().nth(index).and_then(|(beg, end)| {Some(Line::new_ref(beg, end))})
     }
 
-    fn sides_iter<'a>(&'a self) -> Box<Iterator<Item=(&'a Vec2<f64>, &'a Vec2<f64>)> + 'a> {
+    fn sides_iter<'a>(&'a self) -> Box<Iterator<Item=(&'a Vector2<f64>, &'a Vector2<f64>)> + 'a> {
         let corners_it_shift = self.corners.iter().cycle().skip(1);
         Box::new(self.corners.iter().zip(corners_it_shift).map(|(beg, end)| {(beg, end)}))
     }
@@ -89,7 +89,7 @@ impl ConPoly {
         .collect()
     }
 
-    pub fn get_shift(&self, other: &ConPoly) -> Vec2<f64> {
+    pub fn get_shift(&self, other: &ConPoly) -> Vector2<f64> {
         other.corners[0] - self.corners[0]
     }
 
@@ -103,6 +103,6 @@ impl ConPoly {
 
 #[test]
 fn lazy_evaluation_test() {
-    let new_poly = ConPoly::new_from_rect(1.0, 1.0, Vec2::zero(), Rot2::new(Vec1::zero()));
+    let new_poly = ConPoly::new_from_rect(1.0, 1.0, Vector2::zero(), Rotation2::new(Vector1::zero()));
     panic!("Third side is {:?}", new_poly.get_side(3))
 }

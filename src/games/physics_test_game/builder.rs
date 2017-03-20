@@ -1,4 +1,4 @@
-use na::{Vec2, Rot2};
+use na::{Vector2, Rotation2};
 use num::Zero;
 use super::{PhysicsTestGame, PhysicsTestGameInput};
 use super::coll_circle::CollCircle;
@@ -44,19 +44,19 @@ impl PhysicsTestBuilder {
         self.clear_currents();
     }
 
-    pub fn add_circle<'a> (&'a mut self, pos: Vec2<f64>, rad: f64) -> &'a mut Self {
+    pub fn add_circle<'a> (&'a mut self, pos: Vector2<f64>, rad: f64) -> &'a mut Self {
         self.push_existing();
-        self.curr_circ = Some(CollCircle::new(pos, rad, BLUE));
+        self.curr_circ = Some(CollCircle::new(pos, rad, BLUE.into()));
         self
     }
 
-    pub fn add_rect<'a> (&'a mut self, pos: Vec2<f64>, length: f64, height: f64, rot: Rot2<f64>) -> &'a mut Self {
+    pub fn add_rect<'a> (&'a mut self, pos: Vector2<f64>, length: f64, height: f64, rot: Rotation2<f64>) -> &'a mut Self {
         self.push_existing();
-        self.curr_rect = Some(CollRect::new(pos, length, height, rot, BLUE));
+        self.curr_rect = Some(CollRect::new(pos, length, height, rot, BLUE.into()));
         self
     }
 
-    pub fn with_velocity<'a> (&'a mut self, vel: Vec2<f64>) -> &'a mut Self {
+    pub fn with_velocity<'a> (&'a mut self, vel: Vector2<f64>) -> &'a mut Self {
         if let Some(ref mut circ) = self.curr_circ {
             circ.set_velocity(vel);
         }
@@ -84,7 +84,7 @@ impl PhysicsTestBuilder {
             rects: self.rects.clone(),
             collider: Collider,
             external_input: Default::default(),
-            mouse_mov: Vec2::zero(),
+            mouse_mov: Vector2::zero(),
             mouse_speed: 0.01
         }
     }

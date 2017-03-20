@@ -6,7 +6,7 @@ use geometry::{circle, con_poly, line, HasAngle, DualSoln};
 use geometry::circle::Circle;
 use geometry::con_poly::ConPoly;
 use geometry::line::Line;
-use na::{normalize, Vec2, dot, abs};
+use na::{normalize, Vector2, dot, abs};
 use utils::debug::*;
 
 static EPSILON: f64 = 0.0001;
@@ -31,14 +31,14 @@ pub enum CollObj {
 #[derive(Clone, Debug)]
 pub enum CollDetails {
     None,
-    Circ(Vec2<f64>), // Collision direction, outward from object
+    Circ(Vector2<f64>), // Collision direction, outward from object
     ConPoly(ConPolyInfo)
 }
 
 #[derive(Clone, Debug)]
 pub enum ConPolyInfo {
     LineInfo(usize, f64), // Line number and position on line => (0,1)
-    CornerInfo(usize, Vec2<f64>), // Corner number and striking direction (outward)
+    CornerInfo(usize, Vector2<f64>), // Corner number and striking direction (outward)
     SideInfo(usize), // Collision along a side
 }
 
@@ -170,7 +170,7 @@ fn circ_poly_coll_corners(circ_next: &Circle, circ_prev: &Circle, poly_next: &Co
     let circ_shift = circ_next.center - circ_prev.center;
     let poly_next_rel = poly_next.shifted_by(circ_shift * - 1.0);
 
-    let mut collisions: Vec<(usize, f64, Vec2<f64>)> = Vec::new(); //corner index, time, circle collision dir
+    let mut collisions: Vec<(usize, f64, Vector2<f64>)> = Vec::new(); //corner index, time, circle collision dir
 
     for (index, corner_line) in (0..poly_prev.total_sides()).zip(poly_prev.get_corner_lines(&poly_next_rel)) {
         let corner_coll_soln = geometry::line_circle_intersect(&corner_line, &circ_prev);

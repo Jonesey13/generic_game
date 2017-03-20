@@ -1,4 +1,4 @@
-use na::{Vec1, Vec3, Vec4, Rot2};
+use na::{Vector1, Vector3, Vector4, Rotation2};
 use num::Zero;
 use super::renderables::{Renderable, RenderType};
 use super::render_by_shaders::RenderByShaders;
@@ -9,9 +9,9 @@ use super::conversion_tools::*;
 pub struct Rectangle {
     pub length: f64,  /// x-axis
     pub height: f64,  /// y-axis
-    pub rot: Rot2<f64>,  /// anti-clockwise angle w.r.t. positive z-axis
-    pub pos: Vec3<f64>,
-    pub color: Vec4<f64>
+    pub rot: Rotation2<f64>,  /// anti-clockwise angle w.r.t. positive z-axis
+    pub pos: Vector3<f64>,
+    pub color: Vector4<f64>
 }
 
 impl Renderable for Rectangle {
@@ -44,12 +44,14 @@ implement_vertex!(RectangleVertex, length, height, rot, pos, color);
 
 impl From<Rectangle> for RectangleVertex {
     fn from(rect: Rectangle) -> Self {
-        RectangleVertex {
+        let result = RectangleVertex {
             length: rect.length as f32,
             height: rect.height as f32,
-            rot: mat2_64_to_32(*rect.rot.submat().as_ref()),
+            rot: mat2_64_to_32(*rect.rot.matrix().as_ref()),
             pos: vec3_64_to_32(*rect.pos.as_ref()),
             color: vec4_64_to_32(*rect.color.as_ref())
-        }
+        };
+        println!("{:?}", result);
+        result
     }
 }

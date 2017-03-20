@@ -1,26 +1,26 @@
-use na::Vec2;
+use na::Vector2;
 use std::fmt;
 use geometry::line::Line;
 
 #[derive(Clone)]
 pub struct Circle{
     pub rad: f64,
-    pub center: Vec2<f64>
+    pub center: Vector2<f64>
 }
 
 impl Circle {
-    pub fn new(rad: f64, center: Vec2<f64>) -> Circle {
+    pub fn new(rad: f64, center: Vector2<f64>) -> Circle {
         Circle{
             rad: rad,
             center: center
         }
     }
 
-    pub fn shift_by(&mut self, shift: Vec2<f64>) {
+    pub fn shift_by(&mut self, shift: Vector2<f64>) {
         self.center = self.center + shift;
     }
 
-    pub fn shifted_by(&self, shift: Vec2<f64>) -> Circle {
+    pub fn shifted_by(&self, shift: Vector2<f64>) -> Circle {
         let mut out = self.clone();
         out.shift_by(shift);
         out

@@ -1,4 +1,4 @@
-use na::{Vec2, Vec4, Mat2, Diag, ToHomogeneous};
+use na::{Vector2, Vector4, Matrix2};
 use unicode_normalization;
 use rusttype::{FontCollection, Font, Scale, point, vector, PositionedGlyph};
 use rusttype::gpu_cache::{Cache};
@@ -16,10 +16,10 @@ pub const OPEN_SANS: &'static[u8] = include_bytes!("OpenSans.ttf");
 #[derive(Clone)]
 pub struct PlainText {
     pub content: String,
-    pub position: Vec2<f64>, //Bottom Left
-    pub scale: Vec2<f64>, // Applied First
-    pub transform: Mat2<f64>, //Applied Second
-    pub color: Vec4<f64>
+    pub position: Vector2<f64>, //Bottom Left
+    pub scale: Vector2<f64>, // Applied First
+    pub transform: Matrix2<f64>, //Applied Second
+    pub color: Vector4<f64>
 }
 
 pub trait RenderText<'a> {
@@ -190,7 +190,6 @@ pub struct TextProcessor<'a, T: RenderText<'a>> {
 
 impl<'a, T: RenderText<'a>> TextProcessor<'a, T> {
     pub fn new(display: Box<glium::backend::glutin_backend::GlutinFacade>) -> Self {
-        let (screen_width, screen_height) = display.get_window().unwrap().get_inner_size().unwrap();
         let dpi_factor = display.get_window().unwrap().hidpi_factor();
 
         let (cache_width, cache_height) = (512 * dpi_factor as u32, 512 * dpi_factor as u32);
