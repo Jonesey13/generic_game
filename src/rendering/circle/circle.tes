@@ -1,5 +1,5 @@
 #version 410 core
-uniform float aspect_ratio;
+uniform mat4 world_view;
 
 in float radius_cs[];
 in vec3 pos_cs[];
@@ -18,7 +18,7 @@ void main() {
   circle_param = gl_TessCoord.xy;
   color_es = color_cs[0];
   gl_Position = vec4( circle_pos(circle_param), 1.0);
-  gl_Position = vec4( gl_Position.x / aspect_ratio, gl_Position.yzw);
+  gl_Position = world_view * gl_Position;
 }
 
 vec3 circle_pos(vec2 uv) {

@@ -1,7 +1,7 @@
 #version 410 core
-uniform uint screen_width;
 uniform uint screen_height;
-uniform float aspect_ratio;
+uniform uint screen_width;
+uniform mat4 world_view;
 
 in float length_vs[];
 in float height_vs[];
@@ -55,6 +55,8 @@ vec4 Transform(in vec2 corner, in vec2 pos, in mat2 transform, in vec2 scale)
 {
   vec2 scaled_corner = scale * corner;
   vec2 transformed_corner = transform * scaled_corner / vec2(screen_width, screen_height); 
-  vec2 translated = vec2(pos.x / aspect_ratio, pos.y) + transformed_corner;
+  vec2 translated = pos + transformed_corner;
   return vec4(translated.xy, 0.0, 1.0);
+  return world_view * vec4(translated.xy, 0.0, 1.0);
 }
+

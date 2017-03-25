@@ -10,9 +10,12 @@ use glium::Frame;
 use glium::backend::glutin_backend::GlutinFacade;
 use glium::index::PrimitiveType;
 use glium::{DisplayBuild, Surface, DrawParameters, Depth, DepthTest, Program};
+use na;
 use na::Matrix4;
 use num::One;
 use rusttype;
+use games::view_details;
+use utils::transforms_2d;
 
 pub struct GliumRenderer<'a> {
     display: Box<GlutinFacade>,
@@ -21,7 +24,7 @@ pub struct GliumRenderer<'a> {
     circ_buffer: Buffer<Circle>,
     text_processor: TextProcessor<'a, PlainText>,
     global_uniforms: GlobalUniforms,
-    worldview: [[f32;4]; 4]
+    view_details: view_details::ViewDetails,
 }
 
 impl<'a> GliumRenderer<'a> {
@@ -44,7 +47,7 @@ impl<'a> GliumRenderer<'a> {
             circ_buffer: create_buffer::<Circle>(&display),
             text_processor: TextProcessor::new(display),
             global_uniforms: Default::default(),
-            worldview: *Matrix4::<f32>::one().as_ref()
+            view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default())
         }
     }
 
@@ -56,13 +59,28 @@ impl<'a> GliumRenderer<'a> {
 
     fn build_uniforms(&mut self, target: &glium::Frame) {
         let (width, height) = target.get_dimensions();
+        let aspect_ratio = width as f64 / height as f64;
         self.global_uniforms =
             GlobalUniforms {
                 screen_width: width,
                 screen_height: height,
-                aspect_ratio: width as f32 / height as f32,
-                worldview: self.worldview
+                aspect_ratio: aspect_ratio as f32,
+                worldview: self.create_worldview_mat(aspect_ratio)
             };
+    }
+    
+    fn create_worldview_mat(&mut self, aspect_ratio: f64) ->  [[f32;4]; 4] {
+        let view_mat = match self.view_details {
+            view_details::ViewDetails::TwoDim(ref view) =>
+                transforms_2d::build_worldview_mat(
+                    view.camera_pos,
+                    view.viewport_height,
+                    aspect_ratio,
+                    view.up_vector),
+            view_details::ViewDetails::ThreeDim(_) => panic!("3D mode not supported!")
+        };
+        let single_mat: Matrix4<f32> = na::convert(view_mat);
+        *single_mat.as_ref()
     }
 }
 
@@ -88,9 +106,9 @@ impl<'a> Renderer for GliumRenderer<'a> {
         target.finish().unwrap();
         self.flush_buffers();
     }
-    
-    fn set_worldview(&mut self, view_mat: [[f32; 4]; 4]) {
-        self.worldview = view_mat;
+
+    fn set_worldview(&mut self, view_details: view_details::ViewDetails) {
+        self.view_details = view_details;
     }
 }
 

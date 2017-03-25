@@ -1,5 +1,5 @@
 use super::Game;
-use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, Matrix2};
+use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, Matrix2, Matrix4};
 use num::{Zero, One} ;
 use rendering::renderables::Renderable;
 use rendering::rectangle::Rectangle;

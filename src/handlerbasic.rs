@@ -53,6 +53,7 @@ impl Handler for HandlerBasic {
     fn update_rendering(&mut self) {
         self.clocks.render_clock.start();
         self.renderer.load_renderables(self.game.get_renderables());
+        self.renderer.set_worldview(self.game.get_view());
         self.renderer.render();
         self.clocks.render_clock.end();
     }

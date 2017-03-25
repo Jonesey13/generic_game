@@ -1,6 +1,7 @@
 /// For use in shaders (projective space transforms)
 use na::{Matrix4, Matrix3, Vector2, Vector3, dot, normalize, Rotation2};
 use num::One;
+use std::f64::consts::PI;
 
 /// Translation by the three_vec
 pub fn translation_mat(two_vec: Vector2<f64>) -> Matrix3<f64>{
@@ -33,11 +34,13 @@ pub fn build_worldview_mat(
     position: Vector2<f64>,
     view_height: f64,
     aspect_ratio: f64,
-    rotation_angle: f64
+    up_vector: Vector2<f64>
 ) -> Matrix4<f64> {
     let trans_mat = translation_mat(position * -1.0);
     let scaling = Vector2::new(1.0 / aspect_ratio, 1.0) * (1.0 / view_height);
     let scale_mat = scaling_mat(scaling);
+
+    let rotation_angle = (-up_vector.y).atan2(up_vector.x) - PI / 2.0;
     let rot_mat = rotation_mat(rotation_angle * - 1.0);
 
     let three_mat = scale_mat * rot_mat * trans_mat;
