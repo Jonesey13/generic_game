@@ -23,7 +23,6 @@ pub struct GliumRenderer<'a> {
     rect_buffer: Buffer<Rectangle>,
     circ_buffer: Buffer<Circle>,
     text_processor: TextProcessor<'a, PlainText>,
-    global_uniforms: GlobalUniforms,
     view_details: view_details::ViewDetails,
 }
 
@@ -46,7 +45,6 @@ impl<'a> GliumRenderer<'a> {
             rect_buffer: create_buffer::<Rectangle>(&display),
             circ_buffer: create_buffer::<Circle>(&display),
             text_processor: TextProcessor::new(display),
-            global_uniforms: Default::default(),
             view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default())
         }
     }
@@ -56,21 +54,9 @@ impl<'a> GliumRenderer<'a> {
         self.circ_buffer.vertices = None;
         self.text_processor.text_objects = None;
     }
-
-    fn build_uniforms(&mut self, target: &glium::Frame) {
-        let (width, height) = target.get_dimensions();
-        let aspect_ratio = width as f64 / height as f64;
-        self.global_uniforms =
-            GlobalUniforms {
-                screen_width: width,
-                screen_height: height,
-                aspect_ratio: aspect_ratio as f32,
-                worldview: self.create_worldview_mat(aspect_ratio)
-            };
-    }
     
-    fn create_worldview_mat(&mut self, aspect_ratio: f64) ->  [[f32;4]; 4] {
-        let view_mat = match self.view_details {
+    pub fn create_worldview_mat(view_details: view_details::ViewDetails, aspect_ratio: f64) ->  [[f32;4]; 4] {
+        let view_mat = match view_details {
             view_details::ViewDetails::TwoDim(ref view) =>
                 transforms_2d::build_worldview_mat(
                     view.camera_pos,
@@ -99,10 +85,19 @@ impl<'a> Renderer for GliumRenderer<'a> {
         let mut target = self.display.draw();
         target.clear_color(0.0, 0.0, 0.0, 1.0);
         target.clear_depth(1.0);
-        self.build_uniforms(&target);
-        self.rect_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &self.global_uniforms);
-        self.circ_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &self.global_uniforms);
-        self.text_processor.draw_text_at_target(&mut target, &self.display);
+
+        let (width, height) = target.get_dimensions();
+        let aspect_ratio = width as f64 / height as f64;
+        let uniforms = uniform! {
+            screen_width: width,
+            screen_height: height,
+            aspect_ratio: aspect_ratio as f32,
+            world_view: GliumRenderer::create_worldview_mat(self.view_details, aspect_ratio)
+        };
+        
+        self.rect_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &uniforms);
+        self.circ_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &uniforms);
+        self.text_processor.draw_text_at_target(&mut target, &self.display, self.view_details);
         target.finish().unwrap();
         self.flush_buffers();
     }
@@ -127,7 +122,6 @@ impl<T: RenderByShaders> Buffer<T> {
             primitive_type: primitive_type,
         }
     }
-
 
     pub fn load_renderable(&mut self, renderable: T) {
         if let Some(ref mut vertices) = self.vertices {
@@ -162,22 +156,5 @@ fn create_buffer<T: RenderByShaders>(display: &GlutinFacade) -> Buffer<T>
         vertices: None,
         program: make_program_from_shaders(T::get_shaders(), display),
         primitive_type: T::get_primitive_type(),
-    }
-}
-
-#[derive(Copy, Clone, Default)]
-struct GlobalUniforms {
-    screen_width: u32,
-    screen_height: u32,
-    aspect_ratio: f32,
-    worldview: [[f32; 4]; 4]
-}
-
-impl glium::uniforms::Uniforms for GlobalUniforms {
-    fn visit_values<'a, F: FnMut(&str, glium::uniforms::UniformValue<'a>)>(&'a self, mut f: F) {
-        f("screen_width", glium::uniforms::UniformValue::UnsignedInt(self.screen_width));
-        f("screen_height", glium::uniforms::UniformValue::UnsignedInt(self.screen_height));
-        f("aspect_ratio", glium::uniforms::UniformValue::Float(self.aspect_ratio));
-        f("world_view", glium::uniforms::UniformValue::Mat4(self.worldview));
     }
 }

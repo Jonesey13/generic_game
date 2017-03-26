@@ -89,8 +89,83 @@ impl InputHandler for MultiInput {
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Down)) {
                         kbd.down = val;
                     }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::A)) {
+                        kbd.a = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::B)) {
+                        kbd.b = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::C)) {
+                        kbd.c = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::D)) {
+                        kbd.d = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::E)) {
+                        kbd.e = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::F)) {
+                        kbd.f = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::G)) {
+                        kbd.g = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::H)) {
+                        kbd.h = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::I)) {
+                        kbd.i = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::J)) {
+                        kbd.j = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::K)) {
+                        kbd.k = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::L)) {
+                        kbd.l = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::M)) {
+                        kbd.m = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::N)) {
+                        kbd.n = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::O)) {
+                        kbd.o = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::P)) {
+                        kbd.p = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Q)) {
+                        kbd.q = val;
+                    }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::R)) {
                         kbd.r = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::S)) {
+                        kbd.s = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::T)) {
+                        kbd.t = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::U)) {
+                        kbd.u = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::V)) {
+                        kbd.v = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::W)) {
+                        kbd.w = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::X)) {
+                        kbd.x = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Y)) {
+                        kbd.y = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Z)) {
+                        kbd.z = val;
                     }
                 }
             }

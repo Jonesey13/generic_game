@@ -10,6 +10,7 @@ use std::borrow::Cow;
 use super::shaders;
 use super::conversion_tools::mat2_64_to_32;
 use super::renderables::{Renderable, RenderType};
+use games::view_details;
 
 pub const OPEN_SANS: &'static[u8] = include_bytes!("OpenSans.ttf");
 
@@ -30,11 +31,12 @@ pub trait RenderText<'a> {
         cache: &mut rusttype::gpu_cache::Cache,
         cache_tex: &glium::texture::Texture2d,
         program: &glium::Program,
-        display: &glium::backend::glutin_backend::GlutinFacade);
+        display: &glium::backend::glutin_backend::GlutinFacade,
+        view_details: view_details::ViewDetails);
 
     fn get_vertices(
         &self,
-        glyphs:  Vec<PositionedGlyph<'a>>,
+        glyphs: Vec<PositionedGlyph<'a>>,
         cache: &rusttype::gpu_cache::Cache,
         glyph_scale: Scale
     ) -> Vec<TextVertex>;
@@ -47,7 +49,8 @@ impl<'a> RenderText<'a> for PlainText {
               cache: &mut rusttype::gpu_cache::Cache,
               cache_tex: &glium::texture::Texture2d,
               program: &glium::Program,
-              display: &glium::backend::glutin_backend::GlutinFacade)
+              display: &glium::backend::glutin_backend::GlutinFacade,
+              view_details: view_details::ViewDetails)
     {
         let (width, height) = target.get_dimensions();
         let dpi_factor = display.get_window().unwrap().hidpi_factor();
@@ -73,12 +76,14 @@ impl<'a> RenderText<'a> for PlainText {
             });
         },
         1).unwrap();
-        
+
+        let aspect_ratio = width as f64 / height as f64;
         let uniforms = uniform! {
             tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
             screen_width: width,
             screen_height: height,
-            aspect_ratio: width as f32 / height as f32
+            aspect_ratio: aspect_ratio as f32,
+            world_view: super::glium_renderer::GliumRenderer::create_worldview_mat(view_details, aspect_ratio)
         };
 
         let vertices = self.get_vertices(
@@ -224,7 +229,8 @@ impl<'a, T: RenderText<'a>> TextProcessor<'a, T> {
 
     pub fn draw_text_at_target(&mut self,
                                target: &mut glium::Frame,
-                               display: &glium::backend::glutin_backend::GlutinFacade) {
+                               display: &glium::backend::glutin_backend::GlutinFacade,
+                               view_details: view_details::ViewDetails) {
         let buffer = self.text_objects.take();
         if let Some(buffer) = buffer {
             for mut render_text in buffer {
@@ -233,7 +239,8 @@ impl<'a, T: RenderText<'a>> TextProcessor<'a, T> {
                                    &mut self.text_cache,
                                    &self.cache_texture,
                                    &self.program,
-                                   display);
+                                   display,
+                                   view_details);
             }
         }
     }
