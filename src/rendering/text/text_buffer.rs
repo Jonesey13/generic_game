@@ -98,7 +98,7 @@ impl<'a, T: RenderText<'a>> TextBuffer<'a, T> {
         program: &glium::Program,
         target: &mut Frame,
         display: &GlutinFacade,
-        draw_params: &DrawParameters,
+        _: &DrawParameters,
         uniforms: &Unif)
     {
         let vertex_buffer = glium::VertexBuffer::new(
@@ -164,6 +164,7 @@ impl<'a, T: RenderText<'a>> GliumBuffer<T> for TextBuffer<'a, T> {
 
     fn flush_buffer(&mut self) {
         self.text_objects = None;
+        self.vertices = Vec::new();
     }
 }
 
