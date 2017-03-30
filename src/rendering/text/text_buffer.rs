@@ -1,0 +1,204 @@
+use na::{Vector2, Vector4, Matrix2};
+use unicode_normalization;
+use rusttype::{FontCollection, Font, Scale, point, vector, PositionedGlyph};
+use rusttype::gpu_cache::{Cache};
+use rusttype;
+use rusttype::Rect;
+use glium;
+use glium::{Surface, Frame, DrawParameters};
+use glium::backend::glutin_backend::GlutinFacade;
+use std::borrow::Cow;
+use super::{RenderText, TextVertex};
+use rendering;
+use rendering::shaders;
+use rendering::glium_buffer::GliumBuffer;
+use games::view_details;
+
+pub const OPEN_SANS: &'static[u8] = include_bytes!("OpenSans.ttf");
+
+pub struct TextBuffer<'a, T: RenderText<'a>> {
+    pub text_objects: Option<Vec<T>>,
+    vertices: Vec<TextVertex>,
+    text_cache: rusttype::gpu_cache::Cache,
+    program: glium::Program,
+    cache_tex: glium::texture::Texture2d,
+    font: Font<'a>,
+}
+
+impl<'a, T: RenderText<'a>> TextBuffer<'a, T> {
+    pub fn new(display: Box<GlutinFacade>) -> Self {
+        let dpi_factor = display.get_window().unwrap().hidpi_factor();
+
+        let (cache_width, cache_height) = (512 * dpi_factor as u32, 512 * dpi_factor as u32);
+        let cache = rusttype::gpu_cache::Cache::new(cache_width, cache_height, 0.1, 0.1);
+        let cache_tex = glium::texture::Texture2d::with_format(
+            &*display,
+            glium::texture::RawImage2d {
+                data: Cow::Owned(vec![0u8; cache_width as usize * cache_height as usize]),
+                width: cache_width,
+                height: cache_height,
+                format: glium::texture::ClientFormat::U8
+            },
+            glium::texture::UncompressedFloatFormat::U8,
+            glium::texture::MipmapsOption::NoMipmap).unwrap();
+
+        TextBuffer {
+            text_objects: None,
+            vertices: Vec::new(),
+            text_cache: cache,
+            cache_tex: cache_tex,
+            program: shaders::make_program_from_shaders(T::get_shaders(), &display),
+            font: FontCollection::from_bytes(OPEN_SANS).into_font().unwrap(),
+        }
+    }
+
+    fn load_text_into_cache<Text: RenderText<'a>>(
+        &mut self,
+        render_text: Text,
+        glyph_scale: Scale)
+    {
+        let glyphs = layout_paragraph(&self.font, glyph_scale, &render_text.get_content());
+        for glyph in &glyphs {
+            self.text_cache.queue_glyph(0, glyph.clone());
+        }
+
+        let cache_tex = &mut self.cache_tex;
+        let mut text_cache = &mut self.text_cache;
+        text_cache.cache_queued(
+            |rect, data| {
+                cache_tex.main_level().write(glium::Rect {
+                    left: rect.min.x,
+                    bottom: rect.min.y,
+                    width: rect.width(),
+                    height: rect.height()
+                }, glium::texture::RawImage2d {
+                    data: Cow::Borrowed(data),
+                    width: rect.width(),
+                    height: rect.height(),
+                    format: glium::texture::ClientFormat::U8
+                });
+            },
+            1).unwrap();
+
+        let glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)> = glyphs
+            .iter()
+            .filter_map(|g| {
+                if let Ok(Some(pos_data)) = text_cache.rect_for(0, g) {
+                    Some(pos_data)
+                } else {
+                    None
+                }}).collect();
+
+        let mut vertices = render_text.get_vertices(glyph_pos_data, glyph_scale);
+        self.vertices.append(&mut vertices);
+    }
+
+    fn render<Unif: glium::uniforms::Uniforms>(
+        vertices: &Vec<TextVertex>,
+        program: &glium::Program,
+        target: &mut Frame,
+        display: &GlutinFacade,
+        draw_params: &DrawParameters,
+        uniforms: &Unif)
+    {
+        let vertex_buffer = glium::VertexBuffer::new(
+            display,
+            &vertices).unwrap();
+
+        target.draw(&vertex_buffer,
+                    glium::index::NoIndices(glium::index::PrimitiveType::Points),
+                    &program,
+                    uniforms,
+                    &glium::DrawParameters {
+                        blend: glium::Blend::alpha_blending(),
+                        ..Default::default()
+                    }).unwrap();
+
+    }
+}
+
+impl<'a, T: RenderText<'a>> GliumBuffer<T> for TextBuffer<'a, T> {
+    fn draw_at_target<Unif: glium::uniforms::Uniforms>(
+        &mut self,
+        target: &mut Frame,
+        display: &GlutinFacade,
+        view_details: view_details::ViewDetails,
+        draw_params: &DrawParameters,
+        _: &Unif
+    ) {
+        let buffer = self.text_objects.take();
+        
+        if let Some(buffer) = buffer {
+            let (width, height) = target.get_dimensions();
+            let dpi_factor = display.get_window().unwrap().hidpi_factor();
+            
+            let glyph_scale = Scale::uniform(256.0 * dpi_factor);
+            
+            for render_text in buffer {
+                self.load_text_into_cache(render_text, glyph_scale);
+            }
+
+            let aspect_ratio = width as f64 / height as f64;
+
+            let cache_tex = &self.cache_tex;
+            let uniforms = uniform! {
+                tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
+                screen_width: width,
+                screen_height: height,
+                aspect_ratio: aspect_ratio as f32,
+                world_view: rendering::glium_renderer::GliumRenderer::create_worldview_mat(view_details, aspect_ratio)        
+            };
+
+            Self::render(&self.vertices, &self.program, target, display, draw_params, &uniforms);
+        }
+    }
+
+    fn load_renderable(&mut self, text: T) {
+        if let Some(ref mut buffer) = self.text_objects {
+            buffer.push(text);
+        }
+        else {
+            self.text_objects = Some(vec![text]);
+        }
+    }
+
+    fn flush_buffer(&mut self) {
+        self.text_objects = None;
+    }
+}
+
+fn layout_paragraph<'a>(font: &'a Font,
+                        scale: Scale,
+                        text: &str) -> Vec<PositionedGlyph<'a>> {
+    use unicode_normalization::UnicodeNormalization;
+    let mut result = Vec::new();
+    let v_metrics = font.v_metrics(scale);
+    let advance_height = v_metrics.ascent - v_metrics.descent + v_metrics.line_gap;
+    let mut caret = point(0.0, v_metrics.ascent);
+    let mut last_glyph_id = None;
+    for c in text.nfc() {
+        if c.is_control() {
+            match c {
+                '\r' => {
+                    caret = point(0.0, caret.y + advance_height);
+                }
+                '\n' => {},
+                _ => {}
+            }
+            continue;
+        }
+        let base_glyph = if let Some(glyph) = font.glyph(c) {
+            glyph
+        } else {
+            continue;
+        };
+        if let Some(id) = last_glyph_id.take() {
+            caret.x += font.pair_kerning(scale, id, base_glyph.id());
+        }
+        last_glyph_id = Some(base_glyph.id());
+        let glyph = base_glyph.scaled(scale).positioned(caret);
+        caret.x += glyph.unpositioned().h_metrics().advance_width;
+        result.push(glyph);
+    }
+    result
+}

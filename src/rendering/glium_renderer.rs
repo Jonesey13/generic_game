@@ -2,9 +2,9 @@ use super::Renderer;
 use super::shaders::make_program_from_shaders;
 use super::rectangle::{Rectangle, RectangleVertex};
 use super::circle::{Circle, CircleVertex};
-use super::text::{RenderText, TextProcessor, PlainText};
+use super::text::{RenderText, TextBuffer, PlainText};
 use super::renderables::{Renderable, RenderType};
-use super::render_by_shaders::RenderByShaders;
+use super::render_by_shaders::GliumRenderable;
 use glium;
 use glium::Frame;
 use glium::backend::glutin_backend::GlutinFacade;
@@ -16,13 +16,14 @@ use num::One;
 use rusttype;
 use games::view_details;
 use utils::transforms_2d;
+use super::glium_buffer::{GliumBuffer, BasicBuffer};
 
 pub struct GliumRenderer<'a> {
     display: Box<GlutinFacade>,
     draw_params: DrawParameters<'a>,
-    rect_buffer: Buffer<Rectangle>,
-    circ_buffer: Buffer<Circle>,
-    text_processor: TextProcessor<'a, PlainText>,
+    rect_buffer: BasicBuffer<Rectangle>,
+    circ_buffer: BasicBuffer<Circle>,
+    text_processor: TextBuffer<'a, PlainText>,
     view_details: view_details::ViewDetails,
 }
 
@@ -42,17 +43,17 @@ impl<'a> GliumRenderer<'a> {
         GliumRenderer {
             display: display.clone(),
             draw_params: draw_params,
-            rect_buffer: create_buffer::<Rectangle>(&display),
-            circ_buffer: create_buffer::<Circle>(&display),
-            text_processor: TextProcessor::new(display),
+            rect_buffer: BasicBuffer::<Rectangle>::new(&display),
+            circ_buffer: BasicBuffer::<Circle>::new(&display),
+            text_processor: TextBuffer::new(display),
             view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default())
         }
     }
 
     fn flush_buffers(&mut self) {
-        self.rect_buffer.vertices = None;
-        self.circ_buffer.vertices = None;
-        self.text_processor.text_objects = None;
+        self.rect_buffer.flush_buffer();
+        self.circ_buffer.flush_buffer();
+        self.text_processor.flush_buffer();
     }
     
     pub fn create_worldview_mat(view_details: view_details::ViewDetails, aspect_ratio: f64) ->  [[f32;4]; 4] {
@@ -76,7 +77,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
             match renderable.get_type() {
                 RenderType::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
                 RenderType::Circ(circle) => self.circ_buffer.load_renderable(circle),
-                RenderType::Text(text) => self.text_processor.push_text(text)
+                RenderType::Text(text) => self.text_processor.load_renderable(text)
             }
         }
     }
@@ -95,9 +96,9 @@ impl<'a> Renderer for GliumRenderer<'a> {
             world_view: GliumRenderer::create_worldview_mat(self.view_details, aspect_ratio)
         };
         
-        self.rect_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &uniforms);
-        self.circ_buffer.draw_at_target(&mut target, &self.display, &self.draw_params, &uniforms);
-        self.text_processor.draw_text_at_target(&mut target, &self.display, self.view_details);
+        self.rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+        self.circ_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+        self.text_processor.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         target.finish().unwrap();
         self.flush_buffers();
     }
@@ -107,54 +108,3 @@ impl<'a> Renderer for GliumRenderer<'a> {
     }
 }
 
-#[derive(Debug)]
-struct Buffer<T: RenderByShaders> {
-    vertices: Option<Vec<T::Vertex>>,
-    program: Program,
-    primitive_type: PrimitiveType,
-}
-
-impl<T: RenderByShaders> Buffer<T> {
-    pub fn new(program: Program, primitive_type: PrimitiveType) -> Self {
-        Buffer {
-            vertices: None,
-            program: program,
-            primitive_type: primitive_type,
-        }
-    }
-
-    pub fn load_renderable(&mut self, renderable: T) {
-        if let Some(ref mut vertices) = self.vertices {
-            vertices.push(renderable.get_vertex());
-        }
-        else {
-            self.vertices = Some(vec![renderable.get_vertex()]);
-        };
-    }
-
-    pub fn draw_at_target<Unif: glium::uniforms::Uniforms> (
-        &mut self,
-        target: &mut Frame,
-        display: &GlutinFacade,
-        draw_params: &DrawParameters,
-        uniforms: &Unif,
-    ) {
-        if let Some(vertices) = self.vertices.take() {
-            let vertex_buffer = glium::VertexBuffer::new(display, &vertices).unwrap();
-            target.draw(&vertex_buffer,
-                        &glium::index::NoIndices(self.primitive_type),
-                        &self.program,
-                        uniforms,
-                        draw_params).unwrap();
-        }
-    }
-}
-
-fn create_buffer<T: RenderByShaders>(display: &GlutinFacade) -> Buffer<T>
-{
-    Buffer {
-        vertices: None,
-        program: make_program_from_shaders(T::get_shaders(), display),
-        primitive_type: T::get_primitive_type(),
-    }
-}

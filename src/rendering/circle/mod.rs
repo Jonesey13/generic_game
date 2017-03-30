@@ -1,7 +1,7 @@
 use na::{Vector3, Vector4};
 use num::Zero;
 use super::renderables::{Renderable, RenderType};
-use super::render_by_shaders::RenderByShaders;
+use super::render_by_shaders::GliumRenderable;
 use super::shaders::Shaders;
 use glium;
 use glium::index::PrimitiveType;
@@ -18,7 +18,7 @@ impl Renderable for Circle {
     fn get_type(&self) -> RenderType { RenderType::Circ(self.clone()) }
 }
 
-impl RenderByShaders for Circle {
+impl GliumRenderable for Circle {
     type Vertex = CircleVertex;
 
     fn get_shaders() -> Shaders {

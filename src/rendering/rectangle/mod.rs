@@ -1,7 +1,7 @@
 use na::{Vector1, Vector3, Vector4, Rotation2};
 use num::Zero;
 use super::renderables::{Renderable, RenderType};
-use super::render_by_shaders::RenderByShaders;
+use super::render_by_shaders::GliumRenderable;
 use super::shaders::Shaders;
 use super::conversion_tools::*;
 
@@ -18,7 +18,7 @@ impl Renderable for Rectangle {
     fn get_type(&self) -> RenderType { RenderType::Rect(self.clone()) }
 }
 
-impl RenderByShaders for Rectangle {
+impl GliumRenderable for Rectangle {
     type Vertex = RectangleVertex;
 
     fn get_shaders() -> Shaders {
