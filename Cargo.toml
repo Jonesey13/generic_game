@@ -11,6 +11,7 @@ num = "*"
 time = "*"
 unicode-normalization = "*"
 rusttype = { git = "https://github.com/Jonesey13/rusttype.git", rev = "a2fd94ff" }
+rand = "*"
 
 [dependencies.bitflags]
 version = "*"

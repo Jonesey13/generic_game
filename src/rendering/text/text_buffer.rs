@@ -12,20 +12,21 @@ use super::{RenderText, TextVertex};
 use rendering;
 use rendering::shaders;
 use rendering::glium_buffer::GliumBuffer;
+use rendering::render_by_shaders::GliumRenderable;
 use games::view_details;
 
 pub const OPEN_SANS: &'static[u8] = include_bytes!("OpenSans.ttf");
 
-pub struct TextBuffer<'a, T: RenderText<'a>> {
-    pub text_objects: Option<Vec<T>>,
-    vertices: Vec<TextVertex>,
+pub struct TextBuffer<'a, T: RenderText> {
+    vertices: Vec<T::TextVert>,
     text_cache: rusttype::gpu_cache::Cache,
     program: glium::Program,
     cache_tex: glium::texture::Texture2d,
     font: Font<'a>,
+    hidpi_factor: f32
 }
 
-impl<'a, T: RenderText<'a>> TextBuffer<'a, T> {
+impl<'a, T: RenderText> TextBuffer<'a, T> {
     pub fn new(display: Box<GlutinFacade>) -> Self {
         let dpi_factor = display.get_window().unwrap().hidpi_factor();
 
@@ -43,21 +44,69 @@ impl<'a, T: RenderText<'a>> TextBuffer<'a, T> {
             glium::texture::MipmapsOption::NoMipmap).unwrap();
 
         TextBuffer {
-            text_objects: None,
             vertices: Vec::new(),
             text_cache: cache,
             cache_tex: cache_tex,
             program: shaders::make_program_from_shaders(T::get_shaders(), &display),
             font: FontCollection::from_bytes(OPEN_SANS).into_font().unwrap(),
+            hidpi_factor: dpi_factor
         }
     }
 
-    fn load_text_into_cache<Text: RenderText<'a>>(
-        &mut self,
-        render_text: Text,
-        glyph_scale: Scale)
+    fn render<Unif: glium::uniforms::Uniforms>(
+        vertices: &Vec<T::TextVert>,
+        program: &glium::Program,
+        target: &mut Frame,
+        display: &GlutinFacade,
+        _: &DrawParameters,
+        uniforms: &Unif)
     {
-        let glyphs = layout_paragraph(&self.font, glyph_scale, &render_text.get_content());
+        let vertex_buffer = glium::VertexBuffer::new(
+            display,
+            &vertices).unwrap();
+
+        target.draw(&vertex_buffer,
+                    glium::index::NoIndices(glium::index::PrimitiveType::Points),
+                    &program,
+                    uniforms,
+                    &glium::DrawParameters {
+                        blend: glium::Blend::alpha_blending(),
+                        ..Default::default()
+                    }).unwrap();
+
+    }
+}
+
+impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
+    fn draw_at_target<Unif: glium::uniforms::Uniforms>(
+        &mut self,
+        target: &mut Frame,
+        display: &GlutinFacade,
+        view_details: view_details::ViewDetails,
+        draw_params: &DrawParameters,
+        _: &Unif
+    ) {
+        if !self.vertices.is_empty() {
+            let (width, height) = target.get_dimensions();
+            
+            let aspect_ratio = width as f64 / height as f64;
+
+            let cache_tex = &self.cache_tex;
+            let uniforms = uniform! {
+                tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
+                screen_width: width,
+                screen_height: height,
+                aspect_ratio: aspect_ratio as f32,
+                world_view: rendering::glium_renderer::GliumRenderer::create_worldview_mat(view_details, aspect_ratio)        
+            };
+
+            Self::render(&self.vertices, &self.program, target, display, draw_params, &uniforms);
+        }
+    }
+
+    fn load_renderable(&mut self, text: T) {
+        let glyph_scale = Scale::uniform(256.0 * self.hidpi_factor);
+        let glyphs = layout_paragraph(&self.font, glyph_scale, &text.get_content());
         for glyph in &glyphs {
             self.text_cache.queue_glyph(0, glyph.clone());
         }
@@ -89,81 +138,15 @@ impl<'a, T: RenderText<'a>> TextBuffer<'a, T> {
                     None
                 }}).collect();
 
-        let mut vertices = render_text.get_vertices(glyph_pos_data, glyph_scale);
+        let mut vertices = text.get_vertices(glyph_pos_data, glyph_scale);
         self.vertices.append(&mut vertices);
     }
 
-    fn render<Unif: glium::uniforms::Uniforms>(
-        vertices: &Vec<TextVertex>,
-        program: &glium::Program,
-        target: &mut Frame,
-        display: &GlutinFacade,
-        _: &DrawParameters,
-        uniforms: &Unif)
-    {
-        let vertex_buffer = glium::VertexBuffer::new(
-            display,
-            &vertices).unwrap();
-
-        target.draw(&vertex_buffer,
-                    glium::index::NoIndices(glium::index::PrimitiveType::Points),
-                    &program,
-                    uniforms,
-                    &glium::DrawParameters {
-                        blend: glium::Blend::alpha_blending(),
-                        ..Default::default()
-                    }).unwrap();
-
-    }
-}
-
-impl<'a, T: RenderText<'a>> GliumBuffer<T> for TextBuffer<'a, T> {
-    fn draw_at_target<Unif: glium::uniforms::Uniforms>(
-        &mut self,
-        target: &mut Frame,
-        display: &GlutinFacade,
-        view_details: view_details::ViewDetails,
-        draw_params: &DrawParameters,
-        _: &Unif
-    ) {
-        let buffer = self.text_objects.take();
-        
-        if let Some(buffer) = buffer {
-            let (width, height) = target.get_dimensions();
-            let dpi_factor = display.get_window().unwrap().hidpi_factor();
-            
-            let glyph_scale = Scale::uniform(256.0 * dpi_factor);
-            
-            for render_text in buffer {
-                self.load_text_into_cache(render_text, glyph_scale);
-            }
-
-            let aspect_ratio = width as f64 / height as f64;
-
-            let cache_tex = &self.cache_tex;
-            let uniforms = uniform! {
-                tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
-                screen_width: width,
-                screen_height: height,
-                aspect_ratio: aspect_ratio as f32,
-                world_view: rendering::glium_renderer::GliumRenderer::create_worldview_mat(view_details, aspect_ratio)        
-            };
-
-            Self::render(&self.vertices, &self.program, target, display, draw_params, &uniforms);
-        }
-    }
-
-    fn load_renderable(&mut self, text: T) {
-        if let Some(ref mut buffer) = self.text_objects {
-            buffer.push(text);
-        }
-        else {
-            self.text_objects = Some(vec![text]);
-        }
+    fn get_vertices(&mut self) -> &mut Vec<T::TextVert> {
+        &mut self.vertices
     }
 
     fn flush_buffer(&mut self) {
-        self.text_objects = None;
         self.vertices = Vec::new();
     }
 }

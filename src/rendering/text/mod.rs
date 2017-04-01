@@ -13,6 +13,7 @@ use std::borrow::Cow;
 use super::shaders;
 use super::conversion_tools::mat2_64_to_32;
 use super::renderables::{Renderable, RenderType};
+use super::render_by_shaders::GliumRenderable;
 use games::view_details;
 
 #[derive(Clone)]
@@ -24,24 +25,28 @@ pub struct PlainText {
     pub color: Vector4<f64>
 }
 
-pub trait RenderText<'a> {
+pub trait RenderText {
+    type TextVert: glium::vertex::Vertex;
+
     fn get_shaders() -> super::shaders::Shaders;
 
     fn get_vertices(
         &self,
         glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)>,
         glyph_scale: Scale
-    ) -> Vec<TextVertex>;
+    ) -> Vec<Self::TextVert>;
 
     fn get_content(&self) -> &String;
 }
 
-impl<'a> RenderText<'a> for PlainText {
+impl RenderText for PlainText {
+    type TextVert = TextVertex;
+    
     fn get_vertices(
         &self,
         glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)>,
         glyph_scale: Scale
-    ) -> Vec<TextVertex>
+    ) -> Vec<Self::TextVert>
     {
         let color = [self.color.x as f32,
                      self.color.y as f32,
@@ -87,66 +92,6 @@ impl<'a> RenderText<'a> for PlainText {
             } 
         ).collect()
     }
-    
-    // fn get_vertices(
-    //     &self,
-    //     glyphs: &Vec<PositionedGlyph<'a>>,
-    //     cache: &rusttype::gpu_cache::Cache,
-    //     glyph_scale: Scale
-    // ) -> Vec<TextVertex>
-    // {
-    //     let color = [self.color.x as f32,
-    //                  self.color.y as f32,
-    //                  self.color.z as f32,
-    //                  self.color.w as f32];
-    //     let glyph_positions: Vec<[f32; 2]> = glyphs
-    //         .iter()
-    //         .filter_map(|g| {
-    //             if let Ok(Some((_, screen_rect))) = cache.rect_for(0, g) {
-    //                 Some([(screen_rect.min.x + screen_rect.max.x) as f32 / 2.0,
-    //                       (screen_rect.min.y + screen_rect.max.y) as f32 / 2.0])
-    //             } else {
-    //                 None
-    //             }}).collect();
-
-    //     let mut average_glyph_pos: [f32; 2] = glyph_positions
-    //         .iter()
-    //         .fold([0.0, 0.0], |acc, rect| 
-    //             [acc[0] + rect[0], acc[1] + rect[1]]
-    //         );
-    //     average_glyph_pos = [average_glyph_pos[0] / (glyph_positions.len() as f32),
-    //                          average_glyph_pos[1] / (glyph_positions.len() as f32)];
-        
-    //     let global_pos = [self.position.x as f32 ,self.position.y as f32];
-    //     glyphs.iter().filter_map(|g| {
-    //         if let Ok(Some((uv_rect, screen_rect))) = cache.rect_for(0, g) {
-    //             let actual_length = screen_rect.max.x - screen_rect.min.x;
-    //             let actual_height = screen_rect.max.y - screen_rect.min.y;
-    //             let screen_rect_pos = [(screen_rect.min.x + screen_rect.max.x) as f32 / 2.0,
-    //                                    (screen_rect.min.y + screen_rect.max.y) as f32 / 2.0];
-    //             let corrected_screen_rect_pos = [screen_rect_pos[0] - average_glyph_pos[0],
-    //                                              screen_rect_pos[1] - average_glyph_pos[1]];
-    //             let text_rect_width_clip = (uv_rect.max.x - uv_rect.min.x) * 0.00;
-    //             let text_rect_height_clip = (uv_rect.max.y - uv_rect.min.y) * 0.00;
-
-    //             Some(TextVertex {
-    //                 length: actual_length as f32,
-    //                 height: actual_height as f32,
-    //                 local_position: [corrected_screen_rect_pos[0], corrected_screen_rect_pos[1]],
-    //                 position: global_pos,
-    //                 tex_coords_min: [uv_rect.min.x + text_rect_width_clip, uv_rect.min.y + text_rect_height_clip],
-    //                 tex_coords_max: [uv_rect.max.x - text_rect_width_clip, uv_rect.max.y - text_rect_height_clip],
-    //                 scale: [self.scale.x as f32 * 100.0 / glyph_scale.x, self.scale.y as f32 * 100.0/ glyph_scale.y],
-    //                 transform: mat2_64_to_32(*self.transform.as_ref()),
-    //                 colour: color,
-    //             })
-    //         } else {
-    //             None
-    //         }
-    //     }).collect()
-    // }
-
-    fn get_content(&self) -> &String {&self.content}
 
     fn get_shaders() -> super::shaders::Shaders {
         shaders::Shaders::VertexGeometryFragment(
@@ -154,6 +99,18 @@ impl<'a> RenderText<'a> for PlainText {
             include_str!("text.ges"),
             include_str!("text.fs"))
     }
+
+    fn get_content(&self) -> &String {&self.content}
+}
+
+impl<T: RenderText> GliumRenderable for T {
+    type Vertex = T::TextVert;
+
+    fn get_shaders() -> super::shaders::Shaders {
+        T::get_shaders()
+    }
+
+    fn get_vertex(&self) -> Self::Vertex {panic!("Should be using RenderText's get_vertices()!")}
 }
 
 impl Renderable for PlainText {

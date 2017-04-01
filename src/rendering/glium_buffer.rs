@@ -16,8 +16,12 @@ use rusttype;
 use games::view_details::ViewDetails;
 use utils::transforms_2d;
 
-pub trait GliumBuffer<T> {
-    fn load_renderable(&mut self, _: T);
+pub trait GliumBuffer<T: GliumRenderable> {
+    fn load_renderable(&mut self, renderable: T) {
+        self.get_vertices().push(renderable.get_vertex());
+    }
+
+    fn get_vertices(&mut self) -> &mut Vec<T::Vertex>;
 
     fn draw_at_target<Unif: glium::uniforms::Uniforms> (
         &mut self,
@@ -33,19 +37,14 @@ pub trait GliumBuffer<T> {
 
 #[derive(Debug)]
 pub struct BasicBuffer<T: GliumRenderable> {
-    vertices: Option<Vec<T::Vertex>>,
+    vertices: Vec<T::Vertex>,
     program: Program,
     primitive_type: PrimitiveType,
 }
 
 impl<T: GliumRenderable> GliumBuffer<T> for BasicBuffer<T> {
-    fn load_renderable(&mut self, renderable: T) {
-        if let Some(ref mut vertices) = self.vertices {
-            vertices.push(renderable.get_vertex());
-        }
-        else {
-            self.vertices = Some(vec![renderable.get_vertex()]);
-        };
+    fn get_vertices(&mut self) -> &mut Vec<T::Vertex> {
+        &mut self.vertices
     }
 
     fn draw_at_target<Unif: glium::uniforms::Uniforms> (
@@ -56,8 +55,8 @@ impl<T: GliumRenderable> GliumBuffer<T> for BasicBuffer<T> {
         draw_params: &DrawParameters,
         uniforms: &Unif,
     ) {
-        if let Some(vertices) = self.vertices.take() {
-            let vertex_buffer = glium::VertexBuffer::new(display, &vertices).unwrap();
+        if !self.vertices.is_empty() {
+            let vertex_buffer = glium::VertexBuffer::new(display, &self.vertices).unwrap();
             target.draw(&vertex_buffer,
                         &glium::index::NoIndices(self.primitive_type),
                         &self.program,
@@ -67,14 +66,14 @@ impl<T: GliumRenderable> GliumBuffer<T> for BasicBuffer<T> {
     }
 
     fn flush_buffer(&mut self) {
-        self.vertices = None;
+        self.vertices = Vec::new();
     }
 }
 
 impl<T: GliumRenderable> BasicBuffer<T> {
     pub fn new(display: &GlutinFacade) -> Self {
         BasicBuffer {
-            vertices: None,
+            vertices: Vec::new(),
             program: make_program_from_shaders(T::get_shaders(), display),
             primitive_type: T::get_primitive_type(),
         }

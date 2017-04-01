@@ -7,6 +7,7 @@ pub mod glium_renderer;
 pub mod render_by_shaders;
 mod conversion_tools;
 pub mod glium_buffer;
+pub mod polar_pixel;
 
 use games::view_details;
 

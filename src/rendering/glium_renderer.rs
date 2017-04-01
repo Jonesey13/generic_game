@@ -3,6 +3,8 @@ use super::shaders::make_program_from_shaders;
 use super::rectangle::{Rectangle, RectangleVertex};
 use super::circle::{Circle, CircleVertex};
 use super::text::{RenderText, TextBuffer, PlainText};
+use super::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
+use super::glium_buffer::{GliumBuffer, BasicBuffer};
 use super::renderables::{Renderable, RenderType};
 use super::render_by_shaders::GliumRenderable;
 use glium;
@@ -16,13 +18,13 @@ use num::One;
 use rusttype;
 use games::view_details;
 use utils::transforms_2d;
-use super::glium_buffer::{GliumBuffer, BasicBuffer};
 
 pub struct GliumRenderer<'a> {
     display: Box<GlutinFacade>,
     draw_params: DrawParameters<'a>,
     rect_buffer: BasicBuffer<Rectangle>,
     circ_buffer: BasicBuffer<Circle>,
+    polar_buffer: PolarBuffer,
     text_processor: TextBuffer<'a, PlainText>,
     view_details: view_details::ViewDetails,
 }
@@ -45,6 +47,7 @@ impl<'a> GliumRenderer<'a> {
             draw_params: draw_params,
             rect_buffer: BasicBuffer::<Rectangle>::new(&display),
             circ_buffer: BasicBuffer::<Circle>::new(&display),
+            polar_buffer: PolarBuffer::new(&display),
             text_processor: TextBuffer::new(display),
             view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default())
         }
@@ -53,18 +56,21 @@ impl<'a> GliumRenderer<'a> {
     fn flush_buffers(&mut self) {
         self.rect_buffer.flush_buffer();
         self.circ_buffer.flush_buffer();
+        self.polar_buffer.flush_buffer();
         self.text_processor.flush_buffer();
     }
     
     pub fn create_worldview_mat(view_details: view_details::ViewDetails, aspect_ratio: f64) ->  [[f32;4]; 4] {
-        let view_mat = match view_details {
-            view_details::ViewDetails::TwoDim(ref view) =>
+        let view_mat = match
+            view_details {
+                view_details::ViewDetails::TwoDim(ref view) =>
                 transforms_2d::build_worldview_mat(
                     view.camera_pos,
                     view.viewport_height,
                     aspect_ratio,
                     view.up_vector),
-            view_details::ViewDetails::ThreeDim(_) => panic!("3D mode not supported!")
+                view_details::ViewDetails::ThreeDim(_) => panic!("3D mode not supported!"),
+                _ => Matrix4::one()
         };
         let single_mat: Matrix4<f32> = na::convert(view_mat);
         *single_mat.as_ref()
@@ -77,7 +83,8 @@ impl<'a> Renderer for GliumRenderer<'a> {
             match renderable.get_type() {
                 RenderType::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
                 RenderType::Circ(circle) => self.circ_buffer.load_renderable(circle),
-                RenderType::Text(text) => self.text_processor.load_renderable(text)
+                RenderType::Text(text) => self.text_processor.load_renderable(text),
+                RenderType::PolarPix(polar) => self.polar_buffer.load_renderable(polar)
             }
         }
     }
@@ -98,6 +105,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
         
         self.rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.circ_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+        self.polar_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.text_processor.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         target.finish().unwrap();
         self.flush_buffers();

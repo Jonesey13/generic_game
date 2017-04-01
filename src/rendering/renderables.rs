@@ -1,5 +1,6 @@
 use super::rectangle::Rectangle;
 use super::circle::Circle;
+use super::polar_pixel::PolarPixel;
 use super::text::PlainText;
 
 pub trait Renderable {
@@ -10,5 +11,6 @@ pub trait Renderable {
 pub enum RenderType {
     Rect(Rectangle),
     Circ(Circle),
+    PolarPix(PolarPixel),
     Text(PlainText),
 }
