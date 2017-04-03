@@ -1,7 +1,7 @@
-use super::rectangle::Rectangle;
-use super::circle::Circle;
-use super::polar_pixel::PolarPixel;
-use super::text::PlainText;
+pub use super::rectangle::Rectangle;
+pub use super::circle::Circle;
+pub use super::polar_pixel::PolarPixel;
+pub use super::text::PlainText;
 
 pub trait Renderable {
     fn get_type(&self) -> RenderType;

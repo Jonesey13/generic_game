@@ -22,6 +22,7 @@ mod collision;
 mod clock;
 mod geometry;
 mod utils;
+mod debug;
 
 use na::{Vector2, Vector1, Rotation2};
 use utils::debug::*;
@@ -44,7 +45,9 @@ fn main() {
         //     .add_rect(Vector2::new(-0.5, 0.0), 0.2, 0.2, Rotation2::new(Vector1::new(0.0))).with_velocity(Vector2::new(0.25, 0.0))
         //     .build_game());
     //let game: Box<games::Game> = Box::new(games::input_test_game::InputTestGame::new());
-    let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame::default());
+    //let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame::default());
+
+    let game = Box::new(games::polar_game::PolarGameBuilder::default().build_game());
     let mut handler: Box<Handler> = Box::new(handlerbasic::HandlerBasic::new(renderer, input_handler, game));
 
     handler.init();

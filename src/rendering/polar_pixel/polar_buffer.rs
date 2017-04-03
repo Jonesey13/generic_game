@@ -9,7 +9,7 @@ use rendering::shaders;
 use rendering::glium_buffer::GliumBuffer;
 use rendering::render_by_shaders::GliumRenderable;
 use games::view_details;
-use games::view_details::ViewDetails;
+use games::view_details::{ViewDetails, PolarViewDetails};
 use rendering::shaders::make_program_from_shaders;
 
 pub struct PolarBuffer {
@@ -23,16 +23,31 @@ impl GliumBuffer<PolarPixel> for PolarBuffer {
         &mut self,
         target: &mut Frame,
         display: &GlutinFacade,
-        _: ViewDetails,
+        view_details: ViewDetails,
         draw_params: &DrawParameters,
-        uniforms: &Unif,
+        _: &Unif,
     ) {
         if !self.vertices.is_empty() {
+            let polar_view: PolarViewDetails = match view_details {
+                ViewDetails::Polar(pol_view) => pol_view,
+                _ => panic!("Must use PolarViewDetails with polar pixel rendering elements!")
+            };
+            
             let vertex_buffer = glium::VertexBuffer::new(display, &self.vertices).unwrap();
+
+            let (width, height) = target.get_dimensions();
+            let aspect_ratio = width as f64 / height as f64;
+
+            let uniforms = uniform! {
+                rotation_angle: polar_view.rotation_angle as f32,
+                radial_shift: polar_view.radial_shift as f32,
+                aspect_ratio: aspect_ratio as f32
+            };
+            
             target.draw(&vertex_buffer,
                         &glium::index::NoIndices(self.primitive_type),
                         &self.program,
-                        uniforms,
+                        &uniforms,
                         draw_params).unwrap();
         }
     }

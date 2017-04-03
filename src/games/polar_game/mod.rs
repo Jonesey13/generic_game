@@ -8,6 +8,10 @@ mod enemy;
 mod flare;
 mod sun;
 mod frame;
+pub mod builder;
+pub use self::builder::PolarGameBuilder;
+
+
 use self::player::Player;
 use self::object::{Part,Object,Point,collision};
 use self::flare::Flare;
@@ -57,6 +61,8 @@ impl PolarGame {
             view_details:  Default::default()
         }
     }
+
+    fn update_view_details(&mut self) {}
 }
 
 impl Game for PolarGame {
@@ -112,7 +118,9 @@ impl Game for PolarGame {
         }
         self.state = GameState{player_death: self.player.destroyed,
                                survival_time: new_survival_time,
-                               };
+        };
+
+        self.update_view_details;
     }
 
     fn get_view(&self) -> ViewDetails {
@@ -151,6 +159,16 @@ pub struct GameSetup{
     pub radial_max: f64,
     pub player_start: Point,
     pub player_width: Point,
+}
+
+impl Default for GameSetup {
+    fn default() -> Self {
+        GameSetup {
+            radial_max: 8.0,
+            player_start: Point{x: 4.0, y: 0.75},
+            player_width: Point{x: 0.02, y: 0.01},
+        }
+    }
 }
 
 #[derive(Copy, Clone)]

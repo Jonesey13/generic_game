@@ -3,6 +3,7 @@ Handles the Polar Frame
 */
 
 use super::object::{Part,Point};
+use rendering::PolarPixel;
 
 #[derive(Clone)]
 pub struct PolarFrame{
