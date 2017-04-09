@@ -1,5 +1,5 @@
 use time;
-use utils::debug::*;
+use debug::*;
 
 pub struct Clock {
     name: String,

@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use std::fs::{File, OpenOptions};
 use std::io::{Write, Stderr, Result, stderr};
 pub mod clock;
-mod clockwriter;
+mod clock_writer;
 
 pub static mut DEBUGGER: Debugger = Debugger {
     flags: DEFAULTDEBUG,

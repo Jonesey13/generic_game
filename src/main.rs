@@ -19,19 +19,18 @@ mod input;
 mod handlerbasic;
 mod games;
 mod collision;
-mod clock;
 mod geometry;
 mod utils;
 mod debug;
 
 use na::{Vector2, Vector1, Rotation2};
-use utils::debug::*;
+use debug::*;
 use std::env;
 use std::io::*;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "1");
-    utils::debug::set_flags(DEBUGALL);
+    debug::set_flags(DEBUGALL);
     debug(&format!("Starting Up - Date: {}", time::now_utc().ctime()));
     let error_writer = Box::new(ErrorWriter::new());
     set_panic(Some(error_writer));

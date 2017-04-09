@@ -5,7 +5,7 @@ use geometry::{circle, con_poly, average_vec2};
 use rendering;
 use num::Zero;
 use super::RED;
-use utils::debug::*;
+use debug::*;
 
 pub struct CollRect {
     pub length: f64,

@@ -7,7 +7,7 @@ use geometry::circle::Circle;
 use geometry::con_poly::ConPoly;
 use geometry::line::Line;
 use na::{normalize, Vector2, dot, abs};
-use utils::debug::*;
+use debug::*;
 
 static EPSILON: f64 = 0.0001;
 

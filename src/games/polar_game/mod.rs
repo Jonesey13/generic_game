@@ -120,7 +120,7 @@ impl Game for PolarGame {
                                survival_time: new_survival_time,
         };
 
-        self.update_view_details;
+        self.update_view_details();
     }
 
     fn get_view(&self) -> ViewDetails {
