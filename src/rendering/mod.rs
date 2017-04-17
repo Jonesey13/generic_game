@@ -8,6 +8,7 @@ pub mod render_by_shaders;
 mod conversion_tools;
 pub mod glium_buffer;
 pub mod polar_pixel;
+use glium::backend::glutin_backend::GlutinFacade;
 
 pub use rendering::rectangle::Rectangle;
 pub use rendering::circle::Circle;
@@ -23,6 +24,7 @@ pub trait Renderer {
     fn load_renderables(&mut self, _: Vec<Box<renderables::Renderable>>) {}
     fn render(&mut self) {}
     fn set_worldview(&mut self, _: view_details::ViewDetails) {}
+    fn get_glutin_window(&mut self) -> Option<&mut GlutinFacade> { None }
 }
 
 #[allow(dead_code)]

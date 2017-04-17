@@ -119,5 +119,9 @@ impl<'a> Renderer for GliumRenderer<'a> {
     fn set_worldview(&mut self, view_details: view_details::ViewDetails) {
         self.view_details = view_details;
     }
+
+    fn get_glutin_window(&mut self) -> Option<&mut GlutinFacade> {
+        Some(&mut self.display)
+    }
 }
 

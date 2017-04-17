@@ -24,6 +24,7 @@ mod collision;
 mod geometry;
 mod utils;
 mod debug;
+mod window;
 
 use na::{Vector2, Vector1, Rotation2};
 use debug::*;
@@ -39,6 +40,7 @@ fn main() {
 
     let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((1600, 1024)));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
+    let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
     //let game: Box<games::Game> = Box::new(games::pong::builder::PongBuilder::init().build_game());
     //let game: Box<games::Game> = Box::new(
         // games::physics_test_game::builder::PhysicsTestBuilder::init()
@@ -49,7 +51,7 @@ fn main() {
     //let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame::default());
 
     let game = Box::new(games::polar_game::PolarGameBuilder::default().build_game());
-    let mut handler: Box<Handler> = Box::new(handlerbasic::HandlerBasic::new(renderer, input_handler, game));
+    let mut handler: Box<Handler> = Box::new(handlerbasic::HandlerBasic::new(renderer, input_handler, window_handler, game));
 
     handler.init();
     while !handler.exit() {
