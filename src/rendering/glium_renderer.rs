@@ -18,6 +18,7 @@ use num::One;
 use rusttype;
 use games::view_details;
 use utils::transforms_2d;
+use debug::*;
 
 pub struct GliumRenderer<'a> {
     display: Box<GlutinFacade>,
@@ -79,6 +80,7 @@ impl<'a> GliumRenderer<'a> {
 
 impl<'a> Renderer for GliumRenderer<'a> {
     fn load_renderables(&mut self, renderables: Vec<Box<Renderable>>) {
+        debug_clock_start("Render::glium_load");
         for renderable in renderables {
             match renderable.get_type() {
                 RenderType::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
@@ -87,9 +89,11 @@ impl<'a> Renderer for GliumRenderer<'a> {
                 RenderType::PolarPix(polar) => self.polar_buffer.load_renderable(polar)
             }
         }
+        debug_clock_stop("Render::glium_load");
     }
 
     fn render(&mut self) {
+        debug_clock_start("Render::glium_render");
         let mut target = self.display.draw();
         target.clear_color(0.0, 0.0, 0.0, 1.0);
         target.clear_depth(1.0);
@@ -109,6 +113,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
         self.text_processor.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         target.finish().unwrap();
         self.flush_buffers();
+        debug_clock_stop("Render::glium_render");
     }
 
     fn set_worldview(&mut self, view_details: view_details::ViewDetails) {

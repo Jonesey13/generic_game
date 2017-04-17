@@ -24,14 +24,12 @@ impl Object for Flare{
     }
 
     fn get_render_parts(&self) -> Vec<Part>{
-        let mut part_vec: Vec<Part> = Vec::new();
         let p_shift = Part{
             radial: self.part.radial + Point{x: self.position.x, y: self.position.x},
             angle: self.part.angle + Point{x: self.position.y, y: self.position.y},
             color: self.part.color
         };
-        part_vec.push(p_shift);
-        part_vec
+        vec![p_shift]
     }
 }
 

@@ -56,7 +56,8 @@ impl Game for PrimitiveTestGame {
             position: Vector2::new(0.0, 0.0),
             scale: Vector2::new(1.0, 1.0),
             transform: *Rotation2::new(1.0).matrix(),
-            color: Vector4::new(1.0, 1.0, 1.0, 1.0)
+            color: Vector4::new(1.0, 1.0, 1.0, 1.0),
+            fixed: false
         };
         
         vec![Box::new(rect), Box::new(circ), Box::new(text)]

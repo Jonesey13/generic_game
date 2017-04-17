@@ -69,9 +69,9 @@ pub struct Part {
 impl From<Part> for PolarPixel {
     fn from(pol: Part) -> Self {
         PolarPixel {
-            radial: Vector2::new(pol.radial.x, pol.radial.y),
-            angle: Vector2::new(pol.angle.x, pol.angle.y),
-            color: Vector4::new(pol.color[0], pol.color[1], pol.color[2], pol.color[3])
+            radial: [pol.radial.x, pol.radial.y],
+            angle: [pol.angle.x, pol.angle.y],
+            color: [pol.color[0], pol.color[1], pol.color[2], pol.color[3]]
         }
     }
 }

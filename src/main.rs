@@ -13,6 +13,8 @@ extern crate bitflags;
 extern crate unicode_normalization;
 extern crate rusttype;
 extern crate rand;
+#[macro_use]
+extern crate lazy_static;
 
 mod rendering;
 mod input;
@@ -29,8 +31,8 @@ use std::env;
 use std::io::*;
 
 fn main() {
-    env::set_var("RUST_BACKTRACE", "1");
-    debug::set_flags(DEBUGALL);
+    env::set_var("RUST_BACKTRACE", "full");
+    debug::set_flags(DEFAULTDEBUG);
     debug(&format!("Starting Up - Date: {}", time::now_utc().ctime()));
     let error_writer = Box::new(ErrorWriter::new());
     set_panic(Some(error_writer));
@@ -51,15 +53,19 @@ fn main() {
 
     handler.init();
     while !handler.exit() {
+        debug_clock_start_main();
         handler.update_input();
         handler.update_rendering();
         handler.update_logic();
+        debug_clock_stop_main();
     }
+    handler.on_exit();
 }
 
 /// Handler
 pub trait Handler {
     fn exit(&self) -> bool { false }
+    fn on_exit(&mut self) {}
     fn init(&mut self) {}
     fn update_input(&mut self) {}
     fn update_logic(&mut self) {}

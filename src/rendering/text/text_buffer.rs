@@ -8,12 +8,13 @@ use glium;
 use glium::{Surface, Frame, DrawParameters};
 use glium::backend::glutin_backend::GlutinFacade;
 use std::borrow::Cow;
-use super::{RenderText, TextVertex};
+use super::{RenderText};
 use rendering;
 use rendering::shaders;
 use rendering::glium_buffer::GliumBuffer;
 use rendering::render_by_shaders::GliumRenderable;
 use games::view_details;
+use debug::*;
 
 pub const OPEN_SANS: &'static[u8] = include_bytes!("OpenSans.ttf");
 
@@ -30,7 +31,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
     pub fn new(display: Box<GlutinFacade>) -> Self {
         let dpi_factor = display.get_window().unwrap().hidpi_factor();
 
-        let (cache_width, cache_height) = (512 * dpi_factor as u32, 512 * dpi_factor as u32);
+        let (cache_width, cache_height) = (2048 * dpi_factor as u32, 2048 * dpi_factor as u32);
         let cache = rusttype::gpu_cache::Cache::new(cache_width, cache_height, 0.1, 0.1);
         let cache_tex = glium::texture::Texture2d::with_format(
             &*display,
@@ -105,6 +106,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
     }
 
     fn load_renderable(&mut self, text: T) {
+        debug_clock_start("Render::glium_load::text");
         let glyph_scale = Scale::uniform(256.0 * self.hidpi_factor);
         let glyphs = layout_paragraph(&self.font, glyph_scale, &text.get_content());
         for glyph in &glyphs {
@@ -113,6 +115,8 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
 
         let cache_tex = &mut self.cache_tex;
         let mut text_cache = &mut self.text_cache;
+
+        debug_clock_start("Render::glium_load::text::queue_cache");
         text_cache.cache_queued(
             |rect, data| {
                 cache_tex.main_level().write(glium::Rect {
@@ -128,6 +132,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
                 });
             },
             1).unwrap();
+        debug_clock_stop("Render::glium_load::text::queue_cache");
 
         let glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)> = glyphs
             .iter()
@@ -140,6 +145,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
 
         let mut vertices = text.get_vertices(glyph_pos_data, glyph_scale);
         self.vertices.append(&mut vertices);
+        debug_clock_stop("Render::glium_load::text");
     }
 
     fn get_vertices(&mut self) -> &mut Vec<T::TextVert> {

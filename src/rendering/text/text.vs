@@ -9,6 +9,7 @@ in vec2 tex_coords_max;
 in vec2 scale;
 in mat2 transform;
 in vec4 colour;
+in uint fixed_pos;
 
 out float length_vs;
 out float height_vs;
@@ -19,6 +20,7 @@ out vec2 tex_coords_max_vs;
 out vec2 scale_vs;
 out mat2 transform_vs;
 out vec4 colour_vs;
+out uint fixed_pos_vs;
 
 void main() {
   length_vs = length;
@@ -30,4 +32,5 @@ void main() {
   scale_vs = scale;
   transform_vs = transform;
   colour_vs = colour;
+  fixed_pos_vs = fixed_pos;
 }

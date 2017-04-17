@@ -22,6 +22,7 @@ pub trait Game {
     fn get_view(&self) -> view_details::ViewDetails {
         view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default())
     }
+    fn on_exit(&mut self) {}
 }
 
 #[allow(dead_code)]

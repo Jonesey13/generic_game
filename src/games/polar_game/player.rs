@@ -91,6 +91,10 @@ impl Player{
         center
     }
 
+    pub fn get_width(&self) -> f64 {
+        self.parts[0].angle.y - self.parts[0].angle.x
+    }
+
     pub fn collide(&mut self){
         let mut destructs: Vec<Part> = Vec::new();
         let center = self.get_center();

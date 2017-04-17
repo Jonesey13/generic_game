@@ -21,7 +21,7 @@ impl ClockWriter {
         self.global_clock.start();
     }
 
-    pub fn end(&mut self) {
+    pub fn stop(&mut self) {
         self.global_clock.stop();
         
         let total_time = time::precise_time_s() - self.global_clock.start_time;
@@ -30,6 +30,7 @@ impl ClockWriter {
             debug_clock(&format!("Clock {}: Clocks per second: {}, Longest Clock: {}", "Overall".to_string(), self.global_clock.ticks, self.global_clock.longest_tick));
             self.global_clock.reset();
             self.log_clocks();
+            debug_clock(&format!(""));
             
             for (_, ref mut clock) in self.clocks.iter_mut() {
                 clock.reset();
@@ -38,13 +39,21 @@ impl ClockWriter {
     }
 
     pub fn start_clock(&mut self, clock_name: String) {
-        let clock_exists = self.clocks.get_mut(&clock_name).is_some();
+        let clock_exists = self.clocks.get(&clock_name).is_some();
         
         if clock_exists {
             self.clocks.get_mut(&clock_name).unwrap().start();
         }
         else if let Some(parent_key) = get_parent_key(clock_name.clone()) {
-            self.clocks.insert(clock_name, ClockData::new_parent(parent_key));
+            let parent_exists = self.clocks.get(&parent_key).is_some();
+
+            if parent_exists {
+                self.clocks.get_mut(&parent_key.clone()).unwrap().child_keys.push(clock_name.clone());
+                self.clocks.insert(clock_name, ClockData::new_parent(parent_key));
+            }
+            else {
+                return;
+            }
         }
         else {
             self.clocks.insert(clock_name, ClockData::default());
@@ -77,6 +86,7 @@ struct ClockData {
     start_time: f64,
     parent_key: Option<String>,
     child_keys: Vec<String>,
+    tick_history: Vec<f64>
 }
 
 impl ClockData {
@@ -95,20 +105,25 @@ impl ClockData {
         self.ticks = 0;
         self.longest_tick = 0.0;
         self.last_time = time::precise_time_s();
-        self.start_time = time::precise_time_s();
+        self.start_time = self.last_time;
+        self.tick_history.clear();
     }
 
     pub fn start(&mut self) {
+        let current_time = time::precise_time_s();
+        
         if self.ticks == 0 {
-            self.start_time = time::precise_time_s();
+            self.start_time = current_time;
         }
         
-        self.last_time = time::precise_time_s();
+        self.last_time = current_time;
     }
 
     pub fn stop(&mut self) {
         let cycle_time = time::precise_time_s() - self.last_time;
+
         self.ticks += 1;
+        self.tick_history.push(cycle_time);
 
         if cycle_time > self.longest_tick {
             self.longest_tick = cycle_time;
@@ -116,7 +131,9 @@ impl ClockData {
     }
 
     pub fn log(&self, prefix: String, name: String) {
-        debug(&format!("{} {}: Ticks Per Second: {}; Longest Tick {};", prefix, name, self.ticks, self.longest_tick));
+        let total_time: f64 = self.tick_history.iter().sum();
+        debug(&format!("{}{}: Time Spent: {}; Ticks: {}; Longest Tick: {};",
+                       prefix, get_last_name(name), total_time, self.ticks, self.longest_tick));
     }
 
     pub fn get_child_keys(&self) -> &Vec<String> {
@@ -132,5 +149,11 @@ fn get_parent_key(name: String) -> Option<String> {
     name_components.pop();
     let initial_name = name_components.remove(0);
     let parent_key = name_components.into_iter().fold(initial_name, |acc, name| {acc + "::" + &name});
+    debug(&format!("name: {} Parent_key: {}", name, parent_key));
     Some(parent_key)
+}
+
+fn get_last_name(name: String) -> String {
+    let mut name_components: Vec<String> = name.split("::").map(|s| {s.to_owned()}).collect();
+    name_components.pop().unwrap()
 }

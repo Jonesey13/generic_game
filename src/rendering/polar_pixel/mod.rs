@@ -12,9 +12,9 @@ pub use self::polar_buffer::PolarBuffer;
 
 #[derive(Copy, Clone)]
 pub struct PolarPixel {
-    pub radial: Vector2<f64>,
-    pub angle: Vector2<f64>,
-    pub color: Vector4<f64>
+    pub radial: [f64; 2],
+    pub angle: [f64; 2],
+    pub color: [f64; 4]
 }
 
 impl Renderable for PolarPixel {
@@ -46,9 +46,9 @@ pub struct PolarPixelVertex {
 impl From<PolarPixel> for PolarPixelVertex {
     fn from(pol: PolarPixel) -> Self {
         PolarPixelVertex {
-            radial: *pol.radial.as_ref(),
-            angle: *pol.angle.as_ref(),
-            color: *pol.color.as_ref()
+            radial: pol.radial,
+            angle: pol.angle,
+            color: pol.color
         }
     }
 }

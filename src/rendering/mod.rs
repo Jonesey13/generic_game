@@ -14,6 +14,7 @@ pub use rendering::circle::Circle;
 pub use rendering::text::PlainText;
 pub use rendering::polar_pixel::PolarPixel;
 pub use rendering::renderables::Renderable;
+pub use rendering::renderables::RenderType;
 
 use games::view_details;
 

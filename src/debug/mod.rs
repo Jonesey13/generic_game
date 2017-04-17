@@ -3,12 +3,18 @@ use std::env;
 use std::path::PathBuf;
 use std::fs::{File, OpenOptions};
 use std::io::{Write, Stderr, Result, stderr};
+use std::collections::HashMap;
 pub mod clock;
 mod clock_writer;
+use std::sync::Mutex;
 
 pub static mut DEBUGGER: Debugger = Debugger {
     flags: DEFAULTDEBUG,
 };
+
+lazy_static! {
+    static ref CLOCKWRITER: Mutex<clock_writer::ClockWriter> = Mutex::new(clock_writer::ClockWriter::default());
+}
 
 pub struct Debugger {
     pub flags: DebugFlags,
@@ -26,7 +32,7 @@ bitflags! {
         const DEBUGGAME       = 0b00100000,
         const DEBUGCLOCKS     = 0b01000000,
         const DEBUGALL        = 0b11111111,
-        const DEFAULTDEBUG    = WRITETOFILE.bits | DEBUGGAME.bits,
+        const DEFAULTDEBUG    = WRITETOCONSOLE.bits | DEBUGCLOCKS.bits,
     }
 }
 
@@ -77,6 +83,38 @@ pub fn debug_clock(mes: &str) {
     unsafe {
         if DEBUGGER.flags.intersects(DEBUGCLOCKS) {
             debug(mes);
+        }
+    }
+}
+
+pub fn debug_clock_start(clock_name: &str) {
+    unsafe {
+        if DEBUGGER.flags.intersects(DEBUGCLOCKS) {
+            CLOCKWRITER.lock().unwrap().start_clock(clock_name.to_string());
+        }
+    }
+}
+
+pub fn debug_clock_start_main() {
+    unsafe {
+        if DEBUGGER.flags.intersects(DEBUGCLOCKS) {
+            CLOCKWRITER.lock().unwrap().start();
+        }
+    }
+}
+
+pub fn debug_clock_stop(clock_name: &str) {
+    unsafe {
+        if DEBUGGER.flags.intersects(DEBUGCLOCKS) {
+            CLOCKWRITER.lock().unwrap().stop_clock(clock_name.to_string());
+        }
+    }
+}
+
+pub fn debug_clock_stop_main() {
+    unsafe {
+        if DEBUGGER.flags.intersects(DEBUGCLOCKS) {
+            CLOCKWRITER.lock().unwrap().stop();
         }
     }
 }

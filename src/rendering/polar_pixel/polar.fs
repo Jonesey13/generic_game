@@ -40,9 +40,15 @@ void main()
 
 bool angleCompare(in float ang, in vec2 range)
 {
-   ang -=  floor(ang);
-   range.x -= floor(range.x);
-   range.y -= floor(range.x);
+  ang -= floor(ang);
+
+  if (range.y - range.x >= 0.9999)
+  {
+    return true;
+  }
+  
+  range.y -= floor(range.x);
+  range.x -= floor(range.y);
 
   bool isless = range.x <= range.y;
   if (isless)
@@ -52,5 +58,5 @@ bool angleCompare(in float ang, in vec2 range)
   else
     {
       return ang >= range.x ||  ang <= range.y;
-    }
+    }  
 }

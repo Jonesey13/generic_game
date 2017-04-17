@@ -1,6 +1,6 @@
 use na::{Vector2, Vector4, Matrix2};
 use glium;
-use glium::{Surface, Frame, DrawParameters};
+use glium::{Surface, Frame, DrawParameters, Blend};
 use glium::backend::glutin_backend::GlutinFacade;
 use glium::index::PrimitiveType;
 use super::{PolarPixel, PolarPixelVertex};
@@ -24,7 +24,7 @@ impl GliumBuffer<PolarPixel> for PolarBuffer {
         target: &mut Frame,
         display: &GlutinFacade,
         view_details: ViewDetails,
-        draw_params: &DrawParameters,
+        _: &DrawParameters,
         _: &Unif,
     ) {
         if !self.vertices.is_empty() {
@@ -41,14 +41,20 @@ impl GliumBuffer<PolarPixel> for PolarBuffer {
             let uniforms = uniform! {
                 rotation_angle: polar_view.rotation_angle as f32,
                 radial_shift: polar_view.radial_shift as f32,
-                aspect_ratio: aspect_ratio as f32
+                aspect_ratio: aspect_ratio as f32,
+                tunnel_mode: polar_view.tunnel_mode,
+                length_total: polar_view.length_total as f32,
+                length_circle: polar_view.length_circle as f32
             };
+
+            let mut draw_params =  glium::draw_parameters::DrawParameters::default();
+            draw_params.blend = Blend::alpha_blending();
             
             target.draw(&vertex_buffer,
                         &glium::index::NoIndices(self.primitive_type),
                         &self.program,
                         &uniforms,
-                        draw_params).unwrap();
+                        &draw_params).unwrap();
         }
     }
 

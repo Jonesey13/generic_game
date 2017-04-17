@@ -23,7 +23,7 @@ void main() {
   radial_geom = radial_vertex[0];
   angle_geom = angle_vertex[0];
 
-  if (angle_vertex[0].x - angle_vertex[0].y <= 0.25)
+  if (angle_vertex[0].y - angle_vertex[0].x <= 0.25)
     {
       float angle_first = radians(angle_vertex[0].x * 360);
       float angle_second = radians(angle_vertex[0].y * 360);
