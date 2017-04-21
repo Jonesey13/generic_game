@@ -1,7 +1,13 @@
 pub mod multihandler;
 pub mod keyboard;
 pub mod mouse;
+pub mod joystick;
 use games::GameInput;
+
+pub use self::keyboard::KeyboardInput;
+pub use self::mouse::MouseInput;
+pub use self::joystick::JoystickInput;
+pub use self::joystick::HatSwitch;
 
 pub trait InputHandler {
     fn init(&mut self) {}

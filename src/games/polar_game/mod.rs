@@ -27,6 +27,7 @@ use rand::distributions::IndependentSample;
 use rand::distributions::range::Range;
 use games::{GameInput, Game};
 use input::keyboard::KeyboardInput;
+use input::joystick::JoystickInput;
 use super::view_details::{PolarViewDetails, ViewDetails};
 use rendering::renderables::Renderable;
 use rendering::polar_pixel::PolarPixel;
@@ -86,9 +87,17 @@ impl Game for PolarGame {
     }
 
     fn update_input(&mut self) {
-        self.input_keys.jump_radial = (self.external_input.kbd.up as isize - (self.external_input.kbd.down as isize)) as f64 * 0.25;
-        self.input_keys.jump_angle = (self.external_input.kbd.right as isize - (self.external_input.kbd.left as isize)) as f64 * 0.25;
+        self.input_keys.jump_radial = (self.external_input.kbd.up as isize - (self.external_input.kbd.down as isize)) as f64 * 0.3;
+        
+        if self.external_input.gamepad.y_axis.abs() > 0.1 {
+            self.input_keys.jump_radial = self.external_input.gamepad.y_axis * 0.3;
+        }
+       
+        self.input_keys.jump_angle = (self.external_input.kbd.right as isize - (self.external_input.kbd.left as isize)) as f64 * 0.3;
 
+        if self.external_input.gamepad.x_axis.abs() > 0.1 {
+            self.input_keys.jump_angle = self.external_input.gamepad.x_axis * 0.3;
+        }
         
         match (self.external_input.kbd.p, self.input_keys.pause, self.input_keys.pause_lock) {
             (true, false, false) => { self.input_keys.pause = true; self.input_keys.pause_lock = true; },
@@ -261,8 +270,10 @@ impl Times{
 #[derive(Clone, Default)]
 struct ExternalInput {
     kbd: KeyboardInput,
+    gamepad: JoystickInput
 }
 
 impl GameInput for ExternalInput {
     fn get_kbd_inp<'a>(&'a mut self) -> Option<&'a mut KeyboardInput> { Some(&mut self.kbd) }
+    fn get_joystick_inp<'a>(&'a mut self) -> Option<&'a mut JoystickInput> { Some(&mut self.gamepad) }
 }

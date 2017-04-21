@@ -1,7 +1,9 @@
-use multiinput::manager::{RawInputManager, DeviceType, DeviceStats};
-use multiinput::event::{RawEvent, KeyId, State, MouseButton};
+use multiinput::manager::{RawInputManager, DeviceType, XInputInclude,DeviceStats};
+use multiinput::event::{RawEvent, KeyId, State, MouseButton, Axis};
+use multiinput::devices::HatSwitch;
 use std::collections::HashMap;
 use games::GameInput;
+use input;
 use super::InputHandler;
 
 pub struct MultiInput {
@@ -15,6 +17,9 @@ pub struct RawStates {
     pub key_states: HashMap<Key, bool>,
     pub mouse_button_states: HashMap<MouseAndButton, bool>,
     pub mouse_move_states: HashMap<usize, (i32, i32)>,
+    pub joystick_button_states: HashMap<JoystickButton, bool>,
+    pub joystick_axis_states: HashMap<JoystickAxis, f64>,
+    pub joystick_hatswitch_states: HashMap<JoystickHatSwitch, HatSwitch>,
     device_stats: DeviceStats,
 }
 
@@ -30,12 +35,19 @@ impl RawStates {
 pub struct Key(pub usize, pub KeyId);
 #[derive(Eq, PartialEq, Hash)]
 pub struct MouseAndButton(pub usize, pub MouseButton);
+#[derive(Eq, PartialEq, Hash)]
+pub struct JoystickButton(pub usize, pub usize);
+#[derive(Eq, PartialEq, Hash)]
+pub struct JoystickAxis(pub usize, pub Axis);
+#[derive(Eq, PartialEq, Hash)]
+pub struct JoystickHatSwitch(pub usize);
 
 impl MultiInput {
     pub fn new() -> Self {
         let mut raw_manager = RawInputManager::new().unwrap();
         raw_manager.register_devices(DeviceType::Keyboards);
         raw_manager.register_devices(DeviceType::Mice);
+        raw_manager.register_devices(DeviceType::Joysticks(XInputInclude::True));
         let raw_states = RawStates{
             device_stats: raw_manager.get_device_stats(),
             ..Default::default()
@@ -59,6 +71,12 @@ impl InputHandler for MultiInput {
                     => {raw_states.mouse_button_states.insert(MouseAndButton(num, mouse_button), state == State::Pressed);},
                 RawEvent::MouseMoveEvent(num, x, y)
                     => {raw_states.mouse_move_states.insert(num, (x, y));},
+                RawEvent::JoystickButtonEvent(num, button_num, state)
+                    => {raw_states.joystick_button_states.insert(JoystickButton(num, button_num), state == State::Pressed);},
+                RawEvent::JoystickAxisEvent(num, axis, value)
+                    => {raw_states.joystick_axis_states.insert(JoystickAxis(num, axis), value);},
+                RawEvent::JoystickHatSwitchEvent(num, value)
+                    => {raw_states.joystick_hatswitch_states.insert(JoystickHatSwitch(num), value);},
                 _ => (),
             }
         }
@@ -191,6 +209,73 @@ impl InputHandler for MultiInput {
                     }
                     if let Some(&val) = self.raw_states.mouse_move_states.get(&index) {
                         mouse.movement = val;
+                    }
+                }
+            }
+
+            if let Some(joystick) = input.get_joystick_inp() {
+                for index in 0..self.raw_states.device_stats.number_of_joysticks {
+                    if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 0)) {
+                        joystick.button_1 = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 1)) {
+                        joystick.button_2 = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 2)) {
+                        joystick.button_3 = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 3)) {
+                        joystick.button_4 = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 4)) {
+                        joystick.button_5 = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 5)) {
+                        joystick.button_6 = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 6)) {
+                        joystick.button_7 = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 7)) {
+                        joystick.button_8 = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 8)) {
+                        joystick.button_9 = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 9)) {
+                        joystick.button_10 = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::X)) {
+                        joystick.x_axis = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::Y)) {
+                        joystick.y_axis = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::Z)) {
+                        joystick.z_axis = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::RX)) {
+                        joystick.rx_axis = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::RY)) {
+                        joystick.ry_axis = val;
+                    }
+                    if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::RZ)) {
+                        joystick.rz_axis = val;
+                    }
+                    if let Some(&ref val) = self.raw_states.joystick_hatswitch_states.get(&JoystickHatSwitch(index)) {
+                        let converted_val = match *val {
+                            HatSwitch::Center => input::HatSwitch::Center,
+                            HatSwitch::Up => input::HatSwitch::Up,
+                            HatSwitch::UpRight => input::HatSwitch::UpRight,
+                            HatSwitch::Right => input::HatSwitch::Right,
+                            HatSwitch::DownRight => input::HatSwitch::DownRight,
+                            HatSwitch::Down => input::HatSwitch::Down,
+                            HatSwitch::DownLeft => input::HatSwitch::DownLeft,
+                            HatSwitch::Left => input::HatSwitch::Left,
+                            HatSwitch::UpLeft => input::HatSwitch::UpLeft,
+                        };
+                        joystick.hat_switch = converted_val;
                     }
                 }
             }

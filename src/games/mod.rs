@@ -8,6 +8,7 @@ pub mod polar_game;
 use rendering::renderables::Renderable;
 use input::keyboard::KeyboardInput;
 use input::mouse::MouseInput;
+use input::joystick::JoystickInput;
 use na::{Matrix4, Vector2};
 use num::{One, Zero};
 
@@ -34,6 +35,7 @@ impl Game for GameStub {}
 pub trait GameInput {
     fn get_kbd_inp<'a>(&'a mut self) -> Option<&'a mut KeyboardInput> { None }
     fn get_mouse_inp<'a>(&'a mut self) -> Option<&'a mut MouseInput> { None }
+    fn get_joystick_inp<'a>(&'a mut self) -> Option<&'a mut JoystickInput> { None }
 }
 
 pub struct GameInputStub;

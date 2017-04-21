@@ -14,7 +14,7 @@ impl Clock {
             last_time: 0.0,
             cycle_history: Vec::new(),
         }
-    }
+    }   
 
     pub fn start(&mut self) {
         self.last_time = time::precise_time_s();
