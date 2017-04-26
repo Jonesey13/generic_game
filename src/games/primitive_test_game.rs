@@ -7,6 +7,7 @@ use rendering::renderables::Renderable;
 use rendering::rectangle::Rectangle;
 use rendering::circle::Circle;
 use rendering::text::PlainText;
+use rendering::{BezierRect, BezierQuadControl};
 use input::keyboard::KeyboardInput;
 
 #[allow(dead_code)]
@@ -59,8 +60,15 @@ impl Game for PrimitiveTestGame {
             color: Vector4::new(1.0, 1.0, 1.0, 1.0),
             fixed: false
         };
+
+        let quad_control = BezierQuadControl {
+            one: Vector2::new(0.0, 0.0),
+            two: Vector2::new(0.5, 0.2),
+            three: Vector2::new(1.0, 0.0),
+        };
+        let bez_rect = BezierRect::new(quad_control, Vector2::new(1.0, 1.0), 1.0, Vector2::zero(), Vector4::new(0.0, 0.0, 1.0, 1.0));
         
-        vec![Box::new(rect), Box::new(circ), Box::new(text)]
+        vec![Box::new(rect), Box::new(circ), Box::new(text), Box::new(bez_rect)]
     }
 
     fn get_input<'a>(&'a mut self) -> Option <&'a mut GameInput> {
