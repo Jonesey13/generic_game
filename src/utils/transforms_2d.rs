@@ -34,10 +34,14 @@ pub fn build_worldview_mat(
     position: Vector2<f64>,
     view_height: f64,
     aspect_ratio: f64,
-    up_vector: Vector2<f64>
+    up_vector: Vector2<f64>,
+    use_aspect: bool
 ) -> Matrix4<f64> {
     let trans_mat = translation_mat(position * -1.0);
-    let scaling = Vector2::new(1.0 / aspect_ratio, 1.0) * (1.0 / view_height);
+    let scaling = match use_aspect {
+        true => Vector2::new(1.0 / aspect_ratio, 1.0) * (1.0 / view_height),
+        false => Vector2::new(1.0, 1.0) * (1.0 / view_height)
+    };
     let scale_mat = scaling_mat(scaling);
 
     let rotation_angle = (up_vector.y).atan2(up_vector.x) - PI / 2.0;

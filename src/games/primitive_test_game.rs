@@ -41,15 +41,15 @@ impl Game for PrimitiveTestGame {
     
     fn get_renderables(&self) -> Vec<Box<Renderable>> {
         let rect = Rectangle {
-            length: 0.5,
-            height: 0.5,
+            length: 1.0,
+            height: 1.0,
             rot: Rotation2::new(0.0),
-            pos: Vector3::new(0.25, 0.25, 0.1),
+            pos: Vector3::new(0.0, 0.0, 0.1),
             color: Vector4::new(0.0, 1.0, 0.0, 1.0)
         };
         let circ = Circle {
-            radius: 0.25,
-            pos: Vector3::new(-0.25, -0.25, 0.1),
+            radius: 1.0,
+            pos: Vector3::new(-0.0, -0.0, 0.1),
             color: Vector4::new(1.0, 0.0, 0.0, 1.0)
         };
         let text = PlainText {

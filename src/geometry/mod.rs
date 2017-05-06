@@ -2,6 +2,9 @@ pub mod line;
 pub mod circle;
 pub mod vect;
 pub mod con_poly;
+pub mod bezier_2d;
+pub mod rect;
+pub mod bezier_patch;
 use na::{Vector2, norm, dot};
 use num::Zero;
 

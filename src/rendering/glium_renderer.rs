@@ -35,6 +35,7 @@ pub struct GliumRenderer<'a> {
 impl<'a> GliumRenderer<'a> {
     pub fn new(res: (u32, u32)) -> GliumRenderer<'a> {
         let display = Box::new(glium::glutin::WindowBuilder::new()
+                               //.with_fullscreen(glium::glutin::get_primary_monitor())
                                .with_dimensions(res.0, res.1)
                                //.with_multisampling(4)
                                .build_glium().unwrap());
@@ -73,10 +74,11 @@ impl<'a> GliumRenderer<'a> {
                     view.camera_pos,
                     view.viewport_height,
                     aspect_ratio,
-                    view.up_vector),
+                    view.up_vector,
+                    view.use_aspect_ratio),
                 view_details::ViewDetails::ThreeDim(_) => panic!("3D mode not supported!"),
                 _ => Matrix4::one()
-        };
+            };
         let single_mat: Matrix4<f32> = na::convert(view_mat);
         *single_mat.as_ref()
     }
@@ -114,9 +116,9 @@ impl<'a> Renderer for GliumRenderer<'a> {
         
         self.rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.circ_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
-        self.polar_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.bezier_rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.text_processor.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+        self.polar_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         target.finish().unwrap();
         self.flush_buffers();
         debug_clock_stop("Render::glium_render");

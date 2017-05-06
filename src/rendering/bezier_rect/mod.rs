@@ -8,8 +8,9 @@ use glium;
 use glium::index::PrimitiveType;
 use super::conversion_tools::*;
 use na::normalize;
+use debug::*;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct BezierRect {
     pub control: BezierQuadControl,
     pub vert_dir: Vector2<f64>,
@@ -18,7 +19,7 @@ pub struct BezierRect {
     pub color: Vector4<f64>
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct BezierQuadControl {
     pub one: Vector2<f64>,
     pub two: Vector2<f64>,
@@ -82,7 +83,8 @@ implement_vertex!(BezierRectVertex, c0, c1, c2, vert_dir, width, pos, color);
 
 impl From<BezierRect> for BezierRectVertex {
     fn from(rect: BezierRect) -> Self {
-        BezierRectVertex {
+        //debug(&format!("{:?}", rect));
+        let output = BezierRectVertex {
             c0: *na::convert::<_, Vector2<f32>>(rect.control.one).as_ref(),
             c1: *na::convert::<_, Vector2<f32>>(rect.control.two).as_ref(),
             c2: *na::convert::<_, Vector2<f32>>(rect.control.three).as_ref(),
@@ -90,6 +92,8 @@ impl From<BezierRect> for BezierRectVertex {
             width: rect.width as f32,
             pos: *na::convert::<_, Vector2<f32>>(rect.pos).as_ref(),
             color: *na::convert::<_, Vector4<f32>>(rect.color).as_ref(),
-        }
+        };
+        //debug(&format!("{:?}", output));
+        output
     }
 }
