@@ -17,13 +17,13 @@ lazy_static! {
 }
 
 pub struct Debugger {
-    flags: DebugFlags,
+    pub flags: DebugFlags,
 }
 
 const LOGFILEPATH: &'static str = concat!(env!("CARGO_MANIFEST_DIR"), r"\log.txt");
 
 bitflags! {
-    flags DebugFlags: u32 {
+    pub flags DebugFlags: u32 {
         const WRITETOCONSOLE  = 0b00000001,
         const WRITETOFILE     = 0b00000010,
         const DEBUGCOLLISION  = 0b00000100,
