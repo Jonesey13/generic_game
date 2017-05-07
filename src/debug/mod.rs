@@ -17,7 +17,7 @@ lazy_static! {
 }
 
 pub struct Debugger {
-    pub flags: DebugFlags,
+    flags: DebugFlags,
 }
 
 const LOGFILEPATH: &'static str = concat!(env!("CARGO_MANIFEST_DIR"), r"\log.txt");
