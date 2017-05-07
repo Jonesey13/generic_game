@@ -1,11 +1,11 @@
-use super::Game;
-use super::GameInput;
+use gg::games::Game;
+use gg::games::GameInput;
 use na::{Vector1, Vector2, Vector3, Vector4, Rotation2};
 use num::Zero;
-use rendering::renderables::Renderable;
-use rendering::rectangle::Rectangle;
-use rendering::circle::Circle;
-use input::keyboard::KeyboardInput;
+use gg::rendering::renderables::Renderable;
+use gg::rendering::rectangle::Rectangle;
+use gg::rendering::circle::Circle;
+use gg::input::keyboard::KeyboardInput;
 
 #[allow(dead_code)]
 pub struct InputTestGame {

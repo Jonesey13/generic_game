@@ -2,16 +2,16 @@ pub mod coll_circle;
 pub mod coll_rect;
 pub mod builder;
 
-use collision::{Collider, Collidable, CollResults, CollDetails};
+use gg::collision::{Collider, Collidable, CollResults, CollDetails};
 use na::{Vector1, Vector2, Vector4, Rotation2};
 use self::coll_circle::CollCircle;
 use self::coll_rect::CollRect;
-use games::Game;
-use rendering::renderables::Renderable;
-use geometry::FromAngle;
-use input::mouse::MouseInput;
-use input::keyboard::KeyboardInput;
-use games::GameInput;
+use gg::games::Game;
+use gg::rendering::renderables::Renderable;
+use gg::geometry::FromAngle;
+use gg::input::mouse::MouseInput;
+use gg::input::keyboard::KeyboardInput;
+use gg::games::GameInput;
 
 pub const RED: [f64; 4] = [1.0, 0.0, 0.0, 1.0];
 pub const BLUE: [f64; 4] = [0.0, 0.0, 1.0, 1.0];

@@ -1,14 +1,14 @@
-use super::Game;
-use super::GameInput;
-use super::view_details::{ViewDetails2D, ViewDetails};
+use generic_game::games::Game;
+use generic_game::games::GameInput;
+use generic_game::games::view_details::{ViewDetails2D, ViewDetails};
 use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, Matrix2, Matrix4};
 use num::{Zero, One} ;
-use rendering::renderables::Renderable;
-use rendering::rectangle::Rectangle;
-use rendering::circle::Circle;
-use rendering::text::PlainText;
-use rendering::{BezierRect, BezierQuadControl};
-use input::keyboard::KeyboardInput;
+use generic_game::rendering::renderables::Renderable;
+use generic_game::rendering::rectangle::Rectangle;
+use generic_game::rendering::circle::Circle;
+use generic_game::rendering::text::PlainText;
+use generic_game::rendering::{BezierRect, BezierQuadControl};
+use generic_game::input::keyboard::KeyboardInput;
 
 #[allow(dead_code)]
 #[derive(Default, Clone)]

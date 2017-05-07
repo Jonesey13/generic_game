@@ -1,33 +1,28 @@
-use na::{Vector2, Vector3, Vector4, norm, Rotation2};
-use collision;
-use collision::{CollResults, Collidable, CollObj, CollDetails, ConPolyInfo};
-use geometry::{circle, con_poly, average_vec2};
-use rendering;
+use na::{Vector2, Vector3, Vector4, norm};
+use gg::collision;
+use gg::collision::{CollResults, Collidable, CollObj, CollDetails};
+use gg::geometry::circle;
+use gg::rendering;
 use num::Zero;
 use super::RED;
-use debug::*;
 
-pub struct CollRect {
-    pub length: f64,
-    pub height: f64,
+pub struct CollCircle {
+    pub rad: f64,
     pub pos: Vector2<f64>,
     pub color: Vector4<f64>,
     pub velocity: Vector2<f64>,
-    pub rot: Rotation2<f64>,
     pub coll_results: CollResults<super::PhysicsTestObject>,
-    pub prev: Option<Box<CollRect>>,
+    pub prev: Option<Box<CollCircle>>,
     pub player_controlled: bool
 }
 
-impl Clone for CollRect {
+impl Clone for CollCircle {
     fn clone(&self) -> Self {
-        CollRect {
-            length: self.length,
-            height: self.height,
+        CollCircle {
             pos: self.pos.clone(),
+            rad: self.rad,
             color: self.color.clone(),
             velocity: self.velocity.clone(),
-            rot: self.rot.clone(),
             coll_results: self.coll_results.clone(),
             prev: None,
             player_controlled: self.player_controlled,
@@ -35,13 +30,11 @@ impl Clone for CollRect {
     }
 }
 
-impl CollRect {
-    pub fn new(pos: Vector2<f64>, length: f64, height: f64, rot: Rotation2<f64>, color: Vector4<f64>) -> CollRect {
-        CollRect {
-            length: length,
-            height: height,
+impl CollCircle {
+    pub fn new(pos: Vector2<f64>, rad: f64, color: Vector4<f64>) -> CollCircle {
+        CollCircle {
             pos: pos,
-            rot: rot,
+            rad: rad,
             color: color,
             velocity: Vector2::zero(),
             coll_results: CollResults::no_collision(),
@@ -50,11 +43,9 @@ impl CollRect {
         }
     }
 
-    pub fn render(&self) -> rendering::rectangle::Rectangle {
-        rendering::rectangle::Rectangle  {
-            length: self.length,
-            height: self.height,
-            rot: self.rot,
+    pub fn render(&self) -> rendering::circle::Circle {
+        rendering::circle::Circle {
+            radius: self.rad,
             pos: Vector3::new(self.pos.x, self.pos.y, 0.0),
             color: self.color
         }
@@ -76,10 +67,6 @@ impl CollRect {
         self.pos = pos;
     }
 
-    pub fn rotate_by(&mut self, rot: Rotation2<f64>) {
-        self.rot = rot * self.rot;
-    }
-
     pub fn get_pos(&mut self) -> Vector2<f64> {
         self.pos
     }
@@ -88,15 +75,15 @@ impl CollRect {
         self.velocity.norm()
     }
 
-    pub fn get_current_rect(&self) -> con_poly::ConPoly {
-        con_poly::ConPoly::new_from_rect(self.length, self.height, self.pos, self.rot)
+    pub fn get_current_circle(&self) -> circle::Circle {
+        circle::Circle::new(self.rad, self.pos)
     }
 
-    pub fn get_previous_rect(&self) -> con_poly::ConPoly {
-        if let Some(ref prev_rect) = self.prev {
-            return con_poly::ConPoly::new_from_rect(prev_rect.length, prev_rect.height, prev_rect.pos, prev_rect.rot)
+    pub fn get_previous_circle(&self) -> circle::Circle {
+        if let Some(ref prev_circ) = self.prev {
+            return circle::Circle::new(prev_circ.rad, prev_circ.pos);
         }
-        self.get_current_rect()
+        self.get_current_circle()
     }
 
     pub fn set_speed(&mut self, spd: f64) {
@@ -132,14 +119,10 @@ impl CollRect {
     fn resolve_collision(&mut self) {
         self.color = RED.into();
         let coll_dir = match self.get_collision_details() {
-            Some(CollDetails::ConPoly(ConPolyInfo::CornerInfo(_, dir))) => dir,
-            Some(CollDetails::ConPoly(ConPolyInfo::LineInfo(index, _))) => self.get_current_rect().get_normal(index),
-            Some(CollDetails::ConPoly(ConPolyInfo::SideInfo(index))) => self.get_current_rect().get_normal(index),
-            _ => panic!("unreachable!")
+            Some(CollDetails::Circ(dir)) => dir,
+            other => panic!("Invalid Collision Details for Circ: {:?}", other)
         };
         let speed = self.get_speed();
-
-        debug_coll(&format!("Rectangle Collision with coll_details = {:?}", self.get_collision_details()));
         self.set_velocity(coll_dir * -speed);
         if let Some(ref prev) = self.prev.clone() {
             let collision_time = self.get_collision_time().unwrap();
@@ -149,11 +132,11 @@ impl CollRect {
     }
 }
 
-impl Collidable for CollRect {
+impl Collidable for CollCircle {
     type Data = super::PhysicsTestObject;
 
     fn get_collision_object(&self) -> CollObj {
-        CollObj::ConPoly(self.get_current_rect(), self.get_previous_rect())
+        CollObj::Circ(self.get_current_circle(), self.get_previous_circle())
     }
 
     fn get_collision_results(&self) -> CollResults<Self::Data> {
@@ -164,5 +147,5 @@ impl Collidable for CollRect {
         self.coll_results = new_results;
     }
 
-    fn get_collision_data(&self) -> Self::Data { super::PhysicsTestObject::Rect }
+    fn get_collision_data(&self) -> Self::Data { super::PhysicsTestObject::Circle }
 }

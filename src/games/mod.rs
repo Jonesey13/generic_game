@@ -1,10 +1,7 @@
-pub mod primitive_test_game;
-pub mod pong;
-pub mod input_test_game;
-pub mod physics_test_game;
+//pub mod pong;
 pub mod view_details;
-pub mod polar_game;
-pub mod tree_game;
+//pub mod polar_game;
+//pub mod tree_game;
 
 use rendering::renderables::Renderable;
 use input::keyboard::KeyboardInput;

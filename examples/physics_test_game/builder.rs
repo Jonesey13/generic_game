@@ -4,7 +4,7 @@ use super::{PhysicsTestGame, PhysicsTestGameInput};
 use super::coll_circle::CollCircle;
 use super::coll_rect::CollRect;
 use super::BLUE;
-use collision::Collider;
+use gg::collision::Collider;
 
 pub struct PhysicsTestBuilder {
     curr_circ : Option<CollCircle>,
