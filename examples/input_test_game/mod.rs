@@ -6,10 +6,12 @@ use gg::rendering::renderables::Renderable;
 use gg::rendering::rectangle::Rectangle;
 use gg::rendering::circle::Circle;
 use gg::input::keyboard::KeyboardInput;
+use gg::rendering::{BezierRect, BezierQuadControl};
+use gg::rendering::{BezierSubrect, BezierLogic};
 
 #[allow(dead_code)]
 pub struct InputTestGame {
-    rect_pos: Vector2<f64>,
+    obj_pos: Vector2<f64>,
     user_input: Vector2<isize>,
     external_input: InputGameInput
 }
@@ -17,7 +19,7 @@ pub struct InputTestGame {
 impl InputTestGame {
     pub fn new() -> Self {
         InputTestGame {
-            rect_pos: Vector2::zero(),
+            obj_pos: Vector2::zero(),
             user_input: Vector2::zero(),
             external_input: InputGameInput::default()
         }
@@ -31,20 +33,29 @@ impl Game for InputTestGame {
     }
 
     fn update_logic(&mut self, t_step: f64) {
-        self.rect_pos.x = self.rect_pos.x + (self.user_input.x as f64) * t_step;
-        self.rect_pos.y = self.rect_pos.y + (self.user_input.y as f64) * t_step;
+        self.obj_pos.x = self.obj_pos.x + (self.user_input.x as f64) * t_step;
+        self.obj_pos.y = self.obj_pos.y + (self.user_input.y as f64) * t_step;
     }
 
     fn get_renderables(&self) -> Vec<Box<Renderable>> {
-        let rect = Rectangle {
-            length: 0.5,
-            height: 0.5,
-            rot: Rotation2::new(0.0),
-            pos: Vector3::new(self.rect_pos.x, self.rect_pos.y, 0.0),
-            color: Vector4::new(0.0, 1.0, 0.0, 1.0)
+        let quad_control = BezierQuadControl {
+            one: Vector2::new(0.0, 0.0),
+            two: Vector2::new(0.5, 0.2),
+            three: Vector2::new(1.0, 0.2),
         };
+        let bez_rect = BezierRect::new(quad_control, Vector2::new(0.0, 1.0), 1.0, Vector2::zero(), Vector4::new(0.0, 0.0, 1.0, 1.0));
 
-        vec![Box::new(rect)]
+        let bez_logic = BezierLogic::new(1.0, 2.0, 1.0, 2.0);
+        let bez_subrect = BezierSubrect::new(
+            bez_rect,
+            bez_logic,
+            0.1,
+            0.1,
+            self.obj_pos,
+            Vector4::new(0.5, 0.5, 0.5, 0.5)
+        );
+        
+        vec![/*Box::new(rect), Box::new(circ), Box::new(text), */ Box::new(bez_rect), Box::new(bez_subrect)]
     }
 
     fn get_input<'a>(&'a mut self) -> Option <&'a mut GameInput> {

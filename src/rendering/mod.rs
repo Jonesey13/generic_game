@@ -9,6 +9,7 @@ mod conversion_tools;
 pub mod glium_buffer;
 pub mod polar_pixel;
 pub mod bezier_rect;
+pub mod bezier_subrect;
 use glium::backend::glutin_backend::GlutinFacade;
 
 pub use rendering::rectangle::Rectangle;
@@ -16,6 +17,7 @@ pub use rendering::circle::Circle;
 pub use rendering::text::PlainText;
 pub use rendering::polar_pixel::PolarPixel;
 pub use rendering::bezier_rect::BezierRect;
+pub use rendering::bezier_subrect::{BezierSubrect, BezierLogic};
 pub use rendering::bezier_rect::BezierQuadControl;
 pub use rendering::renderables::Renderable;
 pub use rendering::renderables::RenderType;

@@ -1,13 +1,14 @@
 use generic_game::games::Game;
 use generic_game::games::GameInput;
 use generic_game::games::view_details::{ViewDetails2D, ViewDetails};
-use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, Matrix2, Matrix4};
-use num::{Zero, One} ;
+use na::{Vector2, Vector3, Vector4, Rotation2};
+use num::{Zero};
 use generic_game::rendering::renderables::Renderable;
 use generic_game::rendering::rectangle::Rectangle;
 use generic_game::rendering::circle::Circle;
 use generic_game::rendering::text::PlainText;
 use generic_game::rendering::{BezierRect, BezierQuadControl};
+use generic_game::rendering::{BezierSubrect, BezierLogic};
 use generic_game::input::keyboard::KeyboardInput;
 
 #[allow(dead_code)]
@@ -40,35 +41,45 @@ impl Game for PrimitiveTestGame {
     }
     
     fn get_renderables(&self) -> Vec<Box<Renderable>> {
-        let rect = Rectangle {
-            length: 1.0,
-            height: 1.0,
-            rot: Rotation2::new(0.0),
-            pos: Vector3::new(0.0, 0.0, 0.1),
-            color: Vector4::new(0.0, 1.0, 0.0, 1.0)
-        };
-        let circ = Circle {
-            radius: 1.0,
-            pos: Vector3::new(-0.0, -0.0, 0.1),
-            color: Vector4::new(1.0, 0.0, 0.0, 1.0)
-        };
-        let text = PlainText {
-            content: "hello there!".to_string(),
-            position: Vector2::new(0.0, 0.0),
-            scale: Vector2::new(1.0, 1.0),
-            transform: *Rotation2::new(1.0).matrix(),
-            color: Vector4::new(1.0, 1.0, 1.0, 1.0),
-            fixed: false
-        };
+        // let rect = Rectangle {
+        //     length: 1.0,
+        //     height: 1.0,
+        //     rot: Rotation2::new(0.0),
+        //     pos: Vector3::new(0.0, 0.0, 0.1),
+        //     color: Vector4::new(0.0, 1.0, 0.0, 1.0)
+        // };
+        // let circ = Circle {
+        //     radius: 1.0,
+        //     pos: Vector3::new(-0.0, -0.0, 0.1),
+        //     color: Vector4::new(1.0, 0.0, 0.0, 1.0)
+        // };
+        // let text = PlainText {
+        //     content: "hello there!".to_string(),
+        //     position: Vector2::new(0.0, 0.0),
+        //     scale: Vector2::new(1.0, 1.0),
+        //     transform: *Rotation2::new(1.0).matrix(),
+        //     color: Vector4::new(1.0, 1.0, 1.0, 1.0),
+        //     fixed: false
+        // };
 
         let quad_control = BezierQuadControl {
             one: Vector2::new(0.0, 0.0),
             two: Vector2::new(0.5, 0.2),
-            three: Vector2::new(1.0, 0.0),
+            three: Vector2::new(1.0, 0.2),
         };
-        let bez_rect = BezierRect::new(quad_control, Vector2::new(1.0, 1.0), 1.0, Vector2::zero(), Vector4::new(0.0, 0.0, 1.0, 1.0));
+        let bez_rect = BezierRect::new(quad_control, Vector2::new(0.0, 1.0), 1.0, Vector2::zero(), Vector4::new(0.0, 0.0, 1.0, 1.0));
+
+        let bez_logic = BezierLogic::new(1.0, 1.0, 1.0, 4.0);
+        let bez_subrect = BezierSubrect::new(
+            bez_rect,
+            bez_logic,
+            1.0,
+            1.0,
+            Vector2::new(0.5, 0.0),
+            Vector4::new(0.5, 0.5, 0.5, 0.5)
+        );
         
-        vec![Box::new(rect), Box::new(circ), Box::new(text), Box::new(bez_rect)]
+        vec![/*Box::new(rect), Box::new(circ), Box::new(text), */ Box::new(bez_rect), Box::new(bez_subrect)]
     }
 
     fn get_input<'a>(&'a mut self) -> Option <&'a mut GameInput> {

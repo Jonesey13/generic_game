@@ -7,7 +7,7 @@ use super::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
 use super::glium_buffer::{GliumBuffer, BasicBuffer};
 use super::renderables::{Renderable, RenderType};
 use super::render_by_shaders::GliumRenderable;
-use super::BezierRect;
+use super::{BezierRect, BezierSubrect};
 use glium;
 use glium::Frame;
 use glium::backend::glutin_backend::GlutinFacade;
@@ -27,6 +27,7 @@ pub struct GliumRenderer<'a> {
     rect_buffer: BasicBuffer<Rectangle>,
     circ_buffer: BasicBuffer<Circle>,
     bezier_rect_buffer: BasicBuffer<BezierRect>,
+    bezier_subrect_buffer: BasicBuffer<BezierSubrect>,
     polar_buffer: PolarBuffer,
     text_processor: TextBuffer<'a, PlainText>,
     view_details: view_details::ViewDetails,
@@ -52,6 +53,7 @@ impl<'a> GliumRenderer<'a> {
             rect_buffer: BasicBuffer::<Rectangle>::new(&display),
             circ_buffer: BasicBuffer::<Circle>::new(&display),
             bezier_rect_buffer: BasicBuffer::<BezierRect>::new(&display),
+            bezier_subrect_buffer: BasicBuffer::<BezierSubrect>::new(&display),
             polar_buffer: PolarBuffer::new(&display),
             text_processor: TextBuffer::new(display),
             view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default())
@@ -63,6 +65,7 @@ impl<'a> GliumRenderer<'a> {
         self.circ_buffer.flush_buffer();
         self.polar_buffer.flush_buffer();
         self.bezier_rect_buffer.flush_buffer();
+        self.bezier_subrect_buffer.flush_buffer();
         self.text_processor.flush_buffer();
     }
     
@@ -88,12 +91,14 @@ impl<'a> Renderer for GliumRenderer<'a> {
     fn load_renderables(&mut self, renderables: Vec<Box<Renderable>>) {
         debug_clock_start("Render::glium_load");
         for renderable in renderables {
-            match renderable.get_type() {
-                RenderType::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
-                RenderType::Circ(circle) => self.circ_buffer.load_renderable(circle),
-                RenderType::Text(text) => self.text_processor.load_renderable(text),
-                RenderType::BezierRect(bezier_rect) => self.bezier_rect_buffer.load_renderable(bezier_rect),
-                RenderType::PolarPix(polar) => self.polar_buffer.load_renderable(polar),
+            match
+                renderable.get_type() {
+                    RenderType::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
+                    RenderType::Circ(circle) => self.circ_buffer.load_renderable(circle),
+                    RenderType::Text(text) => self.text_processor.load_renderable(text),
+                    RenderType::BezierRect(bezier_rect) => self.bezier_rect_buffer.load_renderable(bezier_rect),
+                    RenderType::BezierSubrect(bezier_subrect) => self.bezier_subrect_buffer.load_renderable(bezier_subrect),
+                    RenderType::PolarPix(polar) => self.polar_buffer.load_renderable(polar),
             }
         }
         debug_clock_stop("Render::glium_load");
@@ -117,6 +122,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
         self.rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.circ_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.bezier_rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+        self.bezier_subrect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.polar_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.text_processor.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         target.finish().unwrap();
