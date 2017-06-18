@@ -5,8 +5,14 @@ pub mod con_poly;
 pub mod bezier_2d;
 pub mod rect;
 pub mod bezier_patch;
+pub mod interval;
+pub mod interpolate;
 use na::{Vector2, norm, dot};
 use num::Zero;
+
+pub use self::interval::Interval;
+pub use self::line::{Line, line_line_intersect_2d} ;
+pub use self::interpolate::interpolate;
 
 const EPSILON: f64 = 0.0000001;
 
@@ -88,22 +94,6 @@ fn in_zero_one(x: f64) -> bool { x >= 0.0 && x <= 1.0 }
 
 fn in_zero_one_strict(x: f64) -> bool { x > 0.0 + EPSILON && x < 1.0 - EPSILON}
 
-/// For the line beg <=> t=0 and end <=> t=1
-/// For the two values in the DualSoln the first float corresponds to a point on
-/// the first line and the second float the second line
-pub fn line_line_intersect_2d(line1: &line::Line, line2: &line::Line) -> DualSoln {
-    let dir1 = line1.get_diff();
-    let dir2 = line2.get_diff();
-    let normal1 = line1.get_normal();
-    let normal2 = line2.get_normal();
-    if dot(&dir1, &normal2) != 0.0 {
-        let t1 = dot(&(line2.beg - line1.beg), &normal2) / dot(&dir1, &normal2);
-        let t2 = dot(&(line1.beg - line2.beg), &normal1) / dot(&dir2, &normal1);
-        return DualSoln::Two(t1, t2);
-    }
-    DualSoln::None
-}
-
 pub trait HasAngle {
     fn get_angle(&self) -> f64;
 }
@@ -124,10 +114,3 @@ impl FromAngle for Vector2<f64> {
     }
 }
 
-#[test]
-fn line_line_intersect() {
-    let line1 = line::Line::new(Vector2::new(-0.5, 0.0), Vector2::new(0.5, 0.0));
-    let line2 = line::Line::new(Vector2::new(0.3, 1.0), Vector2::new(0.3, -1.0));
-    let soln = line_line_intersect_2d(&line1, &line2);
-    assert!(soln.both_within_zero_one(), "soln: {:?}", soln)
-}

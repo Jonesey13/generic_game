@@ -42,24 +42,21 @@ impl BezierSubrect {
 
 #[derive(Copy, Clone, Debug)]
 pub struct BezierLogic {
-    pub length_left: f64,
-    pub length_right: f64,
-    pub height_left: f64,
-    pub height_right: f64
+    pub length: f64,
+    pub width_left: f64,
+    pub width_right: f64
 }
 
 impl BezierLogic {
     pub fn new (
-        length_left: f64,
-        length_right: f64,
-        height_left: f64,
-        height_right: f64
+        length: f64,
+        width_left: f64,
+        width_right: f64
     ) -> BezierLogic {
         BezierLogic {
-            length_left,
-            length_right,
-            height_left,
-            height_right,
+            length,
+            width_left,
+            width_right,
         }
     }
 }
@@ -95,10 +92,9 @@ pub struct BezierSubrectVertex {
     pub bezier_width: f32,
     pub pos: [f32; 2],
     pub color: [f32; 4],
-    pub logic_length_left: f32,
-    pub logic_length_right: f32,
-    pub logic_height_left: f32,
-    pub logic_height_right: f32,
+    pub logic_length: f32,
+    pub logic_width_left: f32,
+    pub logic_width_right: f32,
     pub length: f32,
     pub height: f32,
     pub sub_pos: [f32; 2]
@@ -113,10 +109,9 @@ implement_vertex!(
     bezier_width,
     pos,
     color,
-    logic_length_left,
-    logic_length_right,
-    logic_height_left,
-    logic_height_right,
+    logic_length,
+    logic_width_left,
+    logic_width_right,
     length,
     height,
     sub_pos,
@@ -131,10 +126,9 @@ impl From<BezierSubrect> for BezierSubrectVertex {
             c2: *na::convert::<_, Vector2<f32>>(rect.bezier.control.three).as_ref(),
             vert_dir: *na::convert::<_, Vector2<f32>>(rect.bezier.vert_dir).as_ref(),
             bezier_width: rect.bezier.width as f32,
-            logic_length_left: rect.logic.length_left as f32,
-            logic_length_right: rect.logic.length_right as f32,
-            logic_height_left: rect.logic.height_left as f32,
-            logic_height_right: rect.logic.height_right as f32,
+            logic_length: rect.logic.length as f32,
+            logic_width_left: rect.logic.width_left as f32,
+            logic_width_right: rect.logic.width_right as f32,
             pos: *na::convert::<_, Vector2<f32>>(rect.bezier.pos).as_ref(),
             color: *na::convert::<_, Vector4<f32>>(rect.color).as_ref(),
             length: rect.length as f32,

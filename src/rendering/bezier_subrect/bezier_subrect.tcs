@@ -7,10 +7,9 @@ in vec2 vert_dir_vs[];
 in float bezier_width_vs[];
 in vec2 pos_vs[];
 in vec4 color_vs[];
-in float logic_length_left_vs[];
-in float logic_length_right_vs[];
-in float logic_height_left_vs[];
-in float logic_height_right_vs[];
+in float logic_length_vs[];
+in float logic_width_left_vs[];
+in float logic_width_right_vs[];
 in float length_vs[];
 in float height_vs[];
 in vec2 sub_pos_vs[];
@@ -24,15 +23,14 @@ out vec2 vert_dir_cs[];
 out float bezier_width_cs[];
 out vec2 pos_cs[];
 out vec4 color_cs[];
-out float logic_length_left_cs[];
-out float logic_length_right_cs[];
-out float logic_height_left_cs[];
-out float logic_height_right_cs[];
+out float logic_length_cs[];
+out float logic_width_left_cs[];
+out float logic_width_right_cs[];
 out float length_cs[];
 out float height_cs[];
 out vec2 sub_pos_cs[];
 
-uniform int tess_level_outer = 10;
+uniform int tess_level_outer = 5;
 uniform int tess_level_inner = 5;
 
 void main() {
@@ -43,10 +41,9 @@ void main() {
   bezier_width_cs[gl_InvocationID] = bezier_width_vs[0];
   pos_cs[gl_InvocationID] = pos_vs[0];
   color_cs[gl_InvocationID] = color_vs[0];
-  logic_length_left_cs[gl_InvocationID] = logic_length_left_vs[0];
-  logic_length_right_cs[gl_InvocationID] = logic_length_right_vs[0];
-  logic_height_left_cs[gl_InvocationID] = logic_height_left_vs[0];
-  logic_height_right_cs[gl_InvocationID] = logic_height_right_vs[0];
+  logic_length_cs[gl_InvocationID] = logic_length_vs[0];
+  logic_width_left_cs[gl_InvocationID] = logic_width_left_vs[0];
+  logic_width_right_cs[gl_InvocationID] = logic_width_right_vs[0];
   length_cs[gl_InvocationID] = length_vs[0];
   height_cs[gl_InvocationID] = height_vs[0];
   sub_pos_cs[gl_InvocationID] = sub_pos_vs[0];

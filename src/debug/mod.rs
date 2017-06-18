@@ -23,16 +23,16 @@ pub struct Debugger {
 const LOGFILEPATH: &'static str = concat!(env!("CARGO_MANIFEST_DIR"), r"\log.txt");
 
 bitflags! {
-    pub flags DebugFlags: u32 {
-        const WRITETOCONSOLE  = 0b00000001,
-        const WRITETOFILE     = 0b00000010,
-        const DEBUGCOLLISION  = 0b00000100,
-        const DEBUGRENDERING  = 0b00001000,
-        const DEBUGINPUT      = 0b00010000,
-        const DEBUGGAME       = 0b00100000,
-        const DEBUGCLOCKS     = 0b01000000,
-        const DEBUGALL        = 0b11111111,
-        const DEFAULTDEBUG    = WRITETOCONSOLE.bits | DEBUGCLOCKS.bits,
+    pub struct DebugFlags: u32 {
+        const WRITETOCONSOLE  = 0b00000001;
+        const WRITETOFILE     = 0b00000010;
+        const DEBUGCOLLISION  = 0b00000100;
+        const DEBUGRENDERING  = 0b00001000;
+        const DEBUGINPUT      = 0b00010000;
+        const DEBUGGAME       = 0b00100000;
+        const DEBUGCLOCKS     = 0b01000000;
+        const DEBUGALL        = 0b11111111;
+        const DEFAULTDEBUG    = WRITETOCONSOLE.bits | DEBUGCLOCKS.bits;
     }
 }
 

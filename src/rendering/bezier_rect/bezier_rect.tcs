@@ -18,7 +18,7 @@ out float width_cs[];
 out vec2 pos_cs[];
 out vec4 color_cs[];
 
-uniform int tess_level_outer = 10;
+uniform int tess_level_outer = 5;
 uniform int tess_level_inner = 5;
 
 void main() {
