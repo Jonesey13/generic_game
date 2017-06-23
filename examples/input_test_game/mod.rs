@@ -45,7 +45,7 @@ impl Game for InputTestGame {
         };
         let bez_rect = BezierRect::new(quad_control, Vector2::new(0.0, 1.0), 1.0, Vector2::zero(), Vector4::new(0.0, 0.0, 1.0, 1.0));
 
-        let bez_logic = BezierLogic::new(1.0, 2.0, 1.0, 2.0);
+        let bez_logic = BezierLogic::new(1.0, 1.0, 2.0);
         let bez_subrect = BezierSubrect::new(
             bez_rect,
             bez_logic,

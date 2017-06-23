@@ -1,4 +1,4 @@
-use na::{Vector1, Vector2, Rotation2, normalize};
+use na::{Vector1, Vector2, Rotation2, normalize, dot};
 use num::Zero;
 use geometry::average_vec2;
 use geometry::line::Line;
@@ -44,6 +44,7 @@ impl ConPoly {
         out
     }
 
+    // Normals face outwards
     pub fn normals(&self) -> Vec<Vector2<f64>> {
         let corners_it_shift = self.corners.iter().cloned().cycle().skip(1);
         self.corners.iter().cloned().zip(corners_it_shift).map(|(beg, end)| {-get_normal_2d(end - beg)}).collect()
@@ -99,10 +100,27 @@ impl ConPoly {
         out.shift_by(shift * time);
         out
     }
+
+    pub fn interior_point_check(&self, point: Vector2<f64>) -> Option<Vector2<f64>> {
+        let mut outside = false;
+        let mut correction = Vector2::zero();
+        
+        for (&side, &normal) in self.sides().iter().zip(self.normals().iter()) {
+            let overlap = dot(&(point - side.beg), &normal);
+            if overlap > 0.0 {
+                correction -= overlap * normal;
+                outside = true;
+            }
+        }
+        match outside {
+            true => Some(correction),
+            false => None
+        }
+    }
 }
 
 #[test]
-fn lazy_evaluation_test() {
-    let new_poly = ConPoly::new_from_rect(1.0, 1.0, Vector2::zero(), Rotation2::new(Vector1::zero()));
-    panic!("Third side is {:?}", new_poly.get_side(3))
+fn point_inside_poly_test() {
+
+
 }
