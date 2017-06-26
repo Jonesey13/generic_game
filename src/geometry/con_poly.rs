@@ -1,4 +1,4 @@
-use na::{Vector1, Vector2, Rotation2, normalize, dot};
+use na::{Vector1, Vector2, Rotation2, norm, dot};
 use num::Zero;
 use geometry::average_vec2;
 use geometry::line::Line;
@@ -27,6 +27,18 @@ impl ConPoly {
         for mut vector in corners.iter_mut() {
             *vector = rot * (*vector - average) + pos;
         }
+        ConPoly {
+            corners: corners
+        }
+    }
+
+    pub fn new_from_lines(lines: Vec<Line>) -> ConPoly {
+        ConPoly {
+            corners: lines.iter().map(|line| {line.beg}).collect()
+        }
+    }
+
+    pub fn new (corners: Vec<Vector2<f64>>) -> ConPoly {
         ConPoly {
             corners: corners
         }
@@ -121,6 +133,20 @@ impl ConPoly {
 
 #[test]
 fn point_inside_poly_test() {
+    let corners = vec![
+        Vector2::new(-1.0, -1.0),
+        Vector2::new(1.0, -1.0),
+        Vector2::new(1.0, 1.0),
+        Vector2::new(-1.0, 1.0)
 
+    ];
+    let test_poly = ConPoly::new(corners);
 
+    let test_point = Vector2::new(1.2,0.2);
+
+    let overlap = test_poly.interior_point_check(test_point);
+
+    assert!(overlap.is_some());
+
+    assert!(norm(&(overlap.unwrap() - Vector2::new(-0.2, 0.0))) < 0.00001);
 }

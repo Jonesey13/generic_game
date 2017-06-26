@@ -51,6 +51,10 @@ impl Line {
             end: self.end + move_vec
         }
     }
+
+    pub fn get_lines_to(&self, other: Line) -> (Line, Line) {
+        (Line::new(self.beg, other.beg), Line::new(self.end, other.end))
+    }
 }
 
 /// For the line beg <=> t=0 and end <=> t=1

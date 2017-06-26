@@ -25,14 +25,24 @@ pub trait Collidable {
 pub enum CollObj {
     None,
     Circ(Circle, Circle),
-    ConPoly(ConPoly, ConPoly)
+    ConPoly(ConPoly, ConPoly),
+    Line(Line, Line),
+    Point(Vector2<f64>, Vector2<f64>)
 }
 
 #[derive(Clone, Debug)]
 pub enum CollDetails {
     None,
+    Point,
+    Line(LineInfo), 
     Circ(Vector2<f64>), // Collision direction, outward from object
-    ConPoly(ConPolyInfo)
+    ConPoly(ConPolyInfo),
+}
+
+#[derive(Clone, Debug)]
+pub enum LineInfo {
+    Point(f64), // Position on line => (0,1)
+    WholeLine // Collision along segment of the line
 }
 
 #[derive(Clone, Debug)]
@@ -117,6 +127,10 @@ impl Collider {
             (&CollObj::Circ(ref n1, ref p1), &CollObj::ConPoly(ref n2, ref p2)) => circ_poly_coll(&n1, &p1, &n2, &p2),
             (&CollObj::ConPoly(ref n1, ref p1), &CollObj::Circ(ref n2, ref p2)) => {let res = circ_poly_coll(&n2, &p2, &n1, &p1); (res.1, res.0)},
             (&CollObj::ConPoly(ref n1, ref p1), &CollObj::ConPoly(ref n2, ref p2)) => poly_poly_coll(&n1, &p1, &n2, &p2),
+            (&CollObj::Line(ref n1, ref p1), &CollObj::ConPoly(ref n2, ref p2)) => {let res = poly_line_coll(&n2, &p2, &n1, &p1); (res.1, res.0)},
+            (&CollObj::ConPoly(ref n1, ref p1), &CollObj::Line(ref n2, ref p2)) => poly_line_coll(&n1, &p1, &n2, &p2),
+            (&CollObj::Point(ref n1, ref p1), &CollObj::ConPoly(ref n2, ref p2)) => {let res = poly_point_coll(&n2, &p2, &n1, &p1); (res.1, res.0)},
+            (&CollObj::ConPoly(ref n1, ref p1), &CollObj::Point(ref n2, ref p2)) => poly_point_coll(&n1, &p1, &n2, &p2),
             _ => (CollResults::no_collision(), CollResults::no_collision()),
         }
     }
@@ -303,6 +317,40 @@ fn poly_poly_coll_sides(poly1: &ConPoly, poly2: &ConPoly, corner_num: usize, sid
     None
 }
 
+pub fn poly_point_coll<T: Clone>(poly_next: &ConPoly, poly_prev: &ConPoly, point_next: &Vector2<f64>, point_prev: &Vector2<f64>)
+                         -> (CollResults<T>, CollResults<T>) {
+    let poly_shift = poly_prev.get_shift(&poly_next);
+
+    let shifted_point_line = Line::new(*point_prev, point_next  - poly_shift);
+
+    if let Some((corner_index, time, side_pos)) = point_side_coll(&shifted_point_line, poly_prev) {
+        let poly_details = CollDetails::ConPoly(ConPolyInfo::LineInfo(corner_index, side_pos));
+        let line_details = CollDetails::Point;
+
+        return (CollResults::collided(poly_details, time), CollResults::collided(line_details, time));
+    }
+    
+    (CollResults::no_collision(), CollResults::no_collision())
+}
+
+pub fn poly_line_coll<T: Clone>(poly_next: &ConPoly, poly_prev: &ConPoly, line_next: &Line, line_prev: &Line)
+                         -> (CollResults<T>, CollResults<T>) {
+    let poly_shift = poly_prev.get_shift(&poly_next);
+
+    let shifted_line_next = line_next.shift_by(poly_shift * -1.0);
+
+    let (start_line, end_line) = line_prev.get_lines_to(shifted_line_next);
+
+    if let Some((corner_index, time, side_pos)) = point_side_coll(&shifted_point_line, poly_prev) {
+        let poly_details = CollDetails::ConPoly(ConPolyInfo::LineInfo(corner_index, side_pos));
+        let line_details = CollDetails::Point;
+
+        return (CollResults::collided(poly_details, time), CollResults::collided(line_details, time));
+    }
+    
+    (CollResults::no_collision(), CollResults::no_collision())
+}
+
 /// Computes earliest collision of a set of points moving with a (static) polygon
 /// Inputs: line_vec -> Vector of lines representing the paths of points
 ///         poly -> polygon
@@ -329,7 +377,6 @@ fn points_side_coll(lines: &Vec<Line>, poly: &ConPoly) -> Option<(usize, usize, 
 /// Output: Some(side number, time of collision, side position) <-> Collision occured
 ///         None <-> No collision
 fn point_side_coll(line: &Line, poly: &ConPoly) -> Option<(usize, f64, f64)> {
-
     let mut collisions: Vec<(usize, f64, f64)> = Vec::new();
 
     for ((index, side), normal) in (0..poly.total_sides()).zip(poly.sides()).zip(poly.normals()) {

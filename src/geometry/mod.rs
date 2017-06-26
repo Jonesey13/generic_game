@@ -13,6 +13,9 @@ use num::Zero;
 pub use self::interval::Interval;
 pub use self::line::{Line, line_line_intersect_2d} ;
 pub use self::interpolate::interpolate;
+pub use self::bezier_patch::BezierPatch;
+pub use self::bezier_2d::BezierQuad;
+pub use self::con_poly::ConPoly;
 
 const EPSILON: f64 = 0.0000001;
 

@@ -3,7 +3,7 @@ pub mod coll_rect;
 pub mod builder;
 
 use gg::collision::{Collider, Collidable, CollResults, CollDetails};
-use na::{Vector1, Vector2, Vector4, Rotation2};
+use na::{Vector2, Rotation2};
 use self::coll_circle::CollCircle;
 use self::coll_rect::CollRect;
 use gg::games::Game;
