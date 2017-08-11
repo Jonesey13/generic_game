@@ -1,7 +1,7 @@
 use na::{Vector2, Vector3, Vector4, norm, Rotation2};
 use gg::collision;
 use gg::collision::{CollResults, Collidable, CollObj, CollDetails, ConPolyInfo};
-use gg::geometry::{circle, con_poly, average_vec2};
+use gg::geometry::{circle, con_poly, average_vec2, Poly};
 use rendering;
 use num::Zero;
 use super::RED;

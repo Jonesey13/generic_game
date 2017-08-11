@@ -24,14 +24,14 @@ pub struct TextBuffer<'a, T: RenderText> {
     program: glium::Program,
     cache_tex: glium::texture::Texture2d,
     font: Font<'a>,
-    hidpi_factor: f32
+    glyph_scale: f32
 }
 
 impl<'a, T: RenderText> TextBuffer<'a, T> {
     pub fn new(display: Box<GlutinFacade>) -> Self {
         let dpi_factor = display.get_window().unwrap().hidpi_factor();
 
-        let (cache_width, cache_height) = (2048 * dpi_factor as u32, 2048 * dpi_factor as u32);
+        let (cache_width, cache_height) = (10000 * dpi_factor as u32, 10000 * dpi_factor as u32);
         let cache = rusttype::gpu_cache::Cache::new(cache_width, cache_height, 0.1, 0.1);
         let cache_tex = glium::texture::Texture2d::with_format(
             &*display,
@@ -50,7 +50,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
             cache_tex: cache_tex,
             program: shaders::make_program_from_shaders(T::get_shaders(), &display),
             font: FontCollection::from_bytes(OPEN_SANS).into_font().unwrap(),
-            hidpi_factor: dpi_factor
+            glyph_scale: 512.0 * dpi_factor
         }
     }
 
@@ -97,8 +97,9 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
                 tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
                 screen_width: width,
                 screen_height: height,
+                max_char_height_pix: self.font.v_metrics(Scale::uniform(self.glyph_scale)).ascent,
                 aspect_ratio: aspect_ratio as f32,
-                world_view: rendering::glium_renderer::GliumRenderer::create_worldview_mat(view_details, aspect_ratio)        
+                world_view: rendering::glium_renderer::GliumRenderer::create_worldview_mat(view_details, aspect_ratio),      
             };
 
             Self::render(&self.vertices, &self.program, target, display, draw_params, &uniforms);
@@ -107,7 +108,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
 
     fn load_renderable(&mut self, text: T) {
         debug_clock_start("Render::glium_load::text");
-        let glyph_scale = Scale::uniform(256.0 * self.hidpi_factor);
+        let glyph_scale = Scale::uniform(self.glyph_scale);
         let glyphs = layout_paragraph(&self.font, glyph_scale, &text.get_content());
         for glyph in &glyphs {
             self.text_cache.queue_glyph(0, glyph.clone());
@@ -143,7 +144,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
                     None
                 }}).collect();
 
-        let mut vertices = text.get_vertices(glyph_pos_data, glyph_scale);
+        let mut vertices = text.get_vertices(glyph_pos_data);
         self.vertices.append(&mut vertices);
         debug_clock_stop("Render::glium_load::text");
     }

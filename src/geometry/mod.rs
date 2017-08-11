@@ -7,6 +7,7 @@ pub mod rect;
 pub mod bezier_patch;
 pub mod interval;
 pub mod interpolate;
+pub mod poly;
 use na::{Vector2, norm, dot};
 use num::Zero;
 
@@ -16,6 +17,7 @@ pub use self::interpolate::interpolate;
 pub use self::bezier_patch::BezierPatch;
 pub use self::bezier_2d::BezierQuad;
 pub use self::con_poly::ConPoly;
+pub use self::poly::Poly;
 
 const EPSILON: f64 = 0.0000001;
 

@@ -24,8 +24,7 @@ pub trait RenderText {
 
     fn get_vertices(
         &self,
-        glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)>,
-        glyph_scale: Scale
+        glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)>
     ) -> Vec<Self::TextVert>;
 
     fn get_content(&self) -> &String;

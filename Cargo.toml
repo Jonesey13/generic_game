@@ -5,7 +5,7 @@ authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 
 [dependencies]
 multiinput = "0.0.6"
-glium = "*"
+glium = "0.16.0"
 nalgebra = "*"
 num = "*"
 time = "*"

@@ -2,7 +2,7 @@ pub mod coll_circle;
 pub mod coll_rect;
 pub mod builder;
 
-use gg::collision::{Collider, Collidable, CollResults, CollDetails};
+use gg::collision::{Collider, Collidable};
 use na::{Vector2, Rotation2};
 use self::coll_circle::CollCircle;
 use self::coll_rect::CollRect;

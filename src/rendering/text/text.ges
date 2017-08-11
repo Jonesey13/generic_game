@@ -1,6 +1,7 @@
 #version 410 core
 uniform uint screen_height;
 uniform uint screen_width;
+uniform float max_char_height_pix;
 uniform mat4 world_view;
 
 in float length_vs[];
@@ -58,13 +59,13 @@ vec4 Transform(in vec2 corner, in vec2 pos, in mat2 transform, in vec2 scale, in
   vec2 scaled_corner = scale * corner;
   if (fixed_pos)
   {
-    vec2 transformed_corner = transform * scaled_corner / vec2(screen_height, screen_height); 
+    vec2 transformed_corner = transform * scaled_corner / max_char_height_pix; 
     vec2 translated = pos + transformed_corner;
     return vec4(translated.x * screen_height / screen_width, translated.y, 0.0, 1.0);
   }
   else
   {
-    vec2 transformed_corner = transform * scaled_corner / vec2(screen_height, screen_height); 
+    vec2 transformed_corner = transform * scaled_corner / max_char_height_pix;
     vec2 translated = pos + transformed_corner;
     return world_view * vec4(translated.xy, 0.0, 1.0);
   }

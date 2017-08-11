@@ -27,8 +27,7 @@ impl RenderText for PlainText {
     
     fn get_vertices(
         &self,
-        glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)>,
-        glyph_scale: Scale
+        glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)>
     ) -> Vec<Self::TextVert>
     {
         let color = [self.color.x as f32,
@@ -68,7 +67,7 @@ impl RenderText for PlainText {
                 position: global_pos,
                 tex_coords_min: [uv_rect.min.x + text_rect_width_clip, uv_rect.min.y + text_rect_height_clip],
                 tex_coords_max: [uv_rect.max.x - text_rect_width_clip, uv_rect.max.y - text_rect_height_clip],
-                scale: [self.scale.x as f32 * 100.0 / glyph_scale.x, self.scale.y as f32 * 100.0/ glyph_scale.y],
+                scale: [self.scale.x as f32, self.scale.y as f32 ],
                 transform: *na::convert::<_, Matrix2<f32>>(self.transform).as_ref(),
                 colour: color,
                 fixed_pos: self.fixed as u32

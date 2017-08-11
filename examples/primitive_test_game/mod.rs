@@ -53,14 +53,14 @@ impl Game for PrimitiveTestGame {
         //     pos: Vector3::new(-0.0, -0.0, 0.1),
         //     color: Vector4::new(1.0, 0.0, 0.0, 1.0)
         // };
-        // let text = PlainText {
-        //     content: "hello there!".to_string(),
-        //     position: Vector2::new(0.0, 0.0),
-        //     scale: Vector2::new(1.0, 1.0),
-        //     transform: *Rotation2::new(1.0).matrix(),
-        //     color: Vector4::new(1.0, 1.0, 1.0, 1.0),
-        //     fixed: false
-        // };
+        let text = PlainText {
+            content: "| 疯狂餐厅胡馨囊".to_string(),
+            position: Vector2::new(0.0, 0.0),
+            scale: Vector2::new(2.0, 2.0),
+            transform: *Rotation2::new(0.0).matrix(),
+            color: Vector4::new(1.0, 1.0, 1.0, 1.0),
+            fixed: false
+        };
 
         let quad_control = BezierQuadControl {
             one: Vector2::new(0.0, 0.0),
@@ -79,7 +79,7 @@ impl Game for PrimitiveTestGame {
             Vector4::new(0.5, 0.5, 0.5, 0.5)
         );
         
-        vec![/*Box::new(rect), Box::new(circ), Box::new(text), */ Box::new(bez_rect), Box::new(bez_subrect)]
+        vec![/*Box::new(rect), Box::new(circ),*/ Box::new(text), Box::new(bez_rect), Box::new(bez_subrect)]
     }
 
     fn get_input<'a>(&'a mut self) -> Option <&'a mut GameInput> {

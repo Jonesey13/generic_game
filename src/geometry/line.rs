@@ -1,5 +1,5 @@
 use na::{Vector2, norm, dot};
-use super::{vect, DualSoln} ;
+use super::{vect, DualSoln, Poly} ;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Line {
@@ -57,6 +57,16 @@ impl Line {
     }
 }
 
+impl Poly for Line {
+    fn get_corners(&self) -> Vec<Vector2<f64>> {
+        vec![self.beg, self.end]
+    }
+    fn set_corners(&mut self, corners: Vec<Vector2<f64>>) {
+        self.beg = corners[0];
+        self.end = corners[1];
+    }
+}
+
 /// For the line beg <=> t=0 and end <=> t=1
 /// For the two values in the DualSoln the first float corresponds to a point on
 /// the first line and the second float the second line
@@ -73,10 +83,14 @@ pub fn line_line_intersect_2d(line1: &Line, line2: &Line) -> DualSoln {
     DualSoln::None
 }
 
-#[test]
-fn line_line_intersect() {
-    let line1 = Line::new(Vector2::new(-0.5, 0.0), Vector2::new(0.5, 0.0));
-    let line2 = Line::new(Vector2::new(0.3, 1.0), Vector2::new(0.3, -1.0));
-    let soln = line_line_intersect_2d(&line1, &line2);
-    assert!(soln.both_within_zero_one(), "soln: {:?}", soln)
+#[cfg(test)]
+mod tests
+{
+    #[test]
+    fn line_line_intersect() {
+        let line1 = Line::new(Vector2::new(-0.5, 0.0), Vector2::new(0.5, 0.0));
+        let line2 = Line::new(Vector2::new(0.3, 1.0), Vector2::new(0.3, -1.0));
+        let soln = line_line_intersect_2d(&line1, &line2);
+        assert!(soln.both_within_zero_one(), "soln: {:?}", soln)
+    }
 }

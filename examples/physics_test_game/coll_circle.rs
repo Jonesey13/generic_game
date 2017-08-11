@@ -1,5 +1,4 @@
-use na::{Vector2, Vector3, Vector4, norm};
-use gg::collision;
+use na::{Vector2, Vector3, Vector4};
 use gg::collision::{CollResults, Collidable, CollObj, CollDetails};
 use gg::geometry::circle;
 use gg::rendering;

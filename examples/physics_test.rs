@@ -4,7 +4,7 @@ extern crate nalgebra as na;
 extern crate time;
 extern crate num;
 
-use na::{Vector2, Vector1, Rotation2};
+use na::{Vector2, Rotation2};
 use gg::debug::*;
 use gg::debug;
 use gg::{rendering, input, window, handlerbasic, Handler, games};
