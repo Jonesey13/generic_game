@@ -5,7 +5,7 @@ use rusttype::gpu_cache::{Cache};
 use rusttype;
 use rusttype::Rect;
 use glium;
-use glium::{Surface, Frame, DrawParameters};
+use glium::{Surface, Frame, DrawParameters, Depth, DepthTest};
 use glium::backend::glutin_backend::GlutinFacade;
 use std::borrow::Cow;
 use super::{RenderText};
@@ -59,7 +59,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
         program: &glium::Program,
         target: &mut Frame,
         display: &GlutinFacade,
-        _: &DrawParameters,
+        draw_params: &DrawParameters,
         uniforms: &Unif)
     {
         let vertex_buffer = glium::VertexBuffer::new(
@@ -72,6 +72,10 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
                     uniforms,
                     &glium::DrawParameters {
                         blend: glium::Blend::alpha_blending(),
+                        depth: Depth {
+                            test: DepthTest::IfLessOrEqual,
+                            write: true,..Default::default()
+                        },
                         ..Default::default()
                     }).unwrap();
 

@@ -7,7 +7,7 @@ uniform mat4 world_view;
 in float length_vs[];
 in float height_vs[];
 in vec2 local_position_vs[];
-in vec2 position_vs[];
+in vec3 position_vs[];
 in vec2 tex_coords_min_vs[];
 in vec2 tex_coords_max_vs[];
 in vec2 scale_vs[];
@@ -15,7 +15,7 @@ in mat2 transform_vs[];
 in vec4 colour_vs[];
 in uint fixed_pos_vs[];
 
-out vec2 rect_pos;
+out vec4 rect_pos;
 out vec4 colour_ges;
 out vec2 tex_pos;
 
@@ -23,7 +23,7 @@ layout(points) in;
 layout(triangle_strip, max_vertices = 4) out;
 
 vec2 Set_Bottom_Left_Position(in vec2 pos, in float length, in float height);
-vec4 Transform(in vec2 corner, in vec2 pos, in mat2 transform, in vec2 scale, in bool fixed_pos);
+vec4 Transform(in vec2 corner, in vec3 pos, in mat2 transform, in vec2 scale, in bool fixed_pos);
 	       
 void main()
 {
@@ -32,22 +32,22 @@ void main()
   bool fixed_pos = bool(fixed_pos_vs[0]);
   gl_Position = Transform(local_pos, position_vs[0], transform_vs[0], scale_vs[0], fixed_pos);
   tex_pos = vec2(tex_coords_min_vs[0].x, tex_coords_max_vs[0].y);
-  rect_pos =  gl_Position.xy;
+  rect_pos =  gl_Position;
   colour_ges = colour_vs[0];
   EmitVertex();
   gl_Position = Transform(local_pos + vec2(length_vs[0], 0.0) , position_vs[0], transform_vs[0], scale_vs[0], fixed_pos);
   tex_pos = vec2(tex_coords_max_vs[0].x, tex_coords_max_vs[0].y);
-  rect_pos =  gl_Position.xy;
+  rect_pos =  gl_Position;
   colour_ges = colour_vs[0];
   EmitVertex();
   gl_Position = Transform(local_pos + vec2(0.0, height_vs[0]), position_vs[0], transform_vs[0], scale_vs[0], fixed_pos);
   tex_pos = vec2(tex_coords_min_vs[0].x, tex_coords_min_vs[0].y);
-  rect_pos = gl_Position.xy;
+  rect_pos = gl_Position;
   colour_ges = colour_vs[0];
   EmitVertex();
   gl_Position = Transform(local_pos + vec2(length_vs[0], height_vs[0]), position_vs[0], transform_vs[0], scale_vs[0], fixed_pos);
   tex_pos = vec2(tex_coords_max_vs[0].x, tex_coords_min_vs[0].y);
-  rect_pos = gl_Position.xy;
+  rect_pos = gl_Position;
   colour_ges = colour_vs[0];
   EmitVertex();
 
@@ -58,18 +58,18 @@ vec2 Set_Bottom_Left_Position(in vec2 pos, in float char_length, in float char_h
       return pos + vec2(- char_length / 2.0, - char_height /2.0);
 }
 
-vec4 Transform(in vec2 corner, in vec2 pos, in mat2 transform, in vec2 scale, in bool fixed_pos)
+vec4 Transform(in vec2 corner, in vec3 pos, in mat2 transform, in vec2 scale, in bool fixed_pos)
 {
   vec2 scaled_corner = scale * corner;
   vec2 transformed_corner = transform * scaled_corner / max_char_height_pix; 
-  vec2 translated = pos + transformed_corner;
+  vec3 translated = pos + vec3(transformed_corner.xy, 0.0);
   if (fixed_pos)
   {
-    return vec4(translated.x * screen_height / screen_width, translated.y, 0.0, 1.0);
+    return vec4(translated.x * screen_height / screen_width, translated.yz, 1.0);
   }
   else
   {
-    return world_view * vec4(translated.xy, 0.0, 1.0);
+    return world_view * vec4(translated.xyz, 1.0);
   }
 }
 

@@ -7,7 +7,7 @@ use glium;
 use glium::Surface;
 use std::borrow::Cow;
 use games::view_details;
-use na::{Vector2, Vector4, Matrix2};
+use na::{Vector2, Vector3, Vector4, Matrix2};
 use na;
 use rendering::text::RenderText;
 use rendering::{shaders, Renderable, RenderType};
@@ -15,7 +15,7 @@ use rendering::{shaders, Renderable, RenderType};
 #[derive(Clone)]
 pub struct PlainText {
     pub content: String,
-    pub position: Vector2<f64>, //Bottom Left
+    pub position: Vector3<f64>,
     pub scale: Vector2<f64>, // Applied First
     pub transform: Matrix2<f64>, //Applied Second
     pub color: Vector4<f64>,
@@ -51,7 +51,7 @@ impl RenderText for PlainText {
                              average_glyph_pos[1] / (glyph_positions.len() as f32)];
         let far_left_pos = glyph_pos_data[0].1.min.x as f32;
         
-        let global_pos = [self.position.x as f32 ,self.position.y as f32];
+        let global_pos = [self.position.x as f32 ,self.position.y as f32, self.position.z as f32];
         glyph_pos_data.iter().map(|&(uv_rect, screen_rect)| {
             let actual_length = screen_rect.max.x - screen_rect.min.x;
             let actual_height = screen_rect.max.y - screen_rect.min.y;
@@ -96,7 +96,7 @@ impl Renderable for PlainText {
 }
 
 impl PlainText {
-    pub fn new_simple_white(content: String, height: f64, position: Vector2<f64>, align: TextAlign) -> PlainText {
+    pub fn new_simple_white(content: String, height: f64, position: Vector3<f64>, align: TextAlign) -> PlainText {
         let scale = Vector2::new(height, height);
         let color = Vector4::new(1.0, 1.0, 1.0, 1.0);
 
@@ -123,7 +123,7 @@ pub struct TextVertex {
     length: f32,
     height: f32,
     local_position: [f32; 2],
-    position: [f32; 2],
+    position: [f32; 3],
     tex_coords_min: [f32; 2],
     tex_coords_max: [f32; 2],
     scale: [f32; 2],

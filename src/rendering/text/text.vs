@@ -3,7 +3,7 @@
 in float length;
 in float height;
 in vec2 local_position;
-in vec2 position;
+in vec3 position;
 in vec2 tex_coords_min;
 in vec2 tex_coords_max;
 in vec2 scale;
@@ -14,7 +14,7 @@ in uint fixed_pos;
 out float length_vs;
 out float height_vs;
 out vec2 local_position_vs;
-out vec2 position_vs;
+out vec3 position_vs;
 out vec2 tex_coords_min_vs;
 out vec2 tex_coords_max_vs;
 out vec2 scale_vs;

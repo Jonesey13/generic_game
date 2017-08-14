@@ -25,7 +25,7 @@ impl Game for PrimitiveTestGame {
         self.user_input.anticlockwise_clockwise = self.external_input.kbd.e as isize - (self.external_input.kbd.q as isize);
     }
 
-    fn update_logic(&mut self, t_step: f64, _: Option<&mut Console>) {
+    fn update_logic(&mut self, t_step: f64) {
         self.view_details.camera_pos.x = self.view_details.camera_pos.x + (self.user_input.right_left as f64) * t_step;
         self.view_details.camera_pos.y = self.view_details.camera_pos.y + (self.user_input.up_down as f64) * t_step;
         self.view_details.viewport_height = self.view_details.viewport_height + (self.user_input.in_out as f64) * t_step;
@@ -53,7 +53,7 @@ impl Game for PrimitiveTestGame {
         // };
         let text = PlainText {
             content: "hello there! |".to_string(),
-            position: Vector2::new(0.0, 0.0),
+            position: Vector3::new(0.0, 0.0, 0.0),
             scale: Vector2::new(0.2, 0.2),
             transform: *Rotation2::new(0.0).matrix(),
             color: Vector4::new(1.0, 1.0, 1.0, 1.0),

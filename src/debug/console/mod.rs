@@ -82,7 +82,7 @@ impl Console {
             ConsolePos::Right => ((2.0 - self.config.console_size) / 2.0, 0.0)                                    
         };
 
-        let pos = Vector3::new(posx, posy, 1.0);
+        let pos = Vector3::new(posx, posy, -1.0);
         let color = 0.2 * Vector4::new(1.0, 1.0, 1.0, 1.0);
 
         Box::new(Rectangle::new_regular_fixed(length, height, pos, color))
@@ -93,7 +93,7 @@ impl Console {
 
         for (index, text) in self.stack.get_recent_entries(self.config.get_total_lines()).enumerate() {
             let pos = self.config.get_root_position() - index as f64 * self.config.line_size * Vector2::y();
-            let plain_text = PlainText::new_simple_white(text.clone(), self.config.line_size, pos, TextAlign::Left);
+            let plain_text = PlainText::new_simple_white(text.clone(), self.config.line_size, Vector3::new(pos.x, pos.y, -1.0), TextAlign::Left);
             output.push(Box::new(plain_text));
         }
 
