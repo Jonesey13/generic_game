@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
+#![feature(conservative_impl_trait)]
 
 extern crate multiinput;
 extern crate nalgebra as na;
@@ -18,6 +19,7 @@ extern crate lazy_static;
 pub mod rendering;
 pub mod input;
 pub mod handlerbasic;
+pub mod handler_basic_with_console;
 pub mod games;
 pub mod collision;
 pub mod geometry;

@@ -1,11 +1,13 @@
 #version 410 core
 uniform mat4 world_view;
+uniform float aspect_ratio;
 
 in float length_vs[];
 in float height_vs[];
 in vec3 pos_vs[];
 in mat2 rot_vs[];
 in vec4 color_vs[];
+in uint fixed_vs[];
 
 out vec2 rect_pos; // Coordinates Inside the Rectangle
 out vec4 color_ges;
@@ -13,25 +15,26 @@ out vec4 color_ges;
 layout(points) in;
 layout(triangle_strip, max_vertices = 4) out;
 
-vec4 Transform(in vec2 corner, in vec3 pos, in mat2 rot);
+vec4 Transform(in vec2 corner, in vec3 pos, in mat2 rot, in bool fixed_pos);
 
 void main()
 {
   vec2 half_length = vec2(length_vs[0] / 2.0, 0.0);
   vec2 half_height = vec2(0.0, height_vs[0] / 2.0);
-  gl_Position = Transform( - half_length - half_height, pos_vs[0], rot_vs[0]);
+  bool fixed_pos = bool(fixed_vs[0]);
+  gl_Position = Transform( - half_length - half_height, pos_vs[0], rot_vs[0], fixed_pos);
   rect_pos =  gl_Position.xy;
   color_ges = color_vs[0];
   EmitVertex();
-  gl_Position = Transform( half_length - half_height, pos_vs[0], rot_vs[0]);
+  gl_Position = Transform( half_length - half_height, pos_vs[0], rot_vs[0], fixed_pos);
   rect_pos =  gl_Position.xy;
   color_ges = color_vs[0];
   EmitVertex();
-  gl_Position = Transform( - half_length + half_height, pos_vs[0], rot_vs[0]);
+  gl_Position = Transform( - half_length + half_height, pos_vs[0], rot_vs[0], fixed_pos);
   rect_pos = gl_Position.xy;
   color_ges = color_vs[0];
   EmitVertex();
-  gl_Position = Transform( half_length + half_height, pos_vs[0], rot_vs[0]);
+  gl_Position = Transform( half_length + half_height, pos_vs[0], rot_vs[0], fixed_pos);
   rect_pos = gl_Position.xy;
   color_ges = color_vs[0];
   EmitVertex();
@@ -39,9 +42,14 @@ void main()
   EndPrimitive();
 }
 
-vec4 Transform(in vec2 corner, in vec3 pos, in mat2 rot)
+vec4 Transform(in vec2 corner, in vec3 pos, in mat2 rot, in bool fixed_pos)
 {
   vec2 rotated_corner = rot * corner;
   vec3 translated = pos + vec3(rotated_corner.xy, 0.0);
-  return world_view * vec4(translated.xyz, 1.0);
+  if(fixed_pos) {
+    return vec4(translated.x / aspect_ratio, translated.yz, 1.0);
+  }
+  else {
+    return world_view * vec4(translated.xyz, 1.0);
+  }
 }

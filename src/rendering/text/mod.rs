@@ -1,7 +1,7 @@
 pub mod text_buffer;
 mod plain_text;
 pub use self::text_buffer::TextBuffer;
-pub use self::plain_text::PlainText;
+pub use self::plain_text::{PlainText, TextAlign};
 
 use na::{Vector2, Vector4, Matrix2};
 use unicode_normalization;

@@ -2,6 +2,7 @@ pub mod multihandler;
 pub mod keyboard;
 pub mod mouse;
 pub mod joystick;
+pub mod bool_switch;
 use games::GameInput;
 
 pub use self::keyboard::KeyboardInput;
@@ -14,6 +15,7 @@ pub trait InputHandler {
     fn receive_input(&mut self) {}
     fn pass_on_input<'a>(&self, Option<&'a mut GameInput>) {}
     fn escape_key_pressed(&self) -> bool { false }
+    fn backtick_key_pressed(&self) -> bool { false }
     fn flush_input(&mut self) {}
 }
 

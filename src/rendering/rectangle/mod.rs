@@ -11,7 +11,42 @@ pub struct Rectangle {
     pub height: f64,  /// y-axis
     pub rot: Rotation2<f64>,  /// anti-clockwise angle w.r.t. positive z-axis
     pub pos: Vector3<f64>,
-    pub color: Vector4<f64>
+    pub color: Vector4<f64>,
+    pub fixed: bool
+}
+
+impl Rectangle {
+    pub fn new_regular(
+            length: f64, 
+            height: f64, 
+            pos: Vector3<f64>, 
+            color: Vector4<f64>
+        ) -> Rectangle {
+        Rectangle {
+            length,
+            height,
+            rot: Rotation2::new(0.0),
+            pos,
+            color,
+            fixed: false
+        }
+    }
+
+    pub fn new_regular_fixed(
+            length: f64, 
+            height: f64, 
+            pos: Vector3<f64>, 
+            color: Vector4<f64>
+        ) -> Rectangle {
+        Rectangle {
+            length,
+            height,
+            rot: Rotation2::new(0.0),
+            pos,
+            color,
+            fixed: true
+        }
+    }
 }
 
 impl Renderable for Rectangle {
@@ -37,10 +72,11 @@ pub struct RectangleVertex {
     pub height: f32,
     pub rot: [[f32; 2]; 2],
     pub pos: [f32; 3],
-    pub color: [f32; 4]
+    pub color: [f32; 4],
+    pub fixed_pos: u32
 }
 
-implement_vertex!(RectangleVertex, length, height, rot, pos, color);
+implement_vertex!(RectangleVertex, length, height, rot, pos, color, fixed_pos);
 
 impl From<Rectangle> for RectangleVertex {
     fn from(rect: Rectangle) -> Self {
@@ -49,7 +85,8 @@ impl From<Rectangle> for RectangleVertex {
             height: rect.height as f32,
             rot: mat2_64_to_32(*rect.rot.matrix().as_ref()),
             pos: vec3_64_to_32(*rect.pos.as_ref()),
-            color: vec4_64_to_32(*rect.color.as_ref())
+            color: vec4_64_to_32(*rect.color.as_ref()),
+            fixed_pos: rect.fixed as u32
         }
     }
 }

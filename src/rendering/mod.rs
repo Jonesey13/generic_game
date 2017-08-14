@@ -14,7 +14,7 @@ use glium::backend::glutin_backend::GlutinFacade;
 
 pub use rendering::rectangle::Rectangle;
 pub use rendering::circle::Circle;
-pub use rendering::text::PlainText;
+pub use rendering::text::{PlainText, TextAlign};
 pub use rendering::polar_pixel::PolarPixel;
 pub use rendering::bezier_rect::BezierRect;
 pub use rendering::bezier_subrect::{BezierSubrect, BezierLogic};

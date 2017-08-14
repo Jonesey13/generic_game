@@ -4,12 +4,13 @@ use multiinput::devices::HatSwitch;
 use std::collections::HashMap;
 use games::GameInput;
 use input;
-use super::InputHandler;
+use super::{InputHandler, bool_switch};
 
 pub struct MultiInput {
     pub raw_states: RawStates,
     raw_manager: RawInputManager,
-    escape_key_flag: bool
+    escape_key_switch: bool_switch::BoolSwitch,
+    backtick_key_switch: bool_switch::BoolSwitch,
 }
 
 #[derive(Default)]
@@ -55,7 +56,8 @@ impl MultiInput {
         MultiInput {
             raw_states: raw_states,
             raw_manager: raw_manager,
-            escape_key_flag: false,
+            escape_key_switch: bool_switch::BoolSwitch::new(),
+            backtick_key_switch: bool_switch::BoolSwitch::new(),            
         }
     }
 }
@@ -83,7 +85,19 @@ impl InputHandler for MultiInput {
 
         for index in 0..raw_states.device_stats.number_of_keyboards {
             if let Some(&state) = raw_states.key_states.get(&Key(index, KeyId::Escape)) {
-                self.escape_key_flag = state;
+                self.escape_key_switch.update_state(state);
+            }
+            else {
+                self.escape_key_switch.clear_switch();
+            }
+        }
+        for index in 0..raw_states.device_stats.number_of_keyboards {
+            if let Some(&state) = raw_states.key_states.get(&Key(index, KeyId::BackTick)) {
+                println!("{:?}", state);
+                self.backtick_key_switch.update_state(state);
+            }
+            else {
+                self.backtick_key_switch.clear_switch();
             }
         }
     }
@@ -287,6 +301,10 @@ impl InputHandler for MultiInput {
     }
 
     fn escape_key_pressed(&self) -> bool {
-        self.escape_key_flag
+        self.escape_key_switch.pressed()
+    }
+
+    fn backtick_key_pressed(&self) -> bool {
+        self.backtick_key_switch.pressed()
     }
 }

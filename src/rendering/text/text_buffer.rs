@@ -50,7 +50,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
             cache_tex: cache_tex,
             program: shaders::make_program_from_shaders(T::get_shaders(), &display),
             font: FontCollection::from_bytes(OPEN_SANS).into_font().unwrap(),
-            glyph_scale: 512.0 * dpi_factor
+            glyph_scale: 128.0 * dpi_factor
         }
     }
 
@@ -109,10 +109,16 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
     fn load_renderable(&mut self, text: T) {
         debug_clock_start("Render::glium_load::text");
         let glyph_scale = Scale::uniform(self.glyph_scale);
+
+        debug_clock_start("Render::glium_load::text::layout_paragraph");
         let glyphs = layout_paragraph(&self.font, glyph_scale, &text.get_content());
+        debug_clock_stop("Render::glium_load::text::layout_paragraph");
+
+        debug_clock_start("Render::glium_load::text::queue_glyph");
         for glyph in &glyphs {
-            self.text_cache.queue_glyph(0, glyph.clone());
+            self.text_cache.queue_glyph(0, glyph);
         }
+        debug_clock_stop("Render::glium_load::text::queue_glyph");
 
         let cache_tex = &mut self.cache_tex;
         let mut text_cache = &mut self.text_cache;
@@ -132,9 +138,10 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
                     format: glium::texture::ClientFormat::U8
                 });
             },
-            1).unwrap();
+            4).unwrap();
         debug_clock_stop("Render::glium_load::text::queue_cache");
 
+        debug_clock_start("Render::glium_load::text::glyph_pos_data");
         let glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)> = glyphs
             .iter()
             .filter_map(|g| {
@@ -143,9 +150,13 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
                 } else {
                     None
                 }}).collect();
+        debug_clock_stop("Render::glium_load::text::glyph_pos_data");                
 
+        debug_clock_start("Render::glium_load::text::get_vertices");
         let mut vertices = text.get_vertices(glyph_pos_data);
         self.vertices.append(&mut vertices);
+        debug_clock_stop("Render::glium_load::text::get_vertices");
+
         debug_clock_stop("Render::glium_load::text");
     }
 

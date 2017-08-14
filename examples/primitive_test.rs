@@ -1,11 +1,12 @@
 #![feature(set_stdio)]
-extern crate generic_game;
+extern crate generic_game as gg;
 extern crate nalgebra as na;
 extern crate time;
 extern crate num;
 
-use generic_game::debug::*;
-use generic_game::{debug, rendering, input, window, handlerbasic, games, Handler};
+use gg::debug::*;
+use gg::{debug, rendering, input, window, games, Handler};
+use gg::handler_basic_with_console::HandlerBasicWithConsole;
 use std::env;
 use std::io::*;
 mod primitive_test_game;
@@ -21,7 +22,7 @@ fn main() {
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
     let game: Box<games::Game> = Box::new(primitive_test_game::PrimitiveTestGame::default());
-    let mut handler: Box<Handler> = Box::new(handlerbasic::HandlerBasic::new(renderer, input_handler, window_handler, game));
+    let mut handler: Box<Handler> = Box::new(HandlerBasicWithConsole::new(renderer, input_handler, window_handler, game));
 
     handler.init();
     while !handler.exit() {

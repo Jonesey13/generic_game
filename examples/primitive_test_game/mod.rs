@@ -1,15 +1,13 @@
-use generic_game::games::Game;
-use generic_game::games::GameInput;
-use generic_game::games::view_details::{ViewDetails2D, ViewDetails};
+use gg::games::Game;
+use gg::games::GameInput;
+use gg::games::view_details::{ViewDetails2D, ViewDetails};
 use na::{Vector2, Vector3, Vector4, Rotation2};
 use num::{Zero};
-use generic_game::rendering::renderables::Renderable;
-use generic_game::rendering::rectangle::Rectangle;
-use generic_game::rendering::circle::Circle;
-use generic_game::rendering::text::PlainText;
-use generic_game::rendering::{BezierRect, BezierQuadControl};
-use generic_game::rendering::{BezierSubrect, BezierLogic};
-use generic_game::input::keyboard::KeyboardInput;
+use gg::rendering::{BezierRect, BezierQuadControl};
+use gg::rendering::{BezierSubrect, BezierLogic};
+use gg::input::keyboard::KeyboardInput;
+use gg::rendering::{PlainText, TextAlign, Circle, Rectangle, Renderable};
+use gg::debug::console::Console;
 
 #[allow(dead_code)]
 #[derive(Default, Clone)]
@@ -27,7 +25,7 @@ impl Game for PrimitiveTestGame {
         self.user_input.anticlockwise_clockwise = self.external_input.kbd.e as isize - (self.external_input.kbd.q as isize);
     }
 
-    fn update_logic(&mut self, t_step: f64) {
+    fn update_logic(&mut self, t_step: f64, _: Option<&mut Console>) {
         self.view_details.camera_pos.x = self.view_details.camera_pos.x + (self.user_input.right_left as f64) * t_step;
         self.view_details.camera_pos.y = self.view_details.camera_pos.y + (self.user_input.up_down as f64) * t_step;
         self.view_details.viewport_height = self.view_details.viewport_height + (self.user_input.in_out as f64) * t_step;
@@ -54,12 +52,13 @@ impl Game for PrimitiveTestGame {
         //     color: Vector4::new(1.0, 0.0, 0.0, 1.0)
         // };
         let text = PlainText {
-            content: "| 疯狂餐厅胡馨囊".to_string(),
+            content: "hello there! |".to_string(),
             position: Vector2::new(0.0, 0.0),
-            scale: Vector2::new(2.0, 2.0),
+            scale: Vector2::new(0.2, 0.2),
             transform: *Rotation2::new(0.0).matrix(),
             color: Vector4::new(1.0, 1.0, 1.0, 1.0),
-            fixed: false
+            fixed: false,
+            align: TextAlign::Left
         };
 
         let quad_control = BezierQuadControl {

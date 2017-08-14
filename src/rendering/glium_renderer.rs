@@ -38,7 +38,7 @@ impl<'a> GliumRenderer<'a> {
         let display = Box::new(glium::glutin::WindowBuilder::new()
                                //.with_fullscreen(glium::glutin::get_primary_monitor())
                                .with_dimensions(res.0, res.1)
-                               //.with_multisampling(4)
+                               .with_multisampling(2)
                                .build_glium().unwrap());
         let draw_params = DrawParameters {
             depth: Depth {

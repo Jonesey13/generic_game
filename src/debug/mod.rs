@@ -6,6 +6,7 @@ use std::io::{Write, Stderr, Result, stderr};
 use std::collections::HashMap;
 pub mod clock;
 mod clock_writer;
+pub mod console;
 use std::sync::Mutex;
 
 pub static mut DEBUGGER: Debugger = Debugger {

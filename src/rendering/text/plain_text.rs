@@ -19,7 +19,8 @@ pub struct PlainText {
     pub scale: Vector2<f64>, // Applied First
     pub transform: Matrix2<f64>, //Applied Second
     pub color: Vector4<f64>,
-    pub fixed: bool
+    pub fixed: bool,
+    pub align: TextAlign
 }
 
 impl RenderText for PlainText {
@@ -48,6 +49,7 @@ impl RenderText for PlainText {
             );
         average_glyph_pos = [average_glyph_pos[0] / (glyph_positions.len() as f32),
                              average_glyph_pos[1] / (glyph_positions.len() as f32)];
+        let far_left_pos = glyph_pos_data[0].1.min.x as f32;
         
         let global_pos = [self.position.x as f32 ,self.position.y as f32];
         glyph_pos_data.iter().map(|&(uv_rect, screen_rect)| {
@@ -55,18 +57,20 @@ impl RenderText for PlainText {
             let actual_height = screen_rect.max.y - screen_rect.min.y;
             let screen_rect_pos = [(screen_rect.min.x + screen_rect.max.x) as f32 / 2.0,
                                    (screen_rect.min.y + screen_rect.max.y) as f32 / 2.0];
-            let corrected_screen_rect_pos = [screen_rect_pos[0] - average_glyph_pos[0],
-                                             screen_rect_pos[1] - average_glyph_pos[1]];
-            let text_rect_width_clip = (uv_rect.max.x - uv_rect.min.x) * 0.00;
-            let text_rect_height_clip = (uv_rect.max.y - uv_rect.min.y) * 0.00;
+            let corrected_screen_rect_pos = match self.align {
+                TextAlign::Center => [screen_rect_pos[0] - average_glyph_pos[0],
+                                      screen_rect_pos[1] - average_glyph_pos[1]],
+                TextAlign::Left => [screen_rect_pos[0] - far_left_pos,
+                                      screen_rect_pos[1] - average_glyph_pos[1]],
+            };
             
             TextVertex {
                 length: actual_length as f32,
                 height: actual_height as f32,
                 local_position: [corrected_screen_rect_pos[0], corrected_screen_rect_pos[1]],
                 position: global_pos,
-                tex_coords_min: [uv_rect.min.x + text_rect_width_clip, uv_rect.min.y + text_rect_height_clip],
-                tex_coords_max: [uv_rect.max.x - text_rect_width_clip, uv_rect.max.y - text_rect_height_clip],
+                tex_coords_min: [uv_rect.min.x, uv_rect.min.y],
+                tex_coords_max: [uv_rect.max.x, uv_rect.max.y],
                 scale: [self.scale.x as f32, self.scale.y as f32 ],
                 transform: *na::convert::<_, Matrix2<f32>>(self.transform).as_ref(),
                 colour: color,
@@ -91,6 +95,29 @@ impl Renderable for PlainText {
     fn get_type(&self) -> RenderType { RenderType::Text(self.clone()) }
 }
 
+impl PlainText {
+    pub fn new_simple_white(content: String, height: f64, position: Vector2<f64>, align: TextAlign) -> PlainText {
+        let scale = Vector2::new(height, height);
+        let color = Vector4::new(1.0, 1.0, 1.0, 1.0);
+
+        PlainText {
+            content,
+            scale,
+            position,
+            transform: Matrix2::identity(),
+            color,
+            fixed: true,
+            align
+        }
+    }
+}
+
+#[derive(Copy, Clone)]
+pub enum TextAlign {
+    Center,
+    Left
+}
+
 #[derive(Copy, Clone)]
 pub struct TextVertex {
     length: f32,
@@ -105,4 +132,16 @@ pub struct TextVertex {
     fixed_pos: u32
 }
 
-implement_vertex!(TextVertex, length, height, local_position, position, tex_coords_min, tex_coords_max, scale, transform, colour, fixed_pos);
+implement_vertex!(
+    TextVertex, 
+    length, 
+    height, 
+    local_position, 
+    position, 
+    tex_coords_min, 
+    tex_coords_max, 
+    scale, 
+    transform, 
+    colour, 
+    fixed_pos
+);
