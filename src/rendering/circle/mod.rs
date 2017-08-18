@@ -29,7 +29,7 @@ impl GliumRenderable for Circle {
             include_str!("circle.fs"))
     }
 
-    fn get_vertex(&self) -> Self::Vertex { self.clone().into() }
+    fn get_vertex(self) -> Vec<Self::Vertex> { vec![self.clone().into()] }
 
     fn get_primitive_type() -> PrimitiveType {
         glium::index::PrimitiveType::Patches{ vertices_per_patch: 1 }

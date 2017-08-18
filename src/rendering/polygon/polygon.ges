@@ -1,0 +1,50 @@
+#version 410 core
+uniform mat4 world_view;
+uniform float aspect_ratio;
+
+in vec2 corner1_vs[];
+in vec2 corner2_vs[];
+in vec2 center_vs[];
+in vec3 pos_vs[];
+in mat2 rot_vs[];
+in vec4 color_vs[];
+in uint fixed_vs[];
+
+out vec2 poly_pos; // Coordinates Inside the polygon
+out vec4 color_ges;
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 3) out;
+
+vec4 Transform(in vec2 corner, in vec3 pos, in mat2 rot, in bool fixed_pos);
+
+void main()
+{
+  bool fixed_pos = bool(fixed_vs[0]);
+  gl_Position = Transform(corner1_vs[0], pos_vs[0], rot_vs[0], fixed_pos);
+  poly_pos =  gl_Position.xy;
+  color_ges = color_vs[0];
+  EmitVertex();
+  gl_Position = Transform(corner2_vs[0], pos_vs[0], rot_vs[0], fixed_pos);
+  poly_pos =  gl_Position.xy;
+  color_ges = color_vs[0];
+  EmitVertex();
+  gl_Position = Transform(center_vs[0], pos_vs[0], rot_vs[0], fixed_pos);
+  poly_pos = gl_Position.xy;
+  color_ges = color_vs[0];
+  EmitVertex();
+
+  EndPrimitive();
+}
+
+vec4 Transform(in vec2 corner, in vec3 pos, in mat2 rot, in bool fixed_pos)
+{
+  vec2 rotated_corner = rot * corner;
+  vec3 translated = pos + vec3(rotated_corner.xy, 0.0);
+  if(fixed_pos) {
+    return vec4(translated.x / aspect_ratio, translated.yz, 1.0);
+  }
+  else {
+    return world_view * vec4(translated.xyz, 1.0);
+  }
+}

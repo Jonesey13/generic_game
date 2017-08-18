@@ -31,7 +31,7 @@ impl GliumRenderable for PolarPixel {
             include_str!("polar.fs"))
     }
 
-    fn get_vertex(&self) -> Self::Vertex { self.clone().into() }
+    fn get_vertex(self) -> Vec<Self::Vertex> { vec![self.clone().into()] }
 }
 
 implement_vertex!(PolarPixelVertex, radial, angle, color);

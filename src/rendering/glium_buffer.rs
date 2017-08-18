@@ -18,7 +18,7 @@ use utils::transforms_2d;
 
 pub trait GliumBuffer<T: GliumRenderable> {
     fn load_renderable(&mut self, renderable: T) {
-        self.get_vertices().push(renderable.get_vertex());
+        self.get_vertices().append(&mut renderable.get_vertex());
     }
 
     fn get_vertices(&mut self) -> &mut Vec<T::Vertex>;

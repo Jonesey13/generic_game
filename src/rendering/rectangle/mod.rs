@@ -63,7 +63,7 @@ impl GliumRenderable for Rectangle {
             include_str!("rectangle.fs"))
     }
 
-    fn get_vertex(&self) -> Self::Vertex { self.clone().into() }
+    fn get_vertex(self) -> Vec<Self::Vertex> { vec![self.clone().into()] }
 }
 
 #[derive(Copy, Clone, Debug)]

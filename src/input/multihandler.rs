@@ -93,7 +93,6 @@ impl InputHandler for MultiInput {
         }
         for index in 0..raw_states.device_stats.number_of_keyboards {
             if let Some(&state) = raw_states.key_states.get(&Key(index, KeyId::BackTick)) {
-                println!("{:?}", state);
                 self.backtick_key_switch.update_state(state);
             }
             else {

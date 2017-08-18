@@ -2,6 +2,7 @@ use super::Renderer;
 use super::shaders::make_program_from_shaders;
 use super::rectangle::{Rectangle, RectangleVertex};
 use super::circle::{Circle, CircleVertex};
+use super::polygon::{Polygon, PolygonVertex};
 use super::text::{RenderText, TextBuffer, PlainText};
 use super::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
 use super::glium_buffer::{GliumBuffer, BasicBuffer};
@@ -26,6 +27,7 @@ pub struct GliumRenderer<'a> {
     draw_params: DrawParameters<'a>,
     rect_buffer: BasicBuffer<Rectangle>,
     circ_buffer: BasicBuffer<Circle>,
+    polygon_buffer: BasicBuffer<Polygon>,
     bezier_rect_buffer: BasicBuffer<BezierRect>,
     bezier_subrect_buffer: BasicBuffer<BezierSubrect>,
     polar_buffer: PolarBuffer,
@@ -52,6 +54,7 @@ impl<'a> GliumRenderer<'a> {
             draw_params: draw_params,
             rect_buffer: BasicBuffer::<Rectangle>::new(&display),
             circ_buffer: BasicBuffer::<Circle>::new(&display),
+            polygon_buffer: BasicBuffer::<Polygon>::new(&display),
             bezier_rect_buffer: BasicBuffer::<BezierRect>::new(&display),
             bezier_subrect_buffer: BasicBuffer::<BezierSubrect>::new(&display),
             polar_buffer: PolarBuffer::new(&display),
@@ -64,6 +67,7 @@ impl<'a> GliumRenderer<'a> {
         self.rect_buffer.flush_buffer();
         self.circ_buffer.flush_buffer();
         self.polar_buffer.flush_buffer();
+        self.polygon_buffer.flush_buffer();
         self.bezier_rect_buffer.flush_buffer();
         self.bezier_subrect_buffer.flush_buffer();
         self.text_processor.flush_buffer();
@@ -99,6 +103,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
                     RenderType::BezierRect(bezier_rect) => self.bezier_rect_buffer.load_renderable(bezier_rect),
                     RenderType::BezierSubrect(bezier_subrect) => self.bezier_subrect_buffer.load_renderable(bezier_subrect),
                     RenderType::PolarPix(polar) => self.polar_buffer.load_renderable(polar),
+                    RenderType::Poly(polygon) => self.polygon_buffer.load_renderable(polygon)
             }
         }
         debug_clock_stop("Render::glium_load");
@@ -121,6 +126,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
         
         self.rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.circ_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+        self.polygon_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);        
         self.bezier_rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.bezier_subrect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
         self.polar_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
@@ -136,6 +142,14 @@ impl<'a> Renderer for GliumRenderer<'a> {
 
     fn get_glutin_window(&mut self) -> Option<&mut GlutinFacade> {
         Some(&mut self.display)
+    }
+
+    fn get_window_spec(&self) -> super::WindowSpec {
+        let (width, height) = self.display.get_window().unwrap().get_inner_size().unwrap();
+
+        super::WindowSpec {
+            aspect_ratio: width as f64 / height as f64
+        }
     }
 }
 

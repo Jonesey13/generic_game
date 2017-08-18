@@ -6,7 +6,7 @@ use num::{Zero};
 use gg::rendering::{BezierRect, BezierQuadControl};
 use gg::rendering::{BezierSubrect, BezierLogic};
 use gg::input::keyboard::KeyboardInput;
-use gg::rendering::{PlainText, TextAlign, Circle, Rectangle, Renderable};
+use gg::rendering::{PlainText, TextAlign, Circle, Rectangle, Renderable, Polygon};
 use gg::debug::console::Console;
 
 #[allow(dead_code)]
@@ -52,7 +52,7 @@ impl Game for PrimitiveTestGame {
         //     color: Vector4::new(1.0, 0.0, 0.0, 1.0)
         // };
         let text = PlainText {
-            content: "hello there! |".to_string(),
+            content: "hello \r there! |".to_string(),
             position: Vector3::new(0.0, 0.0, 0.0),
             scale: Vector2::new(0.2, 0.2),
             transform: *Rotation2::new(0.0).matrix(),
@@ -77,8 +77,18 @@ impl Game for PrimitiveTestGame {
             Vector2::new(0.5, 0.0),
             Vector4::new(0.5, 0.5, 0.5, 0.5)
         );
+
+        let poly_corners = vec![
+            Vector2::new(0.5, 0.5),
+            Vector2::new(0.0, 0.5),
+            Vector2::new(0.0, 0.0),
+            Vector2::new(-0.2, 0.0),
+            Vector2::new(-0.2, -0.2),
+            Vector2::new(0.2, -0.2)
+        ];
+        let poly = Polygon::new_regular(poly_corners, Vector2::zero(), Vector3::zero(), Vector4::new(1.0, 0.0, 0.0, 1.0));
         
-        vec![/*Box::new(rect), Box::new(circ),*/ Box::new(text), Box::new(bez_rect), Box::new(bez_subrect)]
+        vec![/*Box::new(rect), Box::new(circ), Box::new(text), Box::new(bez_rect), Box::new(bez_subrect), */ Box::new(poly)]
     }
 
     fn get_input<'a>(&'a mut self) -> Option <&'a mut GameInput> {

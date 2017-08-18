@@ -18,7 +18,6 @@ impl BoolSwitch {
             (true, _) => {self.press_state = PressState::Pressed; self.switch_flag = None;},
             (false, _) => {self.press_state = PressState::Released; self.switch_flag = None;}
         }
-        println!("{:?}", self.switch_flag);
     }
 
     pub fn switched(&self) -> Option<PressState> {

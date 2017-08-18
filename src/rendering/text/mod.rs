@@ -37,6 +37,6 @@ impl<T: RenderText> GliumRenderable for T {
         T::get_shaders()
     }
 
-    fn get_vertex(&self) -> Self::Vertex {panic!("Should be using RenderText's get_vertices()!")}
+    fn get_vertex(self) -> Vec<Self::Vertex> {panic!("Should be using RenderText's get_vertices()!")}
 }
 

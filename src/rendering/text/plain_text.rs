@@ -110,6 +110,14 @@ impl PlainText {
             align
         }
     }
+
+    pub fn get_number_of_lines(&self) -> usize {
+        self.content.chars().fold(1, |mut acc, char| {if char == '\r' {acc += 1; } acc })
+    }
+
+    pub fn truncate_to_line(&mut self, line: usize) {
+        self.content = self.content.split('\r').take(line).fold("".to_owned(), |acc, s| {acc + "\r" + s});
+    }
 }
 
 #[derive(Copy, Clone)]

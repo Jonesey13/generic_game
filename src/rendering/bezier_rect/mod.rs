@@ -61,7 +61,7 @@ impl GliumRenderable for BezierRect {
             include_str!("bezier_rect.fs"))
     }
 
-    fn get_vertex(&self) -> Self::Vertex { self.clone().into() }
+    fn get_vertex(self) -> Vec<Self::Vertex> { vec![self.clone().into()] }
 
     fn get_primitive_type() -> PrimitiveType {
         glium::index::PrimitiveType::Patches{ vertices_per_patch: 1 }

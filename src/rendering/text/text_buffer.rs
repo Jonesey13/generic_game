@@ -14,9 +14,14 @@ use rendering::shaders;
 use rendering::glium_buffer::GliumBuffer;
 use rendering::render_by_shaders::GliumRenderable;
 use games::view_details;
+use std::sync::Mutex;
 use debug::*;
 
 pub const OPEN_SANS: &'static[u8] = include_bytes!("OpenSans.ttf");
+
+lazy_static! {
+    static ref OPEN_SANS_FONT: Mutex<Font<'static>> = Mutex::new(FontCollection::from_bytes(OPEN_SANS).into_font().unwrap());
+}
 
 pub struct TextBuffer<'a, T: RenderText> {
     vertices: Vec<T::TextVert>,
@@ -59,7 +64,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
         program: &glium::Program,
         target: &mut Frame,
         display: &GlutinFacade,
-        draw_params: &DrawParameters,
+        _: &DrawParameters,
         uniforms: &Unif)
     {
         let vertex_buffer = glium::VertexBuffer::new(
@@ -97,11 +102,12 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
             let aspect_ratio = width as f64 / height as f64;
 
             let cache_tex = &self.cache_tex;
+            let v_metrics = self.font.v_metrics(Scale::uniform(self.glyph_scale));
             let uniforms = uniform! {
                 tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
                 screen_width: width,
                 screen_height: height,
-                max_char_height_pix: self.font.v_metrics(Scale::uniform(self.glyph_scale)).ascent,
+                max_char_height_pix: v_metrics.ascent - v_metrics.descent,
                 aspect_ratio: aspect_ratio as f32,
                 world_view: rendering::glium_renderer::GliumRenderer::create_worldview_mat(view_details, aspect_ratio),      
             };
@@ -112,6 +118,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
 
     fn load_renderable(&mut self, text: T) {
         debug_clock_start("Render::glium_load::text");
+        if text.get_content().len() == 0 {return; }
         let glyph_scale = Scale::uniform(self.glyph_scale);
 
         debug_clock_start("Render::glium_load::text::layout_paragraph");
@@ -179,7 +186,7 @@ fn layout_paragraph<'a>(font: &'a Font,
     use unicode_normalization::UnicodeNormalization;
     let mut result = Vec::new();
     let v_metrics = font.v_metrics(scale);
-    let advance_height = v_metrics.ascent - v_metrics.descent + v_metrics.line_gap;
+    let advance_height = v_metrics.ascent - v_metrics.descent;
     let mut caret = point(0.0, v_metrics.ascent);
     let mut last_glyph_id = None;
     for c in text.nfc() {
