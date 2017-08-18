@@ -8,16 +8,18 @@ use gg::rendering::{BezierSubrect, BezierLogic};
 use gg::input::keyboard::KeyboardInput;
 use gg::rendering::{PlainText, TextAlign, Circle, Rectangle, Renderable, Polygon};
 use gg::debug::console::Console;
+use gg::geometry;
+use gg::rendering::Line;
 
 #[allow(dead_code)]
 #[derive(Default, Clone)]
-pub struct PrimitiveTestGame {
+pub struct RenderableTestGame {
     view_details: ViewDetails2D,
     user_input: UserInput,
     external_input: ExternalInput
 }
 
-impl Game for PrimitiveTestGame {
+impl Game for RenderableTestGame {
     fn update_input(&mut self) {
         self.user_input.right_left = self.external_input.kbd.d as isize - (self.external_input.kbd.a as isize);
         self.user_input.up_down = self.external_input.kbd.w as isize - (self.external_input.kbd.s as isize);
@@ -87,8 +89,16 @@ impl Game for PrimitiveTestGame {
             Vector2::new(0.2, -0.2)
         ];
         let poly = Polygon::new_regular(poly_corners, Vector2::zero(), Vector3::zero(), Vector4::new(1.0, 0.0, 0.0, 1.0));
+
+        let line = Line::new_rounded(
+            Vector2::new(-0.5, -0.5),
+            Vector2::new(0.5, -0.25),
+            0.05,
+            Vector4::new(0.0, 0.5, 0.0, 1.0),
+            0.0
+        );
         
-        vec![/*Box::new(rect), Box::new(circ), Box::new(text), Box::new(bez_rect), Box::new(bez_subrect), */ Box::new(poly)]
+        vec![/*Box::new(rect), Box::new(circ), Box::new(text), Box::new(bez_rect), Box::new(bez_subrect), */ Box::new(poly), Box::new(line)]
     }
 
     fn get_input<'a>(&'a mut self) -> Option <&'a mut GameInput> {

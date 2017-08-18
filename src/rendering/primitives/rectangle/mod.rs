@@ -8,7 +8,7 @@ use rendering::shaders::Shaders;
 pub struct Rectangle {
     pub length: f64,  /// x-axis
     pub height: f64,  /// y-axis
-    pub rot: Rotation2<f64>,  /// anti-clockwise angle w.r.t. positive z-axis
+    pub rot: Rotation2<f64>,
     pub pos: Vector3<f64>,
     pub color: Vector4<f64>,
     pub fixed: bool

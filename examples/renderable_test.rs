@@ -9,7 +9,7 @@ use gg::{debug, rendering, input, window, games, Handler};
 use gg::handler_basic_with_console::HandlerBasicWithConsole;
 use std::env;
 use std::io::*;
-mod primitive_test_game;
+mod renderable_test_game;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "full");
@@ -21,7 +21,7 @@ fn main() {
     let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((1600, 1024)));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
-    let game: Box<games::Game> = Box::new(primitive_test_game::PrimitiveTestGame::default());
+    let game: Box<games::Game> = Box::new(renderable_test_game::RenderableTestGame::default());
     let mut handler: Box<Handler> = Box::new(HandlerBasicWithConsole::new(renderer, input_handler, window_handler, game));
 
     handler.init();
