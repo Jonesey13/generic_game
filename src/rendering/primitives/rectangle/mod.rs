@@ -1,9 +1,8 @@
-use na::{Vector1, Vector3, Vector4, Rotation2};
+use na::{Vector1, Vector3, Vector4, Rotation2, Matrix2, convert};
 use num::Zero;
-use super::renderables::{Renderable, RenderType};
-use super::render_by_shaders::GliumRenderable;
-use super::shaders::Shaders;
-use super::conversion_tools::*;
+use rendering::primitives::Primitive;
+use rendering::render_by_shaders::GliumPrimitive;
+use rendering::shaders::Shaders;
 
 #[derive(Copy, Clone)]
 pub struct Rectangle {
@@ -49,11 +48,7 @@ impl Rectangle {
     }
 }
 
-impl Renderable for Rectangle {
-    fn get_type(&self) -> RenderType { RenderType::Rect(self.clone()) }
-}
-
-impl GliumRenderable for Rectangle {
+impl GliumPrimitive for Rectangle {
     type Vertex = RectangleVertex;
 
     fn get_shaders() -> Shaders {
@@ -83,9 +78,9 @@ impl From<Rectangle> for RectangleVertex {
         RectangleVertex {
             length: rect.length as f32,
             height: rect.height as f32,
-            rot: mat2_64_to_32(*rect.rot.matrix().as_ref()),
-            pos: vec3_64_to_32(*rect.pos.as_ref()),
-            color: vec4_64_to_32(*rect.color.as_ref()),
+            rot: *convert::<_, Matrix2<f32>>(*rect.rot.matrix()).as_ref(),
+            pos: *convert::<_, Vector3<f32>>(rect.pos).as_ref(),
+            color: *convert::<_, Vector4<f32>>(rect.color).as_ref(),
             fixed_pos: rect.fixed as u32
         }
     }

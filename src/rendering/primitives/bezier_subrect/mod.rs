@@ -1,12 +1,10 @@
 use na;
 use na::{Vector2, Matrix2, Vector4, Rotation2};
 use num::Zero;
-use super::renderables::{Renderable, RenderType, BezierRect, Rectangle};
-use super::render_by_shaders::GliumRenderable;
-use super::shaders::Shaders;
+use rendering::primitives::{Primitive, BezierRect, Rectangle};
+use rendering::render_by_shaders::GliumPrimitive;
+use rendering::shaders::Shaders;
 use glium;
-use glium::index::PrimitiveType;
-use super::conversion_tools::*;
 use na::normalize;
 use debug::*;
 
@@ -61,11 +59,7 @@ impl BezierLogic {
     }
 }
 
-impl Renderable for BezierSubrect {
-    fn get_type(&self) -> RenderType { RenderType::BezierSubrect(self.clone()) }
-}
-
-impl GliumRenderable for BezierSubrect {
+impl GliumPrimitive for BezierSubrect {
     type Vertex = BezierSubrectVertex;
 
     fn get_shaders() -> Shaders {
@@ -78,7 +72,7 @@ impl GliumRenderable for BezierSubrect {
 
     fn get_vertex(self) -> Vec<Self::Vertex> { vec![self.clone().into()] }
 
-    fn get_primitive_type() -> PrimitiveType {
+    fn get_primitive_type() -> glium::index::PrimitiveType {
         glium::index::PrimitiveType::Patches{ vertices_per_patch: 1 }
     }
 }

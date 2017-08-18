@@ -1,11 +1,9 @@
-use na::{Vector3, Vector4};
+use na::{Vector3, Vector4, convert};
 use num::Zero;
-use super::renderables::{Renderable, RenderType};
-use super::render_by_shaders::GliumRenderable;
-use super::shaders::Shaders;
+use rendering::primitives::Primitive;
+use rendering::render_by_shaders::GliumPrimitive;
+use rendering::shaders::Shaders;
 use glium;
-use glium::index::PrimitiveType;
-use super::conversion_tools::*;
 
 #[derive(Copy, Clone)]
 pub struct Circle {
@@ -14,11 +12,7 @@ pub struct Circle {
     pub color: Vector4<f64>
 }
 
-impl Renderable for Circle {
-    fn get_type(&self) -> RenderType { RenderType::Circ(self.clone()) }
-}
-
-impl GliumRenderable for Circle {
+impl GliumPrimitive for Circle {
     type Vertex = CircleVertex;
 
     fn get_shaders() -> Shaders {
@@ -31,7 +25,7 @@ impl GliumRenderable for Circle {
 
     fn get_vertex(self) -> Vec<Self::Vertex> { vec![self.clone().into()] }
 
-    fn get_primitive_type() -> PrimitiveType {
+    fn get_primitive_type() -> glium::index::PrimitiveType {
         glium::index::PrimitiveType::Patches{ vertices_per_patch: 1 }
     }
 }
@@ -49,8 +43,8 @@ impl From<Circle> for CircleVertex {
     fn from(rect: Circle) -> Self {
         CircleVertex {
             radius: rect.radius as f32,
-            pos: vec3_64_to_32(*rect.pos.as_ref()),
-            color: vec4_64_to_32(*rect.color.as_ref())
+            pos: *convert::<_, Vector3<f32>>(rect.pos).as_ref(),
+            color: *convert::<_, Vector4<f32>>(rect.color).as_ref()
         }
     }
 }

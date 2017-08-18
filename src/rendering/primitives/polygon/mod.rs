@@ -1,9 +1,7 @@
-use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, convert};
+use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, Matrix2, convert};
 use num::Zero;
-use super::renderables::{Renderable, RenderType};
-use super::render_by_shaders::GliumRenderable;
-use super::shaders::Shaders;
-use super::conversion_tools::*;
+use rendering::render_by_shaders::GliumPrimitive;
+use rendering::shaders::Shaders;
 
 /// IMPORTANT: Must form a star domain at its center
 #[derive(Clone)]
@@ -57,9 +55,9 @@ impl Polygon {
                 corner1: *convert::<_, Vector2<f32>>(corner1).as_ref(),
                 corner2: *convert::<_, Vector2<f32>>(corner2).as_ref(),
                 center: *convert::<_, Vector2<f32>>(self.center).as_ref(),
-                rot: mat2_64_to_32(*self.rot.matrix().as_ref()),
-                pos: vec3_64_to_32(*self.pos.as_ref()),
-                color: vec4_64_to_32(*self.color.as_ref()),
+                rot: *convert::<_, Matrix2<f32>>(*self.rot.matrix()).as_ref(),
+                pos: *convert::<_, Vector3<f32>>(self.pos).as_ref(),
+                color: *convert::<_, Vector4<f32>>(self.color).as_ref(),
                 fixed_pos: self.fixed as u32
             });
         }
@@ -67,11 +65,7 @@ impl Polygon {
     }
 }
 
-impl Renderable for Polygon {
-    fn get_type(&self) -> RenderType { RenderType::Poly(self.clone()) }
-}
-
-impl GliumRenderable for Polygon {
+impl GliumPrimitive for Polygon {
     type Vertex = PolygonVertex;
 
     fn get_shaders() -> Shaders {

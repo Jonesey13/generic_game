@@ -1,9 +1,6 @@
-//pub mod pong;
 pub mod view_details;
-//pub mod polar_game;
-//pub mod tree_game;
 
-use rendering::renderables::Renderable;
+use rendering::Renderable;
 use input::keyboard::KeyboardInput;
 use input::mouse::MouseInput;
 use input::joystick::JoystickInput;

@@ -13,7 +13,7 @@ use collision;
 use collision::{Collider, Collidable, CollResults};
 use games;
 use games::Game;
-use rendering::renderables::Renderable;
+use rendering::primitives::Primitive;
 
 pub const BACKGROUND_LAYER: f64 = 0.1;
 pub const FOREGROUND_LAYER: f64 = 0.0;
@@ -43,9 +43,9 @@ impl Game for PongGame {
         self.handle_collision();
     }
 
-    fn get_renderables(&self) -> Vec<Box<Renderable>> {
-        let mut output: Vec<Box<Renderable>> = self.balls.iter().map(|x| {Box::new(x.render()) as Box<Renderable>})
-            .chain(self.players.iter().map(|x| {Box::new(x.render()) as Box<Renderable>})).collect();
+    fn get_primitives(&self) -> Vec<Box<Primitive>> {
+        let mut output: Vec<Box<Primitive>> = self.balls.iter().map(|x| {Box::new(x.render()) as Box<Primitive>})
+            .chain(self.players.iter().map(|x| {Box::new(x.render()) as Box<Primitive>})).collect();
         output.push(Box::new(self.board.render()));
         output
     }

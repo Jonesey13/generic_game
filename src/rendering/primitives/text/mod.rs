@@ -13,14 +13,14 @@ use glium;
 use glium::Surface;
 use std::borrow::Cow;
 use games::view_details;
-use super::conversion_tools::mat2_64_to_32;
-use super::renderables::{Renderable, RenderType};
-use super::render_by_shaders::GliumRenderable;
+use rendering::primitives::Primitive;
+use rendering::render_by_shaders::GliumPrimitive;
+use rendering::shaders::Shaders;
 
 pub trait RenderText {
     type TextVert: glium::vertex::Vertex;
 
-    fn get_shaders() -> super::shaders::Shaders;
+    fn get_shaders() -> Shaders;
 
     fn get_vertices(
         &self,
@@ -30,10 +30,10 @@ pub trait RenderText {
     fn get_content(&self) -> &String;
 }
 
-impl<T: RenderText> GliumRenderable for T {
+impl<T: RenderText> GliumPrimitive for T {
     type Vertex = T::TextVert;
 
-    fn get_shaders() -> super::shaders::Shaders {
+    fn get_shaders() -> Shaders {
         T::get_shaders()
     }
 

@@ -7,7 +7,7 @@ use super::{PolarPixel, PolarPixelVertex};
 use rendering;
 use rendering::shaders;
 use rendering::glium_buffer::GliumBuffer;
-use rendering::render_by_shaders::GliumRenderable;
+use rendering::render_by_shaders::GliumPrimitive;
 use games::view_details;
 use games::view_details::{ViewDetails, PolarViewDetails};
 use rendering::shaders::make_program_from_shaders;

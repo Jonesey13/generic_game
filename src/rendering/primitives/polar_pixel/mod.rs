@@ -1,12 +1,10 @@
 use na::{Vector2, Vector4};
 use na;
 use num::Zero;
-use super::renderables::{Renderable, RenderType};
-use super::render_by_shaders::GliumRenderable;
-use super::shaders::Shaders;
+use rendering::primitives::Primitive;
+use rendering::render_by_shaders::GliumPrimitive;
+use rendering::shaders::Shaders;
 use glium;
-use glium::index::PrimitiveType;
-use super::conversion_tools::*;
 mod polar_buffer;
 pub use self::polar_buffer::PolarBuffer;
 
@@ -17,11 +15,7 @@ pub struct PolarPixel {
     pub color: [f64; 4]
 }
 
-impl Renderable for PolarPixel {
-    fn get_type(&self) -> RenderType { RenderType::PolarPix(self.clone()) }
-}
-
-impl GliumRenderable for PolarPixel {
+impl GliumPrimitive for PolarPixel {
     type Vertex = PolarPixelVertex;
 
     fn get_shaders() -> Shaders {

@@ -29,7 +29,7 @@ use games::{GameInput, Game};
 use input::keyboard::KeyboardInput;
 use input::joystick::JoystickInput;
 use super::view_details::{PolarViewDetails, ViewDetails};
-use rendering::renderables::Renderable;
+use rendering::primitives::Primitive;
 use rendering::polar_pixel::PolarPixel;
 use rendering::text::PlainText;
 use debug::*;
@@ -167,8 +167,8 @@ impl Game for PolarGame {
         ViewDetails::Polar(self.view_details.clone())
     }
 
-    fn get_renderables(&self) -> Vec<Box<Renderable>> {
-        debug_clock_start("Render::get_renderables");
+    fn get_primitives(&self) -> Vec<Box<Primitive>> {
+        debug_clock_start("Render::get_primitives");
         let mut rend_vec: Vec<Part> = Vec::new();
         for f in self.frame.get_render_parts().into_iter(){
             rend_vec.push(f);
@@ -177,22 +177,22 @@ impl Game for PolarGame {
             rend_vec.push(f);
         }
         let sun_part = self.sun.get_render_parts()[0];
-        debug_clock_start("Render::get_renderables::flares");
+        debug_clock_start("Render::get_primitives::flares");
         for f in self.flares.iter(){
             let flare_part = f.get_render_parts()[0];
             rend_vec.push(flare_part);
         }
-        debug_clock_stop("Render::get_renderables::flares");
+        debug_clock_stop("Render::get_primitives::flares");
         rend_vec.push(sun_part);
-        let mut output: Vec<Box<Renderable>> = rend_vec.into_iter()
-            .map(|p| -> Box<Renderable> {Box::new(PolarPixel::from(p))}).collect();
+        let mut output: Vec<Box<Primitive>> = rend_vec.into_iter()
+            .map(|p| -> Box<Primitive> {Box::new(PolarPixel::from(p))}).collect();
 
         let score_text = self.high_score.get_score_text();
         let record_text = self.high_score.get_record_text();
         output.push(Box::new(score_text));
         output.push(Box::new(record_text));
         
-        debug_clock_stop("Render::get_renderables");
+        debug_clock_stop("Render::get_primitives");
         output
     }
 

@@ -1,28 +1,14 @@
+pub mod primitives;
 pub mod renderables;
-pub mod rectangle;
-pub mod text;
-pub mod circle;
 pub mod shaders;
 pub mod glium_renderer;
 pub mod render_by_shaders;
-mod conversion_tools;
 pub mod glium_buffer;
-pub mod polar_pixel;
-pub mod bezier_rect;
-pub mod bezier_subrect;
-pub mod polygon;
 use glium::backend::glutin_backend::GlutinFacade;
 
-pub use rendering::rectangle::Rectangle;
-pub use rendering::circle::Circle;
-pub use rendering::text::{PlainText, TextAlign};
-pub use rendering::polar_pixel::PolarPixel;
-pub use rendering::bezier_rect::BezierRect;
-pub use rendering::bezier_subrect::{BezierSubrect, BezierLogic};
-pub use rendering::bezier_rect::BezierQuadControl;
+pub use rendering::primitives::{
+    Primitive, Rectangle, Polygon, Circle, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
 pub use rendering::renderables::Renderable;
-pub use rendering::renderables::RenderType;
-pub use rendering::polygon::Polygon;
 
 use games::view_details;
 

@@ -9,8 +9,8 @@ use std::borrow::Cow;
 use games::view_details;
 use na::{Vector2, Vector3, Vector4, Matrix2};
 use na;
-use rendering::text::RenderText;
-use rendering::{shaders, Renderable, RenderType};
+use super::RenderText;
+use rendering::{shaders, Renderable};
 
 #[derive(Clone)]
 pub struct PlainText {
@@ -88,11 +88,6 @@ impl RenderText for PlainText {
     }
 
     fn get_content(&self) -> &String {&self.content}
-}
-
-
-impl Renderable for PlainText {
-    fn get_type(&self) -> RenderType { RenderType::Text(self.clone()) }
 }
 
 impl PlainText {

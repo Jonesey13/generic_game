@@ -1,18 +1,18 @@
 use super::Renderer;
 use super::shaders::make_program_from_shaders;
-use super::rectangle::{Rectangle, RectangleVertex};
-use super::circle::{Circle, CircleVertex};
-use super::polygon::{Polygon, PolygonVertex};
-use super::text::{RenderText, TextBuffer, PlainText};
-use super::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
+use rendering::primitives::rectangle::{Rectangle, RectangleVertex};
+use rendering::primitives::circle::{Circle, CircleVertex};
+use rendering::primitives::polygon::{Polygon, PolygonVertex};
+use rendering::primitives::text::{RenderText, TextBuffer, PlainText};
+use rendering::primitives::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
+use rendering::primitives::Primitive; 
+use rendering::renderables::Renderable;
 use super::glium_buffer::{GliumBuffer, BasicBuffer};
-use super::renderables::{Renderable, RenderType};
-use super::render_by_shaders::GliumRenderable;
+use super::render_by_shaders::GliumPrimitive;
 use super::{BezierRect, BezierSubrect};
 use glium;
 use glium::Frame;
 use glium::backend::glutin_backend::GlutinFacade;
-use glium::index::PrimitiveType;
 use glium::{DisplayBuild, Surface, DrawParameters, Depth, DepthTest, Program};
 use na;
 use na::Matrix4;
@@ -94,16 +94,17 @@ impl<'a> GliumRenderer<'a> {
 impl<'a> Renderer for GliumRenderer<'a> {
     fn load_renderables(&mut self, renderables: Vec<Box<Renderable>>) {
         debug_clock_start("Render::glium_load");
-        for renderable in renderables {
-            match
-                renderable.get_type() {
-                    RenderType::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
-                    RenderType::Circ(circle) => self.circ_buffer.load_renderable(circle),
-                    RenderType::Text(text) => self.text_processor.load_renderable(text),
-                    RenderType::BezierRect(bezier_rect) => self.bezier_rect_buffer.load_renderable(bezier_rect),
-                    RenderType::BezierSubrect(bezier_subrect) => self.bezier_subrect_buffer.load_renderable(bezier_subrect),
-                    RenderType::PolarPix(polar) => self.polar_buffer.load_renderable(polar),
-                    RenderType::Poly(polygon) => self.polygon_buffer.load_renderable(polygon)
+        for mut renderable in renderables {
+            for primitive in renderable.get_primitives() {
+                match primitive {
+                        Primitive::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
+                        Primitive::Circ(circle) => self.circ_buffer.load_renderable(circle),
+                        Primitive::Text(text) => self.text_processor.load_renderable(text),
+                        Primitive::BezierRect(bezier_rect) => self.bezier_rect_buffer.load_renderable(bezier_rect),
+                        Primitive::BezierSubrect(bezier_subrect) => self.bezier_subrect_buffer.load_renderable(bezier_subrect),
+                        Primitive::PolarPix(polar) => self.polar_buffer.load_renderable(polar),
+                        Primitive::Poly(polygon) => self.polygon_buffer.load_renderable(polygon)
+                }
             }
         }
         debug_clock_stop("Render::glium_load");

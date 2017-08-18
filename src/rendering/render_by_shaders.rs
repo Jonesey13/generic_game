@@ -2,7 +2,7 @@ use glium;
 use super::shaders::Shaders;
 use glium::index::PrimitiveType;
 
-pub trait GliumRenderable {
+pub trait GliumPrimitive {
     type Vertex: glium::vertex::Vertex;
     fn get_shaders() -> Shaders { Shaders::None }
     fn get_primitive_type() -> PrimitiveType { PrimitiveType::Points }

@@ -5,7 +5,7 @@ use debug::*;
 use games::view_details::{ViewDetails, ViewDetails2D};
 use games::GameInput;
 use games::Game;
-use rendering::{Renderable, BezierRect};
+use rendering::{Primitive, BezierRect};
 use input::{JoystickInput, KeyboardInput};
 
 pub struct TreeGame {
@@ -58,13 +58,13 @@ impl Game for TreeGame {
         self.view_details
     }
 
-    fn get_renderables(&self) -> Vec<Box<Renderable>> {
-        debug_clock_start("Render::get_renderables");
-        let output: Vec<Box<Renderable>> =
+    fn get_primitives(&self) -> Vec<Box<Primitive>> {
+        debug_clock_start("Render::get_primitives");
+        let output: Vec<Box<Primitive>> =
             self.branches.branches
             .iter()
-            .map(|br| -> Box<Renderable> { Box::new(BezierRect::from(br.get_visual())) }).collect();
-        debug_clock_stop("Render::get_renderables");
+            .map(|br| -> Box<Primitive> { Box::new(BezierRect::from(br.get_visual())) }).collect();
+        debug_clock_stop("Render::get_primitives");
         output
     }
 
