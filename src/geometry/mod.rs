@@ -1,3 +1,4 @@
+pub mod point;
 pub mod line;
 pub mod circle;
 pub mod vect;
@@ -8,23 +9,29 @@ pub mod bezier_patch;
 pub mod interval;
 pub mod interpolate;
 pub mod poly;
+pub mod twodtransformable;
+pub mod to_renderable;
 use na::{Vector2, norm, dot};
 use num::Zero;
 
 pub use self::interval::Interval;
-pub use self::line::{Line, line_line_intersect_2d} ;
+pub use self::point::Point;
+pub use self::circle::Circle;
+pub use self::line::{Line, line_line_intersect_2d};
 pub use self::interpolate::interpolate;
 pub use self::bezier_patch::BezierPatch;
 pub use self::bezier_2d::BezierQuad;
 pub use self::con_poly::ConPoly;
 pub use self::poly::Poly;
+pub use self::twodtransformable::TwoDTransformable;
+pub use self::to_renderable::ToRenderable;
 
 const EPSILON: f64 = 0.0000001;
 
 /// For the line beg <=> t=0 and end <=> t=1
 /// Results are expressed as points on the line parameterised in t
 pub fn line_circle_intersect (line: &line::Line, circ: &circle::Circle) -> DualSoln {
-    let shifted_line = line.shift_by(circ.center * -1.0);
+    let shifted_line = line.shifted_by(circ.center * -1.0);
     line_center_circle_intersect(&shifted_line, circ.rad)
 }
 

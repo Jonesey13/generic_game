@@ -19,7 +19,8 @@ impl Polygon {
             corners: Vec<Vector2<f64>>,
             center: Vector2<f64>,
             pos: Vector3<f64>, 
-            color: Vector4<f64>
+            color: Vector4<f64>,
+            fixed: bool
         ) -> Polygon {
         Polygon {
             corners,
@@ -27,23 +28,7 @@ impl Polygon {
             rot: Rotation2::new(0.0),
             pos,
             color,
-            fixed: false
-        }
-    }
-
-    pub fn new_regular_fixed(
-            corners: Vec<Vector2<f64>>,
-            center: Vector2<f64>,            
-            pos: Vector3<f64>, 
-            color: Vector4<f64>
-        ) -> Polygon {
-        Polygon {
-            corners,
-            center,
-            rot: Rotation2::new(0.0),
-            pos,
-            color,
-            fixed: true
+            fixed,
         }
     }
 

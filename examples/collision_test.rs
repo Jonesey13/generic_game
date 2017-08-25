@@ -8,11 +8,11 @@ use na::{Vector2, Rotation2};
 use gg::debug::*;
 use gg::debug;
 use gg::{rendering, input, window, Handler, games};
+use gg::collision::{CollisionTestGame, CollisionTestBuilder};
 use gg::handler_basic_with_console::HandlerBasicWithConsole;
+use gg::geometry::{ConPoly, Circle, Line, Point};
 use std::env;
 use std::io::*;
-
-mod collision_test_game;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "full");
@@ -25,10 +25,28 @@ fn main() {
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
     let game: Box<games::Game> = Box::new(
-         collision_test_game::builder::CollisionTestBuilder::init()
-            .add_rect(Vector2::new(0.5, 0.0), 0.2, 0.2, Rotation2::new(0.0)).with_velocity(Vector2::new(-0.25, 0.0))
-            .add_rect(Vector2::new(-0.5, 0.0), 0.2, 0.2, Rotation2::new(0.0)).with_velocity(Vector2::new(0.25, 0.0))
-             .build_game());
+         CollisionTestBuilder::init()
+            .add_line(Line::new(Vector2::new(-0.5, -0.2), Vector2::new(-0.5, -0.5)))
+            .add_line(Line::new(Vector2::new(-0.8, -0.8), Vector2::new(-0.6, -0.6)))
+            .add_circle(Circle::new(0.1, Vector2::new(-0.5, 0.5)))
+            .add_circle(Circle::new(0.1, Vector2::new(-0.9, 0.8)))
+            .add_point(Point::new(Vector2::new(0.9, -0.9)))
+            .add_point(Point::new(Vector2::new(0.7, -0.7)))
+            .add_poly(ConPoly::new(vec![
+                Vector2::new(0.3, 0.2),
+                Vector2::new(0.3, 0.3),
+                Vector2::new(0.2, 0.3),
+                Vector2::new(0.2, 0.2),                
+            ]))
+            .add_poly(ConPoly::new(vec![
+                Vector2::new(0.8, 0.6),
+                Vector2::new(0.8, 0.8),
+                Vector2::new(0.7, 0.8),
+                Vector2::new(0.7, 0.7),
+                Vector2::new(0.6, 0.7),
+                Vector2::new(0.6, 0.6)                                                              
+            ]))
+            .build_game());
 
     let mut handler: Box<Handler> = Box::new(HandlerBasicWithConsole::new(renderer, input_handler, window_handler, game));
 

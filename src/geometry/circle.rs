@@ -1,6 +1,9 @@
-use na::Vector2;
+use na::{Vector2, Vector3, Vector4};
 use std::fmt;
 use geometry::line::Line;
+use super::{vect, DualSoln, Poly, TwoDTransformable, ToRenderable};
+use rendering;
+use collision;
 
 #[derive(Clone)]
 pub struct Circle{
@@ -16,10 +19,6 @@ impl Circle {
         }
     }
 
-    pub fn shift_by(&mut self, shift: Vector2<f64>) {
-        self.center = self.center + shift;
-    }
-
     pub fn shifted_by(&self, shift: Vector2<f64>) -> Circle {
         let mut out = self.clone();
         out.shift_by(shift);
@@ -28,6 +27,30 @@ impl Circle {
 
     pub fn get_movement_line(&self, other: &Circle) -> Line {
         Line::new(self.center, other.center)
+    }
+}
+
+impl TwoDTransformable for Circle {
+    fn shift_by(&mut self, shift: Vector2<f64>) {
+        self.center = self.center + shift;
+    }
+
+    fn rotate(&mut self, _: f64) {}
+}
+
+impl ToRenderable for Circle {
+    fn to_renderable(&self, color: Vector4<f64>, depth: f64, _: bool) -> Box<rendering::Renderable> {
+        Box::new(rendering::Circle {
+            radius: self.rad,
+            pos: Vector3::new(self.center.x, self.center.y, depth),
+            color
+        })
+    }
+}
+
+impl collision::CollObj for Circle {
+    fn get_object_pair(&self, other: &Self) -> collision::CollObjPair {
+        collision::CollObjPair::Circ(self.clone(), other.clone())
     }
 }
 

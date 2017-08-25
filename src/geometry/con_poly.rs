@@ -1,4 +1,4 @@
-use na::{Vector1, Vector2, Rotation2, norm, dot};
+use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, norm, dot};
 use num::Zero;
 use geometry::average_vec2;
 use geometry::line::Line;
@@ -6,8 +6,11 @@ use geometry::vect::get_normal_2d;
 use geometry::Poly;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
+use geometry::{TwoDTransformable, ToRenderable};
+use rendering::{Renderable, Polygon};
+use collision::{CollObj, CollObjPair};
 
-/// A convex polygon for collision detection
+/// A (formally convex) polygon for collision detection
 #[derive(Clone, Debug)]
 pub struct ConPoly {
     pub corners: Vec<Vector2<f64>>, // defined anticlockwise
@@ -35,7 +38,7 @@ impl ConPoly {
         let mut corners = vec![bottom_left, bottom_right, top_right, top_left];
 
         let average = average_vec2(corners.clone());
-        for mut vector in corners.iter_mut() {
+        for vector in corners.iter_mut() {
             *vector = rot * (*vector - average) + pos;
         }
         ConPoly {
@@ -71,6 +74,38 @@ impl ConPoly {
             false => None
         }
     }
+
+    pub fn get_average(&self) -> Vector2<f64> {
+        self.corners.iter().fold(Vector2::zero(), |acc, v| {acc + v}) / self.corners.len() as f64
+    }
+}
+
+impl TwoDTransformable for ConPoly {
+    fn shift_by(&mut self, shift: Vector2<f64>) {
+        for corner in &mut self.corners {
+            *corner = *corner + shift
+        }
+    }
+
+    fn rotate(&mut self, rot_angle: f64) {
+        let rot_mat = Rotation2::new(rot_angle);
+        let center = self.get_average();
+        for corner in &mut self.corners {
+            *corner = rot_mat * (*corner - center) + center;
+        }
+    }
+}
+
+impl ToRenderable for ConPoly {
+    fn to_renderable(&self, colour: Vector4<f64>, depth: f64, fixed: bool) -> Box<Renderable> {
+        Box::new(Polygon::new_regular(self.corners.clone(), self.get_average(), Vector3::new(0.0, 0.0, depth), colour, fixed))
+    }
+}
+
+impl CollObj for ConPoly {
+    fn get_object_pair(&self, other: &Self) -> CollObjPair {
+        CollObjPair::ConPoly(self.clone(), other.clone())
+    }        
 }
 
 #[test]

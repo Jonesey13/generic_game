@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub struct BoolSwitch {
     press_state: PressState, // Current state of button
     switch_flag: Option<PressState> // Indicates if a press has just happened
@@ -41,6 +42,15 @@ impl BoolSwitch {
             return state == PressState::Released;
         }
         false
+    }
+}
+
+impl Default for BoolSwitch {
+    fn default() -> BoolSwitch {
+        BoolSwitch {
+            press_state: PressState::Released,
+            switch_flag: None
+        }
     }
 }
 

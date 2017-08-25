@@ -132,7 +132,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
         debug_clock_stop("Render::glium_load::text::queue_glyph");
 
         let cache_tex = &mut self.cache_tex;
-        let mut text_cache = &mut self.text_cache;
+        let text_cache = &mut self.text_cache;
 
         debug_clock_start("Render::glium_load::text::queue_cache");
         text_cache.cache_queued(

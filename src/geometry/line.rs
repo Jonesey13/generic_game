@@ -1,5 +1,7 @@
-use na::{Vector2, norm, dot};
-use super::{vect, DualSoln, Poly} ;
+use na::{Vector2, Vector4, Rotation2, norm, dot};
+use super::{vect, DualSoln, Poly, TwoDTransformable, ToRenderable, Point};
+use rendering;
+use collision;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Line {
@@ -45,7 +47,7 @@ impl Line {
         vect::get_rot90_2d(dir)
     }
 
-    pub fn shift_by(&self, move_vec: Vector2<f64>) -> Line {
+    pub fn shifted_by(&self, move_vec: Vector2<f64>) -> Line {
         Line {
             beg: self.beg + move_vec,
             end: self.end + move_vec
@@ -64,6 +66,50 @@ impl Poly for Line {
     fn set_corners(&mut self, corners: Vec<Vector2<f64>>) {
         self.beg = corners[0];
         self.end = corners[1];
+    }
+}
+
+impl TwoDTransformable for Line {
+    fn shift_by(&mut self, shift: Vector2<f64>) {
+        self.beg += shift;
+        self.end += shift;
+    }
+
+    fn rotate(&mut self, rot_angle: f64) {
+        let rot_mat = Rotation2::new(rot_angle);
+        let center = self.get_point(0.5);
+        self.beg = rot_mat * (self.beg - center) + center;
+        self.end = rot_mat * (self.end - center) + center;
+    }
+}
+
+impl ToRenderable for Line {
+    fn to_renderable(&self, colour: Vector4<f64>, depth: f64, fixed: bool) -> Box<rendering::Renderable> {
+        let line_length = (self.end - self.beg).norm();
+        Box::new(rendering::Line::new_square(self.beg, self.end, line_length / 100.0, colour, depth, fixed))
+    }
+}
+
+impl collision::CollObj for Line {
+    fn get_object_pair(&self, other: &Self) -> collision::CollObjPair {
+       collision::CollObjPair::Line(self.clone(), other.clone())
+    }
+
+    fn render_collision_details(&self, coll_details: collision::CollDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    -> Vec<Box<rendering::Renderable>> {
+        let line_info = match coll_details {
+            collision::CollDetails::Line(info) => info,
+            _ => return vec![]
+        };
+
+        let renderable: Box<ToRenderable> = match line_info {
+            collision::LineInfo::LineBeg(_) => Box::new(Point::new(self.beg)),
+            collision::LineInfo::LineEnd(_) => Box::new(Point::new(self.end)),
+            collision::LineInfo::Point(x) => Box::new(Point::new(self.get_point(x))),
+            collision::LineInfo::WholeLine => Box::new(self.clone()),
+        };
+
+        vec![renderable.to_renderable(colour, depth, fixed)]
     }
 }
 

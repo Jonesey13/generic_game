@@ -17,7 +17,8 @@ impl Line {
         end: Vector2<f64>,
         thickness: f64,
         color: Vector4<f64>,
-        depth: f64
+        depth: f64,
+        fixed: bool
     ) -> Self {
         Line {
             start,
@@ -25,7 +26,7 @@ impl Line {
             thickness,
             color,
             depth,
-            fixed: false,
+            fixed,
             shape: LineShape::Square
         }
     }
@@ -35,7 +36,8 @@ impl Line {
         end: Vector2<f64>,
         thickness: f64,
         color: Vector4<f64>,
-        depth: f64
+        depth: f64,
+        fixed: bool
     ) -> Self {
         Line {
             start,
@@ -43,7 +45,7 @@ impl Line {
             thickness,
             color,
             depth,
-            fixed: false,
+            fixed,
             shape: LineShape::Rounded
         }
     }
