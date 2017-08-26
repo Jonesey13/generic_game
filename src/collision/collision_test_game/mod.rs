@@ -58,7 +58,7 @@ impl Game for CollisionTestGame {
         for obj in self.get_coll_objects_mut() {
             obj.set_prev();
             if obj.is_player_controlled() {
-                obj.shift_by(t_step * Vector2::new(mov_horizontal as f64, mov_vertical as f64));
+                obj.shift_by(t_step * 0.4 * Vector2::new(mov_horizontal as f64, mov_vertical as f64));
                 obj.rotate(t_step * rot as f64);
             }
         }
@@ -72,6 +72,7 @@ impl Game for CollisionTestGame {
         let mut output: Vec<Box<Renderable>> = vec![];
         for obj in self.get_coll_objects() {
             output.push(obj.render(0.0));
+            output.append(&mut obj.render_coll_results(-0.1));
         }
         output
     }

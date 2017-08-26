@@ -102,14 +102,37 @@ impl collision::CollObj for Line {
             _ => return vec![]
         };
 
-        let renderable: Box<ToRenderable> = match line_info {
+        let coll_pos_rendering: Box<ToRenderable> = match line_info {
             collision::LineInfo::LineBeg(_) => Box::new(Point::new(self.beg)),
             collision::LineInfo::LineEnd(_) => Box::new(Point::new(self.end)),
-            collision::LineInfo::Point(x) => Box::new(Point::new(self.get_point(x))),
-            collision::LineInfo::WholeLine => Box::new(self.clone()),
+            collision::LineInfo::Point(x, collision::LineSide::Left) => Box::new(Point::new(self.get_point(1.0 - x))),
+            collision::LineInfo::Point(x, collision::LineSide::Right) => Box::new(Point::new(self.get_point(x))),            
+            collision::LineInfo::WholeLine(_) => Box::new(self.clone()),
         };
 
-        vec![renderable.to_renderable(colour, depth, fixed)]
+        let (coll_pos, coll_dir) = match line_info {
+            collision::LineInfo::LineBeg(dir) => (self.beg, dir),
+            collision::LineInfo::LineEnd(dir) => (self.end, dir),
+            collision::LineInfo::Point(x, collision::LineSide::Right) => (self.get_point(x), -self.get_normal()),            
+            collision::LineInfo::Point(x, collision::LineSide::Left) => (self.get_point(1.0 - x), self.get_normal()),
+            collision::LineInfo::WholeLine(collision::LineSide::Right) => (self.get_point(0.5), -self.get_normal()),
+            collision::LineInfo::WholeLine(collision::LineSide::Left) => (self.get_point(0.5), self.get_normal()),            
+        };
+
+        let direction_renderable: Box<rendering::Renderable> = Box::new(
+            rendering::Arrow::new_for_coll_test(
+                    coll_pos,
+                    coll_dir,
+                    colour,
+                    depth,
+                    fixed
+            )
+        );
+
+        vec![
+            coll_pos_rendering.to_renderable(colour, depth, fixed),
+            direction_renderable
+        ]
     }
 }
 

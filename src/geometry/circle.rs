@@ -1,6 +1,6 @@
 use na::{Vector2, Vector3, Vector4};
 use std::fmt;
-use geometry::line::Line;
+use geometry::{Line, Point};
 use super::{vect, DualSoln, Poly, TwoDTransformable, ToRenderable};
 use rendering;
 use collision;
@@ -51,6 +51,32 @@ impl ToRenderable for Circle {
 impl collision::CollObj for Circle {
     fn get_object_pair(&self, other: &Self) -> collision::CollObjPair {
         collision::CollObjPair::Circ(self.clone(), other.clone())
+    }
+
+    fn render_collision_details(&self, coll_details: collision::CollDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    -> Vec<Box<rendering::Renderable>> {
+        let coll_dir = match coll_details {
+            collision::CollDetails::Circ(dir) => dir,
+            _ => return vec![]
+        };
+
+        let coll_location = self.center + self.rad * coll_dir;
+        let location_renderable: Box<ToRenderable> = Box::new(Point::new(coll_location));
+
+        let direction_renderable: Box<rendering::Renderable> = Box::new(
+            rendering::Arrow::new_for_coll_test(
+                    coll_location,
+                    coll_dir,
+                    colour,
+                    depth,
+                    fixed
+            )
+        );
+
+        vec![
+            location_renderable.to_renderable(colour, depth, fixed),
+            direction_renderable
+        ]
     }
 }
 

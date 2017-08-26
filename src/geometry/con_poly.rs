@@ -1,14 +1,15 @@
 use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, norm, dot};
 use num::Zero;
 use geometry::average_vec2;
-use geometry::line::Line;
 use geometry::vect::get_normal_2d;
 use geometry::Poly;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
-use geometry::{TwoDTransformable, ToRenderable};
+use geometry::{TwoDTransformable, ToRenderable, Point, Line};
+use rendering;
 use rendering::{Renderable, Polygon};
 use collision::{CollObj, CollObjPair};
+use collision;
 
 /// A (formally convex) polygon for collision detection
 #[derive(Clone, Debug)]
@@ -105,7 +106,42 @@ impl ToRenderable for ConPoly {
 impl CollObj for ConPoly {
     fn get_object_pair(&self, other: &Self) -> CollObjPair {
         CollObjPair::ConPoly(self.clone(), other.clone())
-    }        
+    }
+
+    fn render_collision_details(&self, coll_details: collision::CollDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    -> Vec<Box<Renderable>> {
+        let coll_location = match coll_details {
+            collision::CollDetails::ConPoly(loc) => loc,
+            _ => return vec![]
+        };
+
+        let location_renderable: Box<ToRenderable> = match coll_location {
+            collision::ConPolyInfo::LineInfo(side, pos) => Box::new(Point::new(self.get_side(side).unwrap().get_point(pos))),
+            collision::ConPolyInfo::CornerInfo(num, _) => Box::new(Point::new(self.get_corners()[num])),
+            collision::ConPolyInfo::SideInfo(side) => Box::new(self.get_side(side).unwrap()),
+        };
+
+        let (coll_pos, coll_dir) = match coll_location {
+            collision::ConPolyInfo::LineInfo(side, pos) => (self.get_side(side).unwrap().get_point(pos), self.get_normal(side)),
+            collision::ConPolyInfo::CornerInfo(num, dir) => (self.get_corners()[num], dir),
+            collision::ConPolyInfo::SideInfo(side) => (self.get_side(side).unwrap().get_point(0.5), self.get_normal(side)),
+        };
+
+        let direction_renderable: Box<rendering::Renderable> = Box::new(
+            rendering::Arrow::new_for_coll_test(
+                    coll_pos,
+                    coll_dir,
+                    colour,
+                    depth,
+                    fixed
+            )
+        );
+
+        vec![
+            location_renderable.to_renderable(colour, depth, fixed),
+            direction_renderable
+        ]
+    }    
 }
 
 #[test]

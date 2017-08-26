@@ -1,4 +1,4 @@
-use collision::{Collidable, CollObj, CollObjPair, CollResults};
+use collision::{Collidable, CollObj, CollObjPair, CollResults, CollDetails};
 use geometry::{ToRenderable, TwoDTransformable};
 use rendering::Renderable;
 use na::{Vector2, Vector4, Rotation2};
@@ -12,7 +12,8 @@ pub struct CollObjectWrapper<C: Clone, D: Clone> {
     data: D,
     player_controlled: bool,
     color: Vector4<f64>,
-    has_collided_in_past: bool
+    has_collided_in_past: bool,
+    last_collision_details: CollDetails,
 }
 
 impl<C:Clone, D: Clone> CollObjectWrapper<C, D> {
@@ -25,8 +26,13 @@ impl<C:Clone, D: Clone> CollObjectWrapper<C, D> {
             data,
             player_controlled: false,
             color: Vector4::new(1.0, 1.0, 1.0, 1.0),
-            has_collided_in_past: false
+            has_collided_in_past: false,
+            last_collision_details: CollDetails::None,
         }
+    }
+
+    pub fn coll_results_color() -> Vector4<f64> {
+        Vector4::new(0.0, 1.0, 0.0, 1.0)
     }
 }
 
@@ -41,6 +47,7 @@ pub trait CollObjectWrapperTrait: Collidable + TwoDTransformable {
     fn set_color(&mut self, color: Vector4<f64>);
     fn has_collided_in_past(&self) -> bool;
     fn reset_collision_flag(&mut self);
+    fn render_coll_results(&self, depth: f64) -> Vec<Box<Renderable>>;
 }
 
 impl<C: Clone + CollObj + ToRenderable + TwoDTransformable, D: Clone> CollObjectWrapperTrait for CollObjectWrapper<C, D>  {
@@ -55,6 +62,10 @@ impl<C: Clone + CollObj + ToRenderable + TwoDTransformable, D: Clone> CollObject
 
     fn render(&self, depth: f64) -> Box<Renderable> {
         self.coll_obj.to_renderable(self.get_color(), depth, false)
+    }
+
+    fn render_coll_results(&self, depth: f64) -> Vec<Box<Renderable>> {
+        self.coll_obj.render_collision_details(self.last_collision_details.clone(), CollObjectWrapper::<C,D>::coll_results_color(), depth, false)
     }
 
     fn set_prev(&mut self) {
@@ -87,6 +98,7 @@ impl<C: Clone + CollObj + ToRenderable + TwoDTransformable, D: Clone> CollObject
 
     fn reset_collision_flag(&mut self) {
         self.has_collided_in_past = false;
+        self.last_collision_details = CollDetails::None;
     }
 }
 
@@ -102,9 +114,10 @@ impl<C: Clone + CollObj + ToRenderable + TwoDTransformable, D: Clone> Collidable
     }
 
     fn set_collision_results(&mut self, new_results: CollResults<Self::Data>) {
-        self.coll_results = new_results;
+        self.coll_results = new_results.clone();
         if self.has_collided() {
             self.has_collided_in_past = true;
+            self.last_collision_details = new_results.details.unwrap();
         }
     }
 

@@ -40,7 +40,7 @@ pub enum CollObjPair {
 #[derive(Clone, Debug)]
 pub enum CollDetails {
     None,
-    Point,
+    Point(Vector2<f64>),
     Line(LineInfo), 
     Circ(Vector2<f64>), // Collision direction, outward from object
     ConPoly(ConPolyInfo),
@@ -48,10 +48,17 @@ pub enum CollDetails {
 
 #[derive(Clone, Debug)]
 pub enum LineInfo {
-    Point(f64), // Position on line => (0,1)
+    Point(f64, LineSide), // Position on line => (0,1)
     LineEnd(Vector2<f64>),
     LineBeg(Vector2<f64>),
-    WholeLine // Collision along segment of the line
+    WholeLine(LineSide) // Collision along segment of the line
+}
+
+// Considered from beginning of line to end
+#[derive(Clone, Debug)]
+pub enum LineSide {
+    Left,
+    Right
 }
 
 #[derive(Clone, Debug)]
@@ -69,10 +76,12 @@ impl CollDetails {
             _ => panic!("Cannot convert CollDetails to LineInfo!")
         };
         match con_poly_info {
-            ConPolyInfo::LineInfo(_, x) => LineInfo::Point(x),
+            ConPolyInfo::LineInfo(0, x) => LineInfo::Point(x, LineSide::Right),
+            ConPolyInfo::LineInfo(1, x) => LineInfo::Point(x, LineSide::Left),            
             ConPolyInfo::CornerInfo(0, dir) => LineInfo::LineBeg(dir),
             ConPolyInfo::CornerInfo(1, dir) => LineInfo::LineEnd(dir),
-            ConPolyInfo::SideInfo(_) => LineInfo::WholeLine,
+            ConPolyInfo::SideInfo(0) => LineInfo::WholeLine(LineSide::Right),
+            ConPolyInfo::SideInfo(1) => LineInfo::WholeLine(LineSide::Left),            
             _ => panic!("Invalid ConPolyInfo to convert to LineInfo!")
         }
     }
@@ -196,7 +205,7 @@ pub fn circ_point_coll<T: Clone>(circ_next: &Circle, circ_prev: &Circle, point_n
         if coll_soln.both_positive() {
             let collision_dir = normalize(&(point_timeline_rel.get_point(time) - circ_prev.center));
             return (CollResults::collided(CollDetails::Circ(collision_dir), time),
-                    CollResults::collided(CollDetails::Point, time));
+                    CollResults::collided(CollDetails::Point(-collision_dir), time));
         }
     }
     (CollResults::no_collision(), CollResults::no_collision())
@@ -395,9 +404,9 @@ pub fn poly_point_coll<T: Clone>(poly_next: &Poly, poly_prev: &Poly, point_next:
 
     if let Some((corner_index, time, side_pos)) = point_side_coll(&shifted_point_line, poly_prev) {
         let poly_details = CollDetails::ConPoly(ConPolyInfo::LineInfo(corner_index, side_pos));
-        let line_details = CollDetails::Point;
+        let point_details = CollDetails::Point(-poly_prev.get_normal(corner_index));
 
-        return (CollResults::collided(poly_details, time), CollResults::collided(line_details, time));
+        return (CollResults::collided(poly_details, time), CollResults::collided(point_details, time));
     }
     
     (CollResults::no_collision(), CollResults::no_collision())

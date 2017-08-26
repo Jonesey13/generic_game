@@ -6,7 +6,7 @@ use num::{Zero};
 use gg::rendering::{BezierRect, BezierQuadControl};
 use gg::rendering::{BezierSubrect, BezierLogic};
 use gg::input::keyboard::KeyboardInput;
-use gg::rendering::{PlainText, TextAlign, Circle, Rectangle, Renderable, Polygon};
+use gg::rendering::{PlainText, TextAlign, Circle, Rectangle, Renderable, Polygon, Arrow};
 use gg::debug::console::Console;
 use gg::geometry;
 use gg::rendering::Line;
@@ -88,17 +88,37 @@ impl Game for RenderableTestGame {
             Vector2::new(-0.2, -0.2),
             Vector2::new(0.2, -0.2)
         ];
-        let poly = Polygon::new_regular(poly_corners, Vector2::zero(), Vector3::zero(), Vector4::new(1.0, 0.0, 0.0, 1.0));
+        let poly = Polygon::new_regular(poly_corners, Vector2::zero(), Vector3::zero(), Vector4::new(1.0, 0.0, 0.0, 1.0), false);
 
         let line = Line::new_rounded(
             Vector2::new(-0.5, -0.5),
             Vector2::new(0.5, -0.25),
             0.05,
             Vector4::new(0.0, 0.5, 0.0, 1.0),
-            0.0
+            0.0,
+            false
+        );
+
+        let arrow = Arrow::new(
+            Vector2::new(-0.5, 0.0),
+            Vector2::new(-0.5, 0.3),
+            0.05,
+            0.2,
+            Vector4::new(0.5, 0.5, 1.0, 1.0),
+            0.0,
+            false
         );
         
-        vec![/*Box::new(rect), Box::new(circ), Box::new(text), Box::new(bez_rect), Box::new(bez_subrect), */ Box::new(poly), Box::new(line)]
+        vec![
+            /*Box::new(rect), 
+            Box::new(circ), 
+            Box::new(text), 
+            Box::new(bez_rect), 
+            Box::new(bez_subrect), 
+            */ Box::new(poly), 
+            Box::new(line),
+            Box::new(arrow)
+            ]
     }
 
     fn get_input<'a>(&'a mut self) -> Option <&'a mut GameInput> {
