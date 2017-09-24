@@ -12,7 +12,6 @@ extern crate time;
 extern crate bitflags;
 extern crate unicode_normalization;
 extern crate rusttype;
-extern crate rand;
 #[macro_use]
 extern crate lazy_static;
 

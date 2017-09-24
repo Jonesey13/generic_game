@@ -151,8 +151,8 @@ fn point_inside_poly_test() {
         Vector2::new(1.0, -1.0),
         Vector2::new(1.0, 1.0),
         Vector2::new(-1.0, 1.0)
-
     ];
+    
     let test_poly = ConPoly::new(corners);
 
     let test_point = Vector2::new(1.2,0.2);

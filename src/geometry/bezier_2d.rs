@@ -1,5 +1,6 @@
 use na::Vector2;
 use rendering::BezierQuadControl;
+use geometry::Line;
 
 #[derive(Clone)]
 pub struct BezierQuad {
@@ -14,6 +15,14 @@ impl BezierQuad {
             c0: c0,
             c1: c1,
             c2: c2
+        }
+    }
+
+    pub fn from_line(line: Line) -> BezierQuad {
+        BezierQuad {
+            c0: line.beg,
+            c1: line.get_point(0.5),
+            c2: line.end
         }
     }
     
