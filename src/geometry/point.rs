@@ -36,14 +36,14 @@ impl ToRenderable for Point {
 }
 
 impl collision::CollObj for Point {
-    fn get_object_pair(&self, other: &Self) -> collision::CollObjPair {
-        collision::CollObjPair::Point(self.pos, other.pos)
+    fn get_object_pair(&self, other: &Self) -> collision::CollisionObjectState {
+        collision::CollisionObjectState::Point(self.pos, other.pos)
     }
 
-    fn render_collision_details(&self, coll_details: collision::CollDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    fn render_collision_details(&self, collision_details: collision::CollisionDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::Renderable>> {
-        match coll_details {
-            collision::CollDetails::Point(dir) => vec![
+        match collision_details {
+            collision::CollisionDetails::Point(dir) => vec![
                 self.to_renderable(colour, depth, fixed),
                 Box::new(rendering::Arrow::new_for_coll_test(
                     self.pos,

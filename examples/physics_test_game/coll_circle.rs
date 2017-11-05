@@ -1,5 +1,5 @@
 use na::{Vector2, Vector3, Vector4};
-use gg::collision::{CollResults, Collidable, CollObj, CollDetails};
+use gg::collision::{CollisionResults, Collidable, CollObj, CollisionDetails};
 use gg::geometry::circle;
 use gg::rendering;
 use num::Zero;
@@ -10,7 +10,7 @@ pub struct CollCircle {
     pub pos: Vector2<f64>,
     pub color: Vector4<f64>,
     pub velocity: Vector2<f64>,
-    pub coll_results: CollResults<super::PhysicsTestObject>,
+    pub coll_results: CollisionResults<super::PhysicsTestObject>,
     pub prev: Option<Box<CollCircle>>,
     pub player_controlled: bool
 }
@@ -36,7 +36,7 @@ impl CollCircle {
             rad: rad,
             color: color,
             velocity: Vector2::zero(),
-            coll_results: CollResults::no_collision(),
+            coll_results: CollisionResults::no_collision(),
             prev: None,
             player_controlled: false,
         }
@@ -118,7 +118,7 @@ impl CollCircle {
     fn resolve_collision(&mut self) {
         self.color = RED.into();
         let coll_dir = match self.get_collision_details() {
-            Some(CollDetails::Circ(dir)) => dir,
+            Some(CollisionDetails::Circ(dir)) => dir,
             other => panic!("Invalid Collision Details for Circ: {:?}", other)
         };
         let speed = self.get_speed();
@@ -138,11 +138,11 @@ impl Collidable for CollCircle {
         CollObj::Circ(self.get_current_circle(), self.get_previous_circle())
     }
 
-    fn get_collision_results(&self) -> CollResults<Self::Data> {
+    fn get_collision_results(&self) -> CollisionResults<Self::Data> {
         self.coll_results.clone()
     }
 
-    fn set_collision_results(&mut self, new_results: CollResults<Self::Data>) {
+    fn set_collision_results(&mut self, new_results: CollisionResults<Self::Data>) {
         self.coll_results = new_results;
     }
 

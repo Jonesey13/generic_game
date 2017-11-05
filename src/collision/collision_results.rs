@@ -1,16 +1,16 @@
-use super::collision_details::CollDetails;
+use super::collision_details::CollisionDetails;
 
 #[derive(Clone)]
-pub struct CollResults<T: Clone> {
+pub struct CollisionResults<T: Clone> {
     pub collided: bool,
-    pub details: Option<CollDetails>,
+    pub details: Option<CollisionDetails>,
     pub time: Option<f64>,
     pub data: Option<T>
 }
 
-impl<T: Clone> CollResults<T> {
-    pub fn no_collision() -> CollResults<T> {
-        CollResults {
+impl<T: Clone> CollisionResults<T> {
+    pub fn no_collision() -> CollisionResults<T> {
+        CollisionResults {
             collided: false,
             details: None,
             time: None,
@@ -18,8 +18,8 @@ impl<T: Clone> CollResults<T> {
         }
     }
 
-    pub fn collided(details: CollDetails, time: f64) -> CollResults<T> {
-        CollResults {
+    pub fn collided(details: CollisionDetails, time: f64) -> CollisionResults<T> {
+        CollisionResults {
             collided: true,
             details: Some(details),
             time: Some(time),
@@ -27,9 +27,9 @@ impl<T: Clone> CollResults<T> {
         }
     }
 
-    pub fn to_line_results(mut self) -> CollResults<T> {
+    pub fn to_line_results(mut self) -> CollisionResults<T> {
         if self.collided {
-            self.details = self.details.and_then(|d| {Some(CollDetails::Line(d.to_line_info()))});
+            self.details = self.details.and_then(|d| {Some(CollisionDetails::Line(d.to_line_info()))});
         }
         self
     }

@@ -10,7 +10,7 @@ use self::board::Board;
 
 use na::{Vector2, Vector4};
 use collision;
-use collision::{Collider, Collidable, CollResults};
+use collision::{Collider, Collidable, CollisionResults};
 use games;
 use games::Game;
 use rendering::primitives::Primitive;

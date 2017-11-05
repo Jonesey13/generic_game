@@ -5,13 +5,13 @@ use geometry::circle::Circle;
 use geometry::con_poly::ConPoly;
 use geometry::line::Line;
 use na::{normalize, Vector2, dot, abs};
-use super::{CollResults, CollDetails};
+use super::{CollisionResults, CollisionDetails};
 use super::collision_details::ConPolyInfo;
 
 static EPSILON: f64 = 0.0001;
 
 pub fn circ_point_coll<T: Clone>(circ_next: &Circle, circ_prev: &Circle, point_next: &Vector2<f64>, point_prev: &Vector2<f64>)
-                         -> (CollResults<T>, CollResults<T>) {
+                         -> (CollisionResults<T>, CollisionResults<T>) {
     // Make the circle stationary
     let circ_shift = circ_next.center - circ_prev.center;
     let point_next_rel = point_next + circ_shift * -1.0;
@@ -20,15 +20,15 @@ pub fn circ_point_coll<T: Clone>(circ_next: &Circle, circ_prev: &Circle, point_n
     if let Some(time) = coll_soln.smallest_within_zero_one() {
         if coll_soln.both_positive() {
             let collision_dir = normalize(&(point_timeline_rel.get_point(time) - circ_prev.center));
-            return (CollResults::collided(CollDetails::Circ(collision_dir), time),
-                    CollResults::collided(CollDetails::Point(-collision_dir), time));
+            return (CollisionResults::collided(CollisionDetails::Circ(collision_dir), time),
+                    CollisionResults::collided(CollisionDetails::Point(-collision_dir), time));
         }
     }
-    (CollResults::no_collision(), CollResults::no_collision())
+    (CollisionResults::no_collision(), CollisionResults::no_collision())
 }
 
 pub fn circ_circ_coll<T: Clone>(circ1_next: &Circle, circ1_prev: &Circle, circ2_next: &Circle, circ2_prev: &Circle)
-                         -> (CollResults<T>, CollResults<T>) {
+                         -> (CollisionResults<T>, CollisionResults<T>) {
     // Make circ1 stationary
     let shift1 = circ1_next.center - circ1_prev.center;
     let circ2_next_rel = circ2_next.shifted_by(shift1 * -1.0);
@@ -40,36 +40,36 @@ pub fn circ_circ_coll<T: Clone>(circ1_next: &Circle, circ1_prev: &Circle, circ2_
         if coll_soln.both_positive() {
             let circ2_collision_center = circ2_prev.center + shift2_rel * time;
             let collision_dir = normalize(&(circ2_collision_center - circ1_prev.center));
-            return (CollResults::collided(CollDetails::Circ(collision_dir), time),
-                    CollResults::collided(CollDetails::Circ(collision_dir * -1.0), time));
+            return (CollisionResults::collided(CollisionDetails::Circ(collision_dir), time),
+                    CollisionResults::collided(CollisionDetails::Circ(collision_dir * -1.0), time));
         }
     }
-    (CollResults::no_collision(), CollResults::no_collision())
+    (CollisionResults::no_collision(), CollisionResults::no_collision())
 }
 
 pub fn circ_poly_coll<T: Clone, P: Sized + Clone + Poly>(circ_next: &Circle, circ_prev: &Circle, poly_next: &P, poly_prev: &P)
-                                -> (CollResults<T>, CollResults<T>) {
+                                -> (CollisionResults<T>, CollisionResults<T>) {
     let earliest_corner = circ_poly_coll_corners(circ_next, circ_prev, poly_next, poly_prev);
 
     let earliest_side = circ_poly_coll_sides(circ_next, circ_prev, poly_next, poly_prev);
 
     match (earliest_corner, earliest_side) {
-        (None, None) => (CollResults::no_collision(), CollResults::no_collision()),
-        (Some((c_det, p_det, t)), None) => (CollResults::collided(c_det, t), CollResults::collided(p_det, t)),
-        (None, Some((c_det, p_det, t))) => (CollResults::collided(c_det, t), CollResults::collided(p_det, t)),
+        (None, None) => (CollisionResults::no_collision(), CollisionResults::no_collision()),
+        (Some((c_det, p_det, t)), None) => (CollisionResults::collided(c_det, t), CollisionResults::collided(p_det, t)),
+        (None, Some((c_det, p_det, t))) => (CollisionResults::collided(c_det, t), CollisionResults::collided(p_det, t)),
         (Some((c_det1, p_det1, t1)), Some((c_det2, p_det2, t2))) => {
             if t1 < t2 + EPSILON {
-                return (CollResults::collided(c_det1, t1), CollResults::collided(p_det1, t1));
+                return (CollisionResults::collided(c_det1, t1), CollisionResults::collided(p_det1, t1));
             }
             else {
-                return (CollResults::collided(c_det2, t2), CollResults::collided(p_det2, t2));
+                return (CollisionResults::collided(c_det2, t2), CollisionResults::collided(p_det2, t2));
             }
         }
     }
 }
 
 fn circ_poly_coll_corners<P: Poly + Sized + Clone>(circ_next: &Circle, circ_prev: &Circle, poly_next: &P, poly_prev: &P)
-                          -> Option<(CollDetails, CollDetails, f64)> {
+                          -> Option<(CollisionDetails, CollisionDetails, f64)> {
     // Change frame of reference so that the Circle appears to be fixed
     let circ_shift = circ_next.center - circ_prev.center;
     let poly_next_rel = poly::get_shifted(poly_next, circ_shift * - 1.0);
@@ -90,15 +90,15 @@ fn circ_poly_coll_corners<P: Poly + Sized + Clone>(circ_next: &Circle, circ_prev
     match collisions.iter().cloned().nth(0) {
         None => None,
         Some((index, time, coll_dir)) => {
-            let circ_details = CollDetails::Circ(coll_dir);
-            let poly_details = CollDetails::ConPoly(ConPolyInfo::CornerInfo(index, coll_dir * -1.0));
+            let circ_details = CollisionDetails::Circ(coll_dir);
+            let poly_details = CollisionDetails::ConPoly(ConPolyInfo::CornerInfo(index, coll_dir * -1.0));
             Some((circ_details, poly_details, time))
         }
     }
 }
 
 fn circ_poly_coll_sides<P: Poly> (circ_next: &Circle, circ_prev: &Circle, poly_next: &P, poly_prev: &P)
-                        -> Option<(CollDetails, CollDetails, f64)> {
+                        -> Option<(CollisionDetails, CollisionDetails, f64)> {
     // Side checks next - requires polygon to be stationary
     let poly_shift = poly_next.get_corners()[0] - poly_prev.get_corners()[0];
     let circ_next_rel = circ_next.shifted_by(poly_shift * - 1.0);
@@ -124,26 +124,26 @@ fn circ_poly_coll_sides<P: Poly> (circ_next: &Circle, circ_prev: &Circle, poly_n
     match collisions.iter().cloned().nth(0) {
         None => None,
         Some((index, time, side_pos)) => {
-            let circ_details = CollDetails::Circ(poly_prev.get_normal(index) * -1.0);
-            let poly_details = CollDetails::ConPoly(ConPolyInfo::LineInfo(index, side_pos));
+            let circ_details = CollisionDetails::Circ(poly_prev.get_normal(index) * -1.0);
+            let poly_details = CollisionDetails::ConPoly(ConPolyInfo::LineInfo(index, side_pos));
             Some((circ_details, poly_details, time))
         }
     }
 }
 
 pub fn poly_poly_coll<T: Clone, P1: Poly + Clone, P2: Poly + Clone>(poly1_next: &P1, poly1_prev: &P1, poly2_next: &P2, poly2_prev: &P2)
-                         -> (CollResults<T>, CollResults<T>) {
+                         -> (CollisionResults<T>, CollisionResults<T>) {
     let earliest_corner_collision = earliest_corner_collision(poly1_next, poly1_prev, poly2_next, poly2_prev);
 
-    let mut side_collision: Option<(CollDetails, CollDetails, f64)> = None;
+    let mut side_collision: Option<(CollisionDetails, CollisionDetails, f64)> = None;
 
     if let Some((results1, results2, time)) = earliest_corner_collision.clone() {
         let poly1_at_collision = poly::get_at_time(poly1_prev, poly1_prev.get_shift(poly1_next), time);
         let poly2_at_collision = poly::get_at_time(poly2_prev, poly2_prev.get_shift(poly2_next), time);
         side_collision = match (results1, results2) {
-            (CollDetails::ConPoly(ConPolyInfo::CornerInfo(corner_index, _)), CollDetails::ConPoly(ConPolyInfo::LineInfo(side_index, _)))
+            (CollisionDetails::ConPoly(ConPolyInfo::CornerInfo(corner_index, _)), CollisionDetails::ConPoly(ConPolyInfo::LineInfo(side_index, _)))
                 => poly_poly_coll_sides(&poly1_at_collision, &poly2_at_collision, corner_index, side_index, time),
-            (CollDetails::ConPoly(ConPolyInfo::LineInfo(side_index, _)), CollDetails::ConPoly(ConPolyInfo::CornerInfo(corner_index, _)))
+            (CollisionDetails::ConPoly(ConPolyInfo::LineInfo(side_index, _)), CollisionDetails::ConPoly(ConPolyInfo::CornerInfo(corner_index, _)))
                 => poly_poly_coll_sides(&poly2_at_collision, &poly1_at_collision, corner_index, side_index, time)
                 .and_then(|(p2_det, p1_det, time)| {Some((p1_det, p2_det, time))}),
             _ => None
@@ -151,13 +151,13 @@ pub fn poly_poly_coll<T: Clone, P1: Poly + Clone, P2: Poly + Clone>(poly1_next: 
     }
 
     match side_collision.or(earliest_corner_collision) {
-        None => (CollResults::no_collision(), CollResults::no_collision()),
-        Some((p1_det, p2_det, time)) => (CollResults::collided(p1_det, time), CollResults::collided(p2_det, time))
+        None => (CollisionResults::no_collision(), CollisionResults::no_collision()),
+        Some((p1_det, p2_det, time)) => (CollisionResults::collided(p1_det, time), CollisionResults::collided(p2_det, time))
     }
 }
 
 fn earliest_corner_collision<P1: Poly + Clone, P2: Poly + Clone>(poly1_next: &P1, poly1_prev: &P1, poly2_next: &P2, poly2_prev: &P2)
-    -> Option<(CollDetails, CollDetails, f64)> {
+    -> Option<(CollisionDetails, CollisionDetails, f64)> {
     let poly1_corner_collision = poly_poly_coll_corners(poly1_next, poly1_prev, poly2_next, poly2_prev);
     let poly2_corner_collision = poly_poly_coll_corners(poly2_next, poly2_prev, poly1_next, poly1_prev)
         .and_then(|(poly2_details, poly1_details, time)| {Some((poly1_details, poly2_details, time))});
@@ -175,7 +175,7 @@ fn earliest_corner_collision<P1: Poly + Clone, P2: Poly + Clone>(poly1_next: &P1
 
 /// Check collisions of corners of obj1 on sides of obj2
 fn poly_poly_coll_corners<P1: Poly + Clone, P2: Poly + Clone>(poly1_next: &P1, poly1_prev: &P1, poly2_next: &P2, poly2_prev: &P2)
-                          -> Option<(CollDetails, CollDetails, f64)> {
+                          -> Option<(CollisionDetails, CollisionDetails, f64)> {
     // We require poly2 to be stationary
     let poly2_shift = poly2_prev.get_shift(poly2_next);
     let poly1_next_rel = poly::get_shifted(poly1_next, poly2_shift * -1.0);
@@ -184,8 +184,8 @@ fn poly_poly_coll_corners<P1: Poly + Clone, P2: Poly + Clone>(poly1_next: &P1, p
     let earliest_poly1_corner_coll = points_side_coll(&poly1_lines, poly2_prev);
 
     if let Some((corner_index, side_index, time, side_pos)) = earliest_poly1_corner_coll {
-        let poly1_details = CollDetails::ConPoly(ConPolyInfo::CornerInfo(corner_index, poly2_prev.get_normal(side_index) * -1.0));
-        let poly2_details = CollDetails::ConPoly(ConPolyInfo::LineInfo(side_index, side_pos));
+        let poly1_details = CollisionDetails::ConPoly(ConPolyInfo::CornerInfo(corner_index, poly2_prev.get_normal(side_index) * -1.0));
+        let poly2_details = CollisionDetails::ConPoly(ConPolyInfo::LineInfo(side_index, side_pos));
         return Some((poly1_details, poly2_details, time));
     }
     None
@@ -195,17 +195,17 @@ fn poly_poly_coll_corners<P1: Poly + Clone, P2: Poly + Clone>(poly1_next: &P1, p
 /// (assuming a corner collision has already occured on corner corner_num of poly1
 /// so that we don't have to worry about prev/next)
 fn poly_poly_coll_sides(poly1: &Poly, poly2: &Poly, corner_num: usize, side_num: usize, time: f64)
-                        -> Option<(CollDetails, CollDetails, f64)> {
+                        -> Option<(CollisionDetails, CollisionDetails, f64)> {
     if let (Some((side1, index1, side2, index2)), Some(poly2_side))
         = (poly1.get_adjacent_sides(corner_num), poly2.get_side(side_num)) {
             if line_line_parallel(&side1, &poly2_side) {
-                let poly1_details = CollDetails::ConPoly(ConPolyInfo::SideInfo(index1));
-                let poly2_details = CollDetails::ConPoly(ConPolyInfo::SideInfo(side_num));
+                let poly1_details = CollisionDetails::ConPoly(ConPolyInfo::SideInfo(index1));
+                let poly2_details = CollisionDetails::ConPoly(ConPolyInfo::SideInfo(side_num));
                 return Some((poly1_details, poly2_details, time));
             }
             if line_line_parallel(&side2, &poly2_side) {
-                let poly1_details = CollDetails::ConPoly(ConPolyInfo::SideInfo(index2));
-                let poly2_details = CollDetails::ConPoly(ConPolyInfo::SideInfo(side_num));
+                let poly1_details = CollisionDetails::ConPoly(ConPolyInfo::SideInfo(index2));
+                let poly2_details = CollisionDetails::ConPoly(ConPolyInfo::SideInfo(side_num));
                 return Some((poly1_details, poly2_details, time));
             }
         }
@@ -213,19 +213,19 @@ fn poly_poly_coll_sides(poly1: &Poly, poly2: &Poly, corner_num: usize, side_num:
 }
 
 pub fn poly_point_coll<T: Clone>(poly_next: &Poly, poly_prev: &Poly, point_next: &Vector2<f64>, point_prev: &Vector2<f64>)
-                         -> (CollResults<T>, CollResults<T>) {
+                         -> (CollisionResults<T>, CollisionResults<T>) {
     let poly_shift = poly_prev.get_shift(poly_next);
 
     let shifted_point_line = Line::new(*point_prev, point_next  - poly_shift);
 
     if let Some((corner_index, time, side_pos)) = point_side_coll(&shifted_point_line, poly_prev) {
-        let poly_details = CollDetails::ConPoly(ConPolyInfo::LineInfo(corner_index, side_pos));
-        let point_details = CollDetails::Point(-poly_prev.get_normal(corner_index));
+        let poly_details = CollisionDetails::ConPoly(ConPolyInfo::LineInfo(corner_index, side_pos));
+        let point_details = CollisionDetails::Point(-poly_prev.get_normal(corner_index));
 
-        return (CollResults::collided(poly_details, time), CollResults::collided(point_details, time));
+        return (CollisionResults::collided(poly_details, time), CollisionResults::collided(point_details, time));
     }
     
-    (CollResults::no_collision(), CollResults::no_collision())
+    (CollisionResults::no_collision(), CollisionResults::no_collision())
 }
 
 /// Computes earliest collision of a set of points moving with a (static) polygon

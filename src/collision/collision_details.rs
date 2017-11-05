@@ -5,7 +5,7 @@ use geometry::con_poly::ConPoly;
 use geometry::line::Line;
 use na::{normalize, Vector2, dot, abs};
 
-pub enum CollObjPair {
+pub enum CollisionObjectState {
     None,
     Circ(Circle, Circle),
     ConPoly(ConPoly, ConPoly),
@@ -14,7 +14,7 @@ pub enum CollObjPair {
 }
 
 #[derive(Clone, Debug)]
-pub enum CollDetails {
+pub enum CollisionDetails {
     None,
     Point(Vector2<f64>),
     Line(LineInfo), 
@@ -44,12 +44,12 @@ pub enum ConPolyInfo {
     SideInfo(usize), // Collision along a side
 }
 
-impl CollDetails {
+impl CollisionDetails {
     pub fn to_line_info(self) -> LineInfo {
         let con_poly_info = match self {
-            CollDetails::ConPoly(con_poly_info) => con_poly_info,
-            CollDetails::Line(line_info) => return line_info,
-            _ => panic!("Cannot convert CollDetails to LineInfo!")
+            CollisionDetails::ConPoly(con_poly_info) => con_poly_info,
+            CollisionDetails::Line(line_info) => return line_info,
+            _ => panic!("Cannot convert CollisionDetails to LineInfo!")
         };
         match con_poly_info {
             ConPolyInfo::LineInfo(0, x) => LineInfo::Point(x, LineSide::Right),

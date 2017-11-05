@@ -8,7 +8,7 @@ use std::iter::{Repeat, repeat};
 use geometry::{TwoDTransformable, ToRenderable, Point, Line};
 use rendering;
 use rendering::{Renderable, Polygon};
-use collision::{CollObj, CollObjPair};
+use collision::{CollObj, CollisionObjectState};
 use collision;
 
 /// A (formally convex) polygon for collision detection
@@ -104,14 +104,14 @@ impl ToRenderable for ConPoly {
 }
 
 impl CollObj for ConPoly {
-    fn get_object_pair(&self, other: &Self) -> CollObjPair {
-        CollObjPair::ConPoly(self.clone(), other.clone())
+    fn get_object_pair(&self, other: &Self) -> CollisionObjectState {
+        CollisionObjectState::ConPoly(self.clone(), other.clone())
     }
 
-    fn render_collision_details(&self, coll_details: collision::CollDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    fn render_collision_details(&self, collision_details: collision::CollisionDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<Renderable>> {
-        let coll_location = match coll_details {
-            collision::CollDetails::ConPoly(loc) => loc,
+        let coll_location = match collision_details {
+            collision::CollisionDetails::ConPoly(loc) => loc,
             _ => return vec![]
         };
 

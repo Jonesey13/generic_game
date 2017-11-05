@@ -1,16 +1,16 @@
-use super::{CollResults, Collidable, CollObjPair, collision_logic};
+use super::{CollisionResults, Collidable, CollisionObjectState, collision_logic};
 
 pub struct Collider;
 
 impl Collider {
     pub fn process_all<T: Clone> (mut collidables: Vec<&mut Collidable<Data=T>>) {
         for collidable in collidables.iter_mut() {
-            collidable.set_collision_results(CollResults::no_collision());
+            collidable.set_collision_results(CollisionResults::no_collision());
         }
 
-        let mut collidables_with_objects: Vec<(&mut &mut Collidable<Data=T>, CollObjPair)>
+        let mut collidables_with_objects: Vec<(&mut &mut Collidable<Data=T>, CollisionObjectState)>
             = collidables.iter_mut()
-            .map(|collidable| { let coll_obj = collidable.get_collision_object(); (collidable, coll_obj) })
+            .map(|collidable| { let collision_object = collidable.get_collision_objects()[0].clone(); (collidable, collision_object) })
             .collect();
 
         loop {
@@ -41,48 +41,48 @@ impl Collider {
         }
     }
 
-    fn process_pair<T: Clone> (first: &CollObjPair, second: &CollObjPair) -> (CollResults<T>, CollResults<T>) {
+    fn process_pair<T: Clone> (first: &CollisionObjectState, second: &CollisionObjectState) -> (CollisionResults<T>, CollisionResults<T>) {
         match (first, second) {
             // Reflexive (points can't collide with points)
-            (&CollObjPair::Circ(ref n1, ref p1), &CollObjPair::Circ(ref n2, ref p2)) 
+            (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
                 => collision_logic::circ_circ_coll(&n1, &p1, &n2, &p2),
-            (&CollObjPair::ConPoly(ref n1, ref p1), &CollObjPair::ConPoly(ref n2, ref p2)) 
+            (&CollisionObjectState::ConPoly(ref n1, ref p1), &CollisionObjectState::ConPoly(ref n2, ref p2)) 
                 => collision_logic::poly_poly_coll(n1, p1, n2, p2),
-            (&CollObjPair::Line(ref n1, ref p1), &CollObjPair::Line(ref n2, ref p2))
+            (&CollisionObjectState::Line(ref n1, ref p1), &CollisionObjectState::Line(ref n2, ref p2))
                 => {let res = collision_logic::poly_poly_coll(n1, p1, n2, p2); (res.0.to_line_results(), res.1.to_line_results())},
 
             // Symmetric
-            (&CollObjPair::Circ(ref n1, ref p1), &CollObjPair::ConPoly(ref n2, ref p2)) 
+            (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::ConPoly(ref n2, ref p2)) 
                 => collision_logic::circ_poly_coll(&n1, &p1, n2, p2),
-            (&CollObjPair::ConPoly(ref n1, ref p1), &CollObjPair::Circ(ref n2, ref p2)) 
+            (&CollisionObjectState::ConPoly(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
                 => {let res = collision_logic::circ_poly_coll(&n2, &p2, n1, p1); (res.1, res.0)},
 
-            (&CollObjPair::Line(ref n1, ref p1), &CollObjPair::ConPoly(ref n2, ref p2)) 
+            (&CollisionObjectState::Line(ref n1, ref p1), &CollisionObjectState::ConPoly(ref n2, ref p2)) 
                 => {let res = collision_logic::poly_poly_coll(n2, p2, n1, p1); (res.1.to_line_results(), res.0)},
-            (&CollObjPair::ConPoly(ref n1, ref p1), &CollObjPair::Line(ref n2, ref p2)) 
+            (&CollisionObjectState::ConPoly(ref n1, ref p1), &CollisionObjectState::Line(ref n2, ref p2)) 
                 => {let res = collision_logic::poly_poly_coll(n1, p1, n2, p2); (res.0, res.1.to_line_results())},
 
-            (&CollObjPair::Point(ref n1, ref p1), &CollObjPair::ConPoly(ref n2, ref p2)) 
+            (&CollisionObjectState::Point(ref n1, ref p1), &CollisionObjectState::ConPoly(ref n2, ref p2)) 
                 => {let res = collision_logic::poly_point_coll(n2, p2, &n1, &p1); (res.1, res.0)},
-            (&CollObjPair::ConPoly(ref n1, ref p1), &CollObjPair::Point(ref n2, ref p2)) 
+            (&CollisionObjectState::ConPoly(ref n1, ref p1), &CollisionObjectState::Point(ref n2, ref p2)) 
                 => collision_logic::poly_point_coll(n1, p1, &n2, &p2),
 
-            (&CollObjPair::Circ(ref n1, ref p1), &CollObjPair::Line(ref n2, ref p2)) 
+            (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Line(ref n2, ref p2)) 
                 => {let res = collision_logic::circ_poly_coll(&n1, &p1, n2, p2); (res.0, res.1.to_line_results())},
-            (&CollObjPair::Line(ref n1, ref p1), &CollObjPair::Circ(ref n2, ref p2)) 
+            (&CollisionObjectState::Line(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
                 => {let res = collision_logic::circ_poly_coll(&n2, &p2, n1, p1); (res.1.to_line_results(), res.0)},
             
-            (&CollObjPair::Line(ref n1, ref p1), &CollObjPair::Point(ref n2, ref p2)) 
+            (&CollisionObjectState::Line(ref n1, ref p1), &CollisionObjectState::Point(ref n2, ref p2)) 
                 => {let res = collision_logic::poly_point_coll(n1, p1, n2, p2); (res.0.to_line_results(), res.1)},
-            (&CollObjPair::Point(ref n1, ref p1), &CollObjPair::Line(ref n2, ref p2)) 
+            (&CollisionObjectState::Point(ref n1, ref p1), &CollisionObjectState::Line(ref n2, ref p2)) 
                 => {let res = collision_logic::poly_point_coll(n2, p2, n1, p1); (res.1, res.0.to_line_results())},
             
-            (&CollObjPair::Circ(ref n1, ref p1), &CollObjPair::Point(ref n2, ref p2)) 
+            (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Point(ref n2, ref p2)) 
                 => collision_logic::circ_point_coll(&n1, &p1, n2, p2),
-            (&CollObjPair::Point(ref n1, ref p1), &CollObjPair::Circ(ref n2, ref p2)) 
+            (&CollisionObjectState::Point(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
                 => {let res = collision_logic::circ_point_coll(&n2, &p2, n1, p1); (res.1, res.0)},
             
-            _ => (CollResults::no_collision(), CollResults::no_collision()),
+            _ => (CollisionResults::no_collision(), CollisionResults::no_collision()),
         }
     }
 }

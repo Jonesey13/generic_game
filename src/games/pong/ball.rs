@@ -1,7 +1,7 @@
 use na::{Vector2, Vector3, Vector4, norm};
 use num::Zero;
 use geometry::circle;
-use collision::{Collidable, CollObj, CollResults};
+use collision::{Collidable, CollObj, CollisionResults};
 use rendering;
 use super::FOREGROUND_LAYER;
 
@@ -10,7 +10,7 @@ pub struct Ball {
     radius: f64,
     color: Vector4<f64>,
     velocity: Vector2<f64>,
-    coll_results: CollResults<super::PongObject>,
+    coll_results: CollisionResults<super::PongObject>,
     prev: Option<Box<Ball>>,
 }
 
@@ -34,7 +34,7 @@ impl Ball {
             radius: rad,
             color: color,
             velocity: Vector2::zero(),
-            coll_results: CollResults::no_collision(),
+            coll_results: CollisionResults::no_collision(),
             prev: None
         }
     }
@@ -90,11 +90,11 @@ impl Collidable for Ball {
         CollObj::Circ(self.get_current_circle(), self.get_previous_circle())
     }
 
-    fn get_collision_results(&self) -> CollResults<Self::Data> {
+    fn get_collision_results(&self) -> CollisionResults<Self::Data> {
         self.coll_results.clone()
     }
 
-    fn set_collision_results(&mut self, new_results: CollResults<Self::Data>) {
+    fn set_collision_results(&mut self, new_results: CollisionResults<Self::Data>) {
         self.coll_results = new_results;
     }
 

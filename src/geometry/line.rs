@@ -91,14 +91,14 @@ impl ToRenderable for Line {
 }
 
 impl collision::CollObj for Line {
-    fn get_object_pair(&self, other: &Self) -> collision::CollObjPair {
-       collision::CollObjPair::Line(self.clone(), other.clone())
+    fn get_object_pair(&self, other: &Self) -> collision::CollisionObjectState {
+       collision::CollisionObjectState::Line(self.clone(), other.clone())
     }
 
-    fn render_collision_details(&self, coll_details: collision::CollDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    fn render_collision_details(&self, collision_details: collision::CollisionDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::Renderable>> {
-        let line_info = match coll_details {
-            collision::CollDetails::Line(info) => info,
+        let line_info = match collision_details {
+            collision::CollisionDetails::Line(info) => info,
             _ => return vec![]
         };
 
