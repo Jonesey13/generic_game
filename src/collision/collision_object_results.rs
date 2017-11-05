@@ -1,4 +1,4 @@
-use super::CollisionObjectDetails;
+use super::{CollisionObjectDetails, CollisionResults};
 
 #[derive(Clone)]
 pub struct CollisionObjectResults<T: Clone> {
@@ -32,5 +32,19 @@ impl<T: Clone> CollisionObjectResults<T> {
             self.details = self.details.and_then(|d| {Some(CollisionObjectDetails::Line(d.to_line_info()))});
         }
         self
+    }
+}
+
+impl<T: Clone> From<CollisionResults<T>> for CollisionObjectResults<T> {
+    fn from(coll_results: CollisionResults<T>) -> Self {
+        CollisionObjectResults {
+            collided: coll_results.collided,
+            details: match coll_results.details {
+                None => None,
+                Some(details) => Some(details.object_details)
+            },
+            time: coll_results.time,
+            data: coll_results.data
+        }
     }
 }

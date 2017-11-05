@@ -2,8 +2,8 @@ use super::CollisionObjectDetails;
 
 #[derive(Clone, Debug)]
 pub struct CollisionDetails {
-    location: usize,
-    object_details: CollisionObjectDetails
+    pub location: usize,
+    pub object_details: CollisionObjectDetails
 }
 
 impl CollisionDetails {

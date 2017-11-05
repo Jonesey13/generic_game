@@ -1,22 +1,17 @@
-use super::{CollisionObjectResults, Collidable, CollisionObjectState, collision_logic};
+use super::{CollisionObjectResults, Collidable, CollisionObjectState, collision_logic, CollisionResults};
 
 pub struct Collider;
 
 impl Collider {
     pub fn process_all<T: Clone> (mut collidables: Vec<&mut Collidable<Data=T>>) {
         for collidable in collidables.iter_mut() {
-            collidable.set_collision_object_results(CollisionObjectResults::no_collision());
+            collidable.set_collision_results(CollisionResults::no_collision());
         }
 
-        let mut collidables_with_objects: Vec<(&mut &mut Collidable<Data=T>, CollisionObjectState)>
-            = collidables.iter_mut()
-            .map(|collidable| { let collision_object = collidable.get_collision_objects()[0].clone(); (collidable, collision_object) })
-            .collect();
-
         loop {
-            if let Some ((&mut (ref mut first_collidable, ref mut first_obj), ref mut rest)) = collidables_with_objects.split_last_mut() {
-                for &mut(ref mut second_collidable, ref mut second_obj) in rest.iter_mut() {
-                    let (mut results1, mut results2) = Collider::process_pair(&first_obj, &second_obj);
+            if let Some ((first_collidable, rest)) = collidables.split_last_mut() {
+                for second_collidable in rest.into_iter() {
+                    let (mut results1, mut results2) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable);
 
                     if results1.collided || results2.collided {
                         let data1 = first_collidable.get_collision_data();
@@ -24,12 +19,12 @@ impl Collider {
 
                         if results1.collided {
                             results1.data = Some(data2);
-                            first_collidable.set_collision_object_results(results1);
+                            first_collidable.set_collision_results(results1);
                         }
 
                         if results2.collided {
                             results2.data = Some(data1);
-                            second_collidable.set_collision_object_results(results2);
+                            second_collidable.set_collision_results(results2);
                         }
                     }
                 }
@@ -37,11 +32,40 @@ impl Collider {
             else {
                 break;
             }
-            collidables_with_objects.pop();
+            collidables.pop();
         }
     }
 
-    fn process_pair<T: Clone> (first: &CollisionObjectState, second: &CollisionObjectState) -> (CollisionObjectResults<T>, CollisionObjectResults<T>) {
+    fn process_pair_of_collidables<T: Clone> (first: &Collidable<Data=T>, second: &Collidable<Data=T>) 
+        -> (CollisionResults<T>, CollisionResults<T>) {
+
+        let (mut results1, mut results2) = (CollisionObjectResults::no_collision(), CollisionObjectResults::no_collision());
+        let (mut location1, mut location2) = (0, 0);
+        
+        for (obj_loc1, first_obj) in first.get_collision_objects().iter().enumerate() {
+            for (obj_loc2, second_obj) in second.get_collision_objects().iter().enumerate() {
+                let (obj_results1, obj_results2): (CollisionObjectResults<T>, CollisionObjectResults<T>) 
+                    = Collider::process_pair_of_object_states(first_obj, second_obj);
+
+                if let Some(new_time) = obj_results1.time {
+                    if let Some(old_time) = results1.time {
+                        if new_time > old_time {
+                            continue
+                        }
+                    }
+                    results1 = obj_results1;
+                    results2 = obj_results2;
+                    location1 = obj_loc1;
+                    location2 = obj_loc2;
+                }
+            }
+        }
+
+        (CollisionResults::new_with_location(location1, results1), CollisionResults::new_with_location(location2,results2))
+    }
+
+    fn process_pair_of_object_states<T: Clone> (first: &CollisionObjectState, second: &CollisionObjectState) 
+        -> (CollisionObjectResults<T>, CollisionObjectResults<T>) {
         match (first, second) {
             // Reflexive (points can't collide with points)
             (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 

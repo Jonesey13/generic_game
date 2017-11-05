@@ -1,4 +1,4 @@
-use collision::{Collidable, CollObj, CollisionObjectState, CollisionObjectResults, CollisionObjectDetails};
+use collision::{Collidable, CollObj, CollisionObjectState, CollisionResults, CollisionObjectResults, CollisionObjectDetails};
 use geometry::{ToRenderable, TwoDTransformable};
 use rendering::Renderable;
 use na::{Vector2, Vector4, Rotation2};
@@ -109,15 +109,15 @@ impl<C: Clone + CollObj + ToRenderable + TwoDTransformable, D: Clone> Collidable
        vec![ self.get_obj_pair()]
     }
 
-    fn get_collision_object_results(&self) -> CollisionObjectResults<Self::Data> {
-        self.coll_results.clone()
+    fn get_collision_results(&self) -> CollisionResults<Self::Data> {
+        self.coll_results.clone().into()
     }
 
-    fn set_collision_object_results(&mut self, new_results: CollisionObjectResults<Self::Data>) {
-        self.coll_results = new_results.clone();
+    fn set_collision_results(&mut self, new_results: CollisionResults<Self::Data>) {
+        self.coll_results = new_results.clone().into();
         if self.has_collided() {
             self.has_collided_in_past = true;
-            self.last_collision_details = new_results.details.unwrap();
+            self.last_collision_details = new_results.details.unwrap().object_details;
         }
     }
 

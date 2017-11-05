@@ -30,11 +30,11 @@ pub use self::collider::Collider;
 pub trait Collidable {
     type Data: Clone;
     fn get_collision_objects(&self) -> Vec<CollisionObjectState> { vec![] }
-    fn get_collision_object_results(&self) -> CollisionObjectResults<Self::Data>;
-    fn set_collision_object_results(&mut self, CollisionObjectResults<Self::Data>);
-    fn get_collision_time(&mut self) -> Option<f64> {self.get_collision_object_results().time}
-    fn has_collided(&self) -> bool { self.get_collision_object_results().collided }
-    fn get_collision_details(&self) -> Option<CollisionObjectDetails> { self.get_collision_object_results().details }
+    fn get_collision_results(&self) -> CollisionResults<Self::Data>;
+    fn set_collision_results(&mut self, CollisionResults<Self::Data>);
+    fn get_collision_time(&mut self) -> Option<f64> {self.get_collision_results().time}
+    fn has_collided(&self) -> bool { self.get_collision_results().collided }
+    fn get_collision_details(&self) -> Option<CollisionDetails> { self.get_collision_results().details }
     fn get_collision_data(&self) -> Self::Data;
 }
 

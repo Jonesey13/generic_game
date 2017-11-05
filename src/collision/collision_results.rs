@@ -20,4 +20,19 @@ impl<T: Clone> CollisionResults<T> {
             data: object_results.data
         }
     }
+
+    pub fn no_collision() -> CollisionResults<T> {
+        CollisionResults {
+            collided: false,
+            details: None,
+            time: None,
+            data: None,
+        }
+    }
+}
+
+impl<T: Clone> From<CollisionObjectResults<T>> for CollisionResults<T> {
+    fn from(obj_result: CollisionObjectResults<T>) -> Self {
+            CollisionResults::new_with_location(0, obj_result)
+    }
 }
