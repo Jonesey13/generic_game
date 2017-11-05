@@ -4,7 +4,7 @@ use geometry::line::Line;
 use geometry::con_poly;
 use rendering;
 use collision;
-use collision::{Collidable, CollObj, CollisionResults};
+use collision::{Collidable, CollObj, CollisionObjectResults};
 use std::f64::consts::PI;
 use super::FOREGROUND_LAYER;
 
@@ -13,7 +13,7 @@ pub struct Player {
     slide_pos: f64,
     paddle: Paddle,
     line: Line,
-    coll_results: CollisionResults<super::PongObject>,
+    coll_results: CollisionObjectResults<super::PongObject>,
     prev: Option<Box<Player>>
 }
 
@@ -37,7 +37,7 @@ impl Player {
             slide_pos: 0.5,
             paddle: paddle,
             line: line,
-            coll_results: CollisionResults::no_collision(),
+            coll_results: CollisionObjectResults::no_collision(),
             prev: None
         }
     }
@@ -90,11 +90,11 @@ impl Collidable for Player {
         CollObj::ConPoly(self.get_current_poly(), self.get_previous_poly())
     }
 
-    fn get_collision_results(&self) -> CollisionResults<Self::Data> {
+    fn get_collision_object_results(&self) -> CollisionObjectResults<Self::Data> {
         self.coll_results.clone()
     }
 
-    fn set_collision_results(&mut self, new_results: CollisionResults<Self::Data>) {
+    fn set_collision_object_results(&mut self, new_results: CollisionObjectResults<Self::Data>) {
         self.coll_results = new_results;
     }
 

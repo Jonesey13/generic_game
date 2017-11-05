@@ -1,11 +1,11 @@
-use super::{CollisionResults, Collidable, CollisionObjectState, collision_logic};
+use super::{CollisionObjectResults, Collidable, CollisionObjectState, collision_logic};
 
 pub struct Collider;
 
 impl Collider {
     pub fn process_all<T: Clone> (mut collidables: Vec<&mut Collidable<Data=T>>) {
         for collidable in collidables.iter_mut() {
-            collidable.set_collision_results(CollisionResults::no_collision());
+            collidable.set_collision_object_results(CollisionObjectResults::no_collision());
         }
 
         let mut collidables_with_objects: Vec<(&mut &mut Collidable<Data=T>, CollisionObjectState)>
@@ -24,12 +24,12 @@ impl Collider {
 
                         if results1.collided {
                             results1.data = Some(data2);
-                            first_collidable.set_collision_results(results1);
+                            first_collidable.set_collision_object_results(results1);
                         }
 
                         if results2.collided {
                             results2.data = Some(data1);
-                            second_collidable.set_collision_results(results2);
+                            second_collidable.set_collision_object_results(results2);
                         }
                     }
                 }
@@ -41,7 +41,7 @@ impl Collider {
         }
     }
 
-    fn process_pair<T: Clone> (first: &CollisionObjectState, second: &CollisionObjectState) -> (CollisionResults<T>, CollisionResults<T>) {
+    fn process_pair<T: Clone> (first: &CollisionObjectState, second: &CollisionObjectState) -> (CollisionObjectResults<T>, CollisionObjectResults<T>) {
         match (first, second) {
             // Reflexive (points can't collide with points)
             (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
@@ -82,7 +82,7 @@ impl Collider {
             (&CollisionObjectState::Point(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
                 => {let res = collision_logic::circ_point_coll(&n2, &p2, n1, p1); (res.1, res.0)},
             
-            _ => (CollisionResults::no_collision(), CollisionResults::no_collision()),
+            _ => (CollisionObjectResults::no_collision(), CollisionObjectResults::no_collision()),
         }
     }
 }

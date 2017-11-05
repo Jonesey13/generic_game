@@ -40,10 +40,10 @@ impl collision::CollObj for Point {
         collision::CollisionObjectState::Point(self.pos, other.pos)
     }
 
-    fn render_collision_details(&self, collision_details: collision::CollisionDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    fn render_collision_details(&self, collision_details: collision::CollisionObjectDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::Renderable>> {
         match collision_details {
-            collision::CollisionDetails::Point(dir) => vec![
+            collision::CollisionObjectDetails::Point(dir) => vec![
                 self.to_renderable(colour, depth, fixed),
                 Box::new(rendering::Arrow::new_for_coll_test(
                     self.pos,

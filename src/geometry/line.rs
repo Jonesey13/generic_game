@@ -95,10 +95,10 @@ impl collision::CollObj for Line {
        collision::CollisionObjectState::Line(self.clone(), other.clone())
     }
 
-    fn render_collision_details(&self, collision_details: collision::CollisionDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    fn render_collision_details(&self, collision_details: collision::CollisionObjectDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::Renderable>> {
         let line_info = match collision_details {
-            collision::CollisionDetails::Line(info) => info,
+            collision::CollisionObjectDetails::Line(info) => info,
             _ => return vec![]
         };
 

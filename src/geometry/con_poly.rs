@@ -108,10 +108,10 @@ impl CollObj for ConPoly {
         CollisionObjectState::ConPoly(self.clone(), other.clone())
     }
 
-    fn render_collision_details(&self, collision_details: collision::CollisionDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    fn render_collision_details(&self, collision_details: collision::CollisionObjectDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<Renderable>> {
         let coll_location = match collision_details {
-            collision::CollisionDetails::ConPoly(loc) => loc,
+            collision::CollisionObjectDetails::ConPoly(loc) => loc,
             _ => return vec![]
         };
 

@@ -1,6 +1,6 @@
 use na::{Vector2, Vector3, Vector4, norm, Rotation2};
 use gg::collision;
-use gg::collision::{CollisionResults, Collidable, CollObj, CollisionDetails, ConPolyInfo};
+use gg::collision::{CollisionObjectResults, Collidable, CollObj, CollisionObjectDetails, ConPolyInfo};
 use gg::geometry::{circle, con_poly, average_vec2, Poly};
 use rendering;
 use num::Zero;
@@ -15,7 +15,7 @@ pub struct CollRect {
     pub color: Vector4<f64>,
     pub velocity: Vector2<f64>,
     pub rot: Rotation2<f64>,
-    pub coll_results: CollisionResults<super::PhysicsTestObject>,
+    pub coll_results: CollisionObjectResults<super::PhysicsTestObject>,
     pub prev: Option<Box<CollRect>>,
     pub player_controlled: bool
 }
@@ -45,7 +45,7 @@ impl CollRect {
             rot: rot,
             color: color,
             velocity: Vector2::zero(),
-            coll_results: CollisionResults::no_collision(),
+            coll_results: CollisionObjectResults::no_collision(),
             prev: None,
             player_controlled: false,
         }
@@ -133,9 +133,9 @@ impl CollRect {
     fn resolve_collision(&mut self) {
         self.color = RED.into();
         let coll_dir = match self.get_collision_details() {
-            Some(CollisionDetails::ConPoly(ConPolyInfo::CornerInfo(_, dir))) => dir,
-            Some(CollisionDetails::ConPoly(ConPolyInfo::LineInfo(index, _))) => self.get_current_rect().get_normal(index),
-            Some(CollisionDetails::ConPoly(ConPolyInfo::SideInfo(index))) => self.get_current_rect().get_normal(index),
+            Some(CollisionObjectDetails::ConPoly(ConPolyInfo::CornerInfo(_, dir))) => dir,
+            Some(CollisionObjectDetails::ConPoly(ConPolyInfo::LineInfo(index, _))) => self.get_current_rect().get_normal(index),
+            Some(CollisionObjectDetails::ConPoly(ConPolyInfo::SideInfo(index))) => self.get_current_rect().get_normal(index),
             _ => panic!("unreachable!")
         };
         let speed = self.get_speed();
@@ -157,11 +157,11 @@ impl Collidable for CollRect {
         CollObj::ConPoly(self.get_current_rect(), self.get_previous_rect())
     }
 
-    fn get_collision_results(&self) -> CollisionResults<Self::Data> {
+    fn get_collision_object_results(&self) -> CollisionObjectResults<Self::Data> {
         self.coll_results.clone()
     }
 
-    fn set_collision_results(&mut self, new_results: CollisionResults<Self::Data>) {
+    fn set_collision_object_results(&mut self, new_results: CollisionObjectResults<Self::Data>) {
         self.coll_results = new_results;
     }
 

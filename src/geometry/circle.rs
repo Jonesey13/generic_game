@@ -53,10 +53,10 @@ impl collision::CollObj for Circle {
         collision::CollisionObjectState::Circ(self.clone(), other.clone())
     }
 
-    fn render_collision_details(&self, collision_details: collision::CollisionDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    fn render_collision_details(&self, collision_details: collision::CollisionObjectDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::Renderable>> {
         let coll_dir = match collision_details {
-            collision::CollisionDetails::Circ(dir) => dir,
+            collision::CollisionObjectDetails::Circ(dir) => dir,
             _ => return vec![]
         };
 

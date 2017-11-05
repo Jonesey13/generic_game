@@ -1,4 +1,4 @@
-use super::collision_details::CollisionDetails;
+use super::{CollisionDetails, CollisionObjectResults};
 
 #[derive(Clone)]
 pub struct CollisionResults<T: Clone> {
@@ -9,28 +9,15 @@ pub struct CollisionResults<T: Clone> {
 }
 
 impl<T: Clone> CollisionResults<T> {
-    pub fn no_collision() -> CollisionResults<T> {
+    pub fn new_with_location(location: usize, object_results: CollisionObjectResults<T>) -> Self {
         CollisionResults {
-            collided: false,
-            details: None,
-            time: None,
-            data: None,
+            collided: object_results.collided,
+            details: match object_results.details {
+                None => None,
+                Some(obj_details) => Some(CollisionDetails::new(location, obj_details))
+            },
+            time: object_results.time,
+            data: object_results.data
         }
-    }
-
-    pub fn collided(details: CollisionDetails, time: f64) -> CollisionResults<T> {
-        CollisionResults {
-            collided: true,
-            details: Some(details),
-            time: Some(time),
-            data: None,
-        }
-    }
-
-    pub fn to_line_results(mut self) -> CollisionResults<T> {
-        if self.collided {
-            self.details = self.details.and_then(|d| {Some(CollisionDetails::Line(d.to_line_info()))});
-        }
-        self
     }
 }

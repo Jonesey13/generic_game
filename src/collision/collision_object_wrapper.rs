@@ -1,4 +1,4 @@
-use collision::{Collidable, CollObj, CollisionObjectState, CollisionResults, CollisionDetails};
+use collision::{Collidable, CollObj, CollisionObjectState, CollisionObjectResults, CollisionObjectDetails};
 use geometry::{ToRenderable, TwoDTransformable};
 use rendering::Renderable;
 use na::{Vector2, Vector4, Rotation2};
@@ -6,28 +6,28 @@ use na::{Vector2, Vector4, Rotation2};
 #[derive(Clone)]
 pub struct CollisionObjectWrapper<C: Clone, D: Clone> {
     collision_object: C,
-    coll_results: CollisionResults<D>,
+    coll_results: CollisionObjectResults<D>,
     object_index: usize,
     collision_object_prev: Option<C>,
     data: D,
     player_controlled: bool,
     color: Vector4<f64>,
     has_collided_in_past: bool,
-    last_collision_details: CollisionDetails,
+    last_collision_details: CollisionObjectDetails,
 }
 
 impl<C:Clone, D: Clone> CollisionObjectWrapper<C, D> {
     pub fn new(collision_object: C, object_index: usize, data: D) -> Self {
         CollisionObjectWrapper {
             collision_object,
-            coll_results: CollisionResults::no_collision(),
+            coll_results: CollisionObjectResults::no_collision(),
             object_index,
             collision_object_prev: None,
             data,
             player_controlled: false,
             color: Vector4::new(1.0, 1.0, 1.0, 1.0),
             has_collided_in_past: false,
-            last_collision_details: CollisionDetails::None,
+            last_collision_details: CollisionObjectDetails::None,
         }
     }
 
@@ -98,22 +98,22 @@ impl<C: Clone + CollObj + ToRenderable + TwoDTransformable, D: Clone> CollisionO
 
     fn reset_collision_flag(&mut self) {
         self.has_collided_in_past = false;
-        self.last_collision_details = CollisionDetails::None;
+        self.last_collision_details = CollisionObjectDetails::None;
     }
 }
 
 impl<C: Clone + CollObj + ToRenderable + TwoDTransformable, D: Clone> Collidable for CollisionObjectWrapper<C, D> {
     type Data = D;
 
-    fn get_collision_object(&self) -> CollisionObjectState {
-        self.get_obj_pair()
+    fn get_collision_objects(&self) -> Vec<CollisionObjectState> {
+       vec![ self.get_obj_pair()]
     }
 
-    fn get_collision_results(&self) -> CollisionResults<Self::Data> {
+    fn get_collision_object_results(&self) -> CollisionObjectResults<Self::Data> {
         self.coll_results.clone()
     }
 
-    fn set_collision_results(&mut self, new_results: CollisionResults<Self::Data>) {
+    fn set_collision_object_results(&mut self, new_results: CollisionObjectResults<Self::Data>) {
         self.coll_results = new_results.clone();
         if self.has_collided() {
             self.has_collided_in_past = true;
