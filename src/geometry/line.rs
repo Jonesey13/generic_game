@@ -1,6 +1,7 @@
 use na::{Vector2, Vector4, Rotation2, norm, dot};
-use super::{vect, DualSoln, Poly, TwoDTransformable, ToRenderable, Point};
+use super::{vect, DualSoln, Poly, TwoDTransformable, ToRenderables, Point};
 use rendering;
+use collision::{ToCollisionObjects, CollisionObject};
 use collision;
 
 #[derive(Copy, Clone, Debug)]
@@ -83,26 +84,19 @@ impl TwoDTransformable for Line {
     }
 }
 
-impl ToRenderable for Line {
-    fn to_renderable(&self, colour: Vector4<f64>, depth: f64, fixed: bool) -> Box<rendering::Renderable> {
+impl ToRenderables for Line {
+    fn to_renderables(&self, colour: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::Renderable>> {
         let line_length = (self.end - self.beg).norm();
-        Box::new(rendering::Line::new_square(self.beg, self.end, line_length / 100.0, colour, depth, fixed))
+        vec![
+            Box::new(rendering::Line::new_square(self.beg, self.end, line_length / 100.0, colour, depth, fixed))
+        ]
     }
 }
 
-impl collision::CollObj for Line {
-    fn get_object_pair(&self, other: &Self) -> collision::CollisionObjectState {
-       collision::CollisionObjectState::Line(self.clone(), other.clone())
-    }
-
-    fn render_collision_details(&self, collision_details: collision::CollisionObjectDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+impl Line {
+    pub fn render_collision_details(&self, line_info: collision::LineInfo, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::Renderable>> {
-        let line_info = match collision_details {
-            collision::CollisionObjectDetails::Line(info) => info,
-            _ => return vec![]
-        };
-
-        let coll_pos_rendering: Box<ToRenderable> = match line_info {
+        let coll_pos_rendering: Box<ToRenderables> = match line_info {
             collision::LineInfo::LineBeg(_) => Box::new(Point::new(self.beg)),
             collision::LineInfo::LineEnd(_) => Box::new(Point::new(self.end)),
             collision::LineInfo::Point(x, collision::LineSide::Left) => Box::new(Point::new(self.get_point(1.0 - x))),
@@ -129,9 +123,16 @@ impl collision::CollObj for Line {
             )
         );
 
+        let mut renderables = coll_pos_rendering.to_renderables(colour, depth, fixed);
+        renderables.push(direction_renderable);
+        renderables
+    }
+}
+
+impl ToCollisionObjects for Line {
+    fn to_collision_objects(&self) -> Vec<CollisionObject> {
         vec![
-            coll_pos_rendering.to_renderable(colour, depth, fixed),
-            direction_renderable
+            CollisionObject::Line(self.clone())
         ]
     }
 }

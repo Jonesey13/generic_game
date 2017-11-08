@@ -1,15 +1,15 @@
 use na::{Vector2, Rotation2};
 use num::Zero;
 use super::{CollisionTestGame, CollisionTestObject};
-use collision::collision_object_wrapper::{CollisionObjectWrapper, CollisionObjectWrapperTrait};
+use collision::collidable_wrapper::{CollidableWrapper, CollidableWrapperTrait};
 use collision::Collider;
 use geometry::{ConPoly, Line, Circle, Point};
 
 pub struct CollisionTestBuilder {
-    polys: Vec<CollisionObjectWrapper<ConPoly, CollisionTestObject>>,
-    circles: Vec<CollisionObjectWrapper<Circle, CollisionTestObject>>,
-    lines: Vec<CollisionObjectWrapper<Line, CollisionTestObject>>,
-    points: Vec<CollisionObjectWrapper<Point, CollisionTestObject>>,
+    polys: Vec<CollidableWrapper<ConPoly, CollisionTestObject>>,
+    circles: Vec<CollidableWrapper<Circle, CollisionTestObject>>,
+    lines: Vec<CollidableWrapper<Line, CollisionTestObject>>,
+    points: Vec<CollidableWrapper<Point, CollisionTestObject>>,
     object_index: usize
 }
 
@@ -31,7 +31,7 @@ impl CollisionTestBuilder {
     }
 
     pub fn add_poly<'a> (&'a mut self, con_poly: ConPoly) -> &'a mut Self {
-        let con_poly_wrapper = CollisionObjectWrapper::new(
+        let con_poly_wrapper = CollidableWrapper::new(
             con_poly,
             self.object_index,
             CollisionTestObject::Poly
@@ -42,7 +42,7 @@ impl CollisionTestBuilder {
     }
 
     pub fn add_circle<'a> (&'a mut self, circle: Circle) -> &'a mut Self {
-        let circle_wrapper = CollisionObjectWrapper::new(
+        let circle_wrapper = CollidableWrapper::new(
             circle,
             self.object_index,
             CollisionTestObject::Circle
@@ -53,7 +53,7 @@ impl CollisionTestBuilder {
     }
 
     pub fn add_point<'a> (&'a mut self, point: Point) -> &'a mut Self {
-        let point_wrapper = CollisionObjectWrapper::new(
+        let point_wrapper = CollidableWrapper::new(
             point,
             self.object_index,
             CollisionTestObject::Point
@@ -64,7 +64,7 @@ impl CollisionTestBuilder {
     }
 
     pub fn add_line<'a> (&'a mut self, line: Line) -> &'a mut Self {
-        let line_wrapper = CollisionObjectWrapper::new(
+        let line_wrapper = CollidableWrapper::new(
             line,
             self.object_index,
             CollisionTestObject::Line

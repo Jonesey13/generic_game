@@ -1,9 +1,9 @@
 use na::{Vector2, Vector3, Vector4};
 use std::fmt;
 use geometry::{Line, Point};
-use super::{vect, DualSoln, Poly, TwoDTransformable, ToRenderable};
+use super::{vect, DualSoln, Poly, TwoDTransformable, ToRenderables};
 use rendering;
-use collision;
+use collision::{ToCollisionObjects, CollisionObject};
 
 #[derive(Clone)]
 pub struct Circle{
@@ -38,30 +38,23 @@ impl TwoDTransformable for Circle {
     fn rotate(&mut self, _: f64) {}
 }
 
-impl ToRenderable for Circle {
-    fn to_renderable(&self, color: Vector4<f64>, depth: f64, _: bool) -> Box<rendering::Renderable> {
-        Box::new(rendering::Circle {
-            radius: self.rad,
-            pos: Vector3::new(self.center.x, self.center.y, depth),
-            color
-        })
+impl ToRenderables for Circle {
+    fn to_renderables(&self, color: Vector4<f64>, depth: f64, _: bool) -> Vec<Box<rendering::Renderable>> {
+        vec![
+            Box::new(rendering::Circle {
+                radius: self.rad,
+                pos: Vector3::new(self.center.x, self.center.y, depth),
+                color
+            })
+        ]
     }
 }
 
-impl collision::CollObj for Circle {
-    fn get_object_pair(&self, other: &Self) -> collision::CollisionObjectState {
-        collision::CollisionObjectState::Circ(self.clone(), other.clone())
-    }
-
-    fn render_collision_details(&self, collision_details: collision::CollisionObjectDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+impl Circle {
+    pub fn render_collision_details(&self, coll_dir: Vector2<f64>, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::Renderable>> {
-        let coll_dir = match collision_details {
-            collision::CollisionObjectDetails::Circ(dir) => dir,
-            _ => return vec![]
-        };
-
         let coll_location = self.center + self.rad * coll_dir;
-        let location_renderable: Box<ToRenderable> = Box::new(Point::new(coll_location));
+        let location_renderable: Box<ToRenderables> = Box::new(Point::new(coll_location));
 
         let direction_renderable: Box<rendering::Renderable> = Box::new(
             rendering::Arrow::new_for_coll_test(
@@ -73,9 +66,16 @@ impl collision::CollObj for Circle {
             )
         );
 
+        let mut renderables = location_renderable.to_renderables(colour, depth, fixed);
+        renderables.push(direction_renderable);
+        renderables
+    }
+}
+
+impl ToCollisionObjects for Circle {
+    fn to_collision_objects(&self) -> Vec<CollisionObject> {
         vec![
-            location_renderable.to_renderable(colour, depth, fixed),
-            direction_renderable
+            CollisionObject::Circ(self.clone())
         ]
     }
 }

@@ -4,7 +4,7 @@ use geometry::line::Line;
 use geometry::con_poly;
 use rendering;
 use collision;
-use collision::{Collidable, CollObj, CollisionObjectResults};
+use collision::{Collidable, CollisionObject, CollisionObjectResults};
 use std::f64::consts::PI;
 use super::FOREGROUND_LAYER;
 
@@ -86,8 +86,8 @@ impl Player {
 impl Collidable for Player {
     type Data = super::PongObject;
 
-    fn get_collision_object(&self) -> CollObj {
-        CollObj::ConPoly(self.get_current_poly(), self.get_previous_poly())
+    fn get_collision_object(&self) -> CollisionObject {
+        CollisionObject::ConPoly(self.get_current_poly(), self.get_previous_poly())
     }
 
     fn get_collision_object_results(&self) -> CollisionObjectResults<Self::Data> {

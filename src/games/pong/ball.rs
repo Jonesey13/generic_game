@@ -1,7 +1,7 @@
 use na::{Vector2, Vector3, Vector4, norm};
 use num::Zero;
 use geometry::circle;
-use collision::{Collidable, CollObj, CollisionObjectResults};
+use collision::{Collidable, CollisionObject, CollisionObjectResults};
 use rendering;
 use super::FOREGROUND_LAYER;
 
@@ -86,8 +86,8 @@ impl Ball {
 impl Collidable for Ball {
     type Data = super::PongObject;
 
-    fn get_collision_object(&self) -> CollObj {
-        CollObj::Circ(self.get_current_circle(), self.get_previous_circle())
+    fn get_collision_object(&self) -> CollisionObject {
+        CollisionObject::Circ(self.get_current_circle(), self.get_previous_circle())
     }
 
     fn get_collision_object_results(&self) -> CollisionObjectResults<Self::Data> {

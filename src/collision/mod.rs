@@ -9,7 +9,7 @@ use geometry::line::Line;
 use na::{normalize, Vector2, dot, abs};
 use debug::*;
 pub mod collision_object;
-pub mod collision_object_wrapper;
+pub mod collidable_wrapper;
 pub mod collision_test_game;
 pub mod collision_logic;
 pub mod collision_object_results;
@@ -18,7 +18,7 @@ pub mod collision_object_details;
 pub mod collision_details;
 pub mod collider;
 
-pub use self::collision_object::CollObj;
+pub use self::collision_object::{CollisionObject, ToCollisionObjects};
 pub use self::collision_test_game::CollisionTestGame;
 pub use self::collision_test_game::builder::CollisionTestBuilder;
 pub use self::collision_object_results::CollisionObjectResults;
@@ -46,4 +46,3 @@ pub enum CollisionObjectState {
     Line(Line, Line),
     Point(Vector2<f64>, Vector2<f64>)
 }
-

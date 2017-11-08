@@ -1,6 +1,6 @@
 use na::{Vector2, Vector3, Vector4, norm, Rotation2};
 use gg::collision;
-use gg::collision::{CollisionObjectResults, Collidable, CollObj, CollisionObjectDetails, ConPolyInfo};
+use gg::collision::{CollisionObjectResults, Collidable, CollisionObject, CollisionObjectDetails, ConPolyInfo};
 use gg::geometry::{circle, con_poly, average_vec2, Poly};
 use rendering;
 use num::Zero;
@@ -153,8 +153,8 @@ impl CollRect {
 impl Collidable for CollRect {
     type Data = super::PhysicsTestObject;
 
-    fn get_collision_object(&self) -> CollObj {
-        CollObj::ConPoly(self.get_current_rect(), self.get_previous_rect())
+    fn get_collision_object(&self) -> CollisionObject {
+        CollisionObject::ConPoly(self.get_current_rect(), self.get_previous_rect())
     }
 
     fn get_collision_object_results(&self) -> CollisionObjectResults<Self::Data> {

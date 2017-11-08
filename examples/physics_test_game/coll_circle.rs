@@ -1,5 +1,5 @@
 use na::{Vector2, Vector3, Vector4};
-use gg::collision::{CollisionObjectResults, Collidable, CollObj, CollisionObjectDetails};
+use gg::collision::{CollisionObjectResults, Collidable, CollisionObject, CollisionObjectDetails};
 use gg::geometry::circle;
 use gg::rendering;
 use num::Zero;
@@ -134,8 +134,8 @@ impl CollCircle {
 impl Collidable for CollCircle {
     type Data = super::PhysicsTestObject;
 
-    fn get_collision_object(&self) -> CollObj {
-        CollObj::Circ(self.get_current_circle(), self.get_previous_circle())
+    fn get_collision_object(&self) -> CollisionObject {
+        CollisionObject::Circ(self.get_current_circle(), self.get_previous_circle())
     }
 
     fn get_collision_object_results(&self) -> CollisionObjectResults<Self::Data> {

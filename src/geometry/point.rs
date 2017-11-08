@@ -1,8 +1,8 @@
 use na::{Vector2, Vector3, Vector4};
 use std::fmt;
-use super::{TwoDTransformable, ToRenderable};
+use super::{TwoDTransformable, ToRenderables};
 use rendering;
-use collision;
+use collision::{ToCollisionObjects, CollisionObject};
 
 #[derive(Clone, Debug)]
 pub struct Point {
@@ -25,34 +25,40 @@ impl TwoDTransformable for Point {
     fn rotate(&mut self, _: f64) {}
 }
 
-impl ToRenderable for Point {
-    fn to_renderable(&self, color: Vector4<f64>, depth: f64, _: bool) -> Box<rendering::Renderable> {
-        Box::new(rendering::Circle {
-            radius: 0.01,
-            pos: Vector3::new(self.pos.x, self.pos.y, depth),
-            color
-        })
+impl ToRenderables for Point {
+    fn to_renderables(&self, color: Vector4<f64>, depth: f64, _: bool) -> Vec<Box<rendering::Renderable>> {
+        vec![
+            Box::new(rendering::Circle {
+                radius: 0.01,
+                pos: Vector3::new(self.pos.x, self.pos.y, depth),
+                color
+            })
+        ]
     }
 }
 
-impl collision::CollObj for Point {
-    fn get_object_pair(&self, other: &Self) -> collision::CollisionObjectState {
-        collision::CollisionObjectState::Point(self.pos, other.pos)
+impl ToCollisionObjects for Point {
+    fn to_collision_objects(&self) -> Vec<CollisionObject> {
+        vec![
+            CollisionObject::Point(self.pos)
+        ]
     }
+}
 
-    fn render_collision_details(&self, collision_details: collision::CollisionObjectDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+impl Point {
+    pub fn render_collision_details(&self, coll_dir: Vector2<f64>, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::Renderable>> {
-        match collision_details {
-            collision::CollisionObjectDetails::Point(dir) => vec![
-                self.to_renderable(colour, depth, fixed),
-                Box::new(rendering::Arrow::new_for_coll_test(
-                    self.pos,
-                    dir,
-                    colour,
-                    depth,
-                    fixed
-                ))],
-            _ => return vec![]
-        }
+        let mut renderables = self.to_renderables(colour, depth, fixed);
+
+        renderables.push(
+            Box::new(rendering::Arrow::new_for_coll_test(
+                self.pos,
+                coll_dir,
+                colour,
+                depth,
+                fixed
+        )));
+
+        renderables
     }
 }

@@ -8,7 +8,7 @@ use input::bool_switch::BoolSwitch;
 use games;
 use geometry::{ConPoly, Line, Circle, Point};
 use std::slice::IterMut;
-use collision::collision_object_wrapper::{CollisionObjectWrapper, CollisionObjectWrapperTrait};
+use collision::collidable_wrapper::{CollidableWrapper, CollidableWrapperTrait};
 
 pub mod builder;
 
@@ -16,10 +16,10 @@ pub const RED: [f64; 4] = [1.0, 0.0, 0.0, 1.0];
 pub const BLUE: [f64; 4] = [0.0, 0.0, 1.0, 1.0];
 
 pub struct CollisionTestGame {
-    polys: Vec<CollisionObjectWrapper<ConPoly, CollisionTestObject>>,
-    lines: Vec<CollisionObjectWrapper<Line, CollisionTestObject>>,
-    circles: Vec<CollisionObjectWrapper<Circle, CollisionTestObject>>,
-    points: Vec<CollisionObjectWrapper<Point, CollisionTestObject>>,
+    polys: Vec<CollidableWrapper<ConPoly, CollisionTestObject>>,
+    lines: Vec<CollidableWrapper<Line, CollisionTestObject>>,
+    circles: Vec<CollidableWrapper<Circle, CollisionTestObject>>,
+    points: Vec<CollidableWrapper<Point, CollisionTestObject>>,
     collider: Collider,
     external_input: CollisionTestExternalGameInput,
     game_input: GameInput,
@@ -55,7 +55,7 @@ impl Game for CollisionTestGame {
         let mov_vertical = self.game_input.mov_vertical;
         let rot = self.game_input.rot;
 
-        for obj in self.get_collision_objectects_mut() {
+        for obj in self.get_collision_wrappers_mut() {
             obj.set_prev();
             if obj.is_player_controlled() {
                 obj.shift_by(t_step * 0.4 * Vector2::new(mov_horizontal as f64, mov_vertical as f64));
@@ -70,8 +70,8 @@ impl Game for CollisionTestGame {
 
     fn get_renderables(&self) -> Vec<Box<Renderable>> {
         let mut output: Vec<Box<Renderable>> = vec![];
-        for obj in self.get_collision_objectects() {
-            output.push(obj.render(0.0));
+        for obj in self.get_collision_wrappers() {
+            output.append(&mut obj.render(0.0));
             output.append(&mut obj.render_coll_results(-0.1));
         }
         output
@@ -100,22 +100,22 @@ impl CollisionTestGame {
         .chain(self.points.iter_mut().map(|it| -> &'a mut Collidable<Data = CollisionTestObject> {it}))    
     }
 
-    fn get_collision_objectects_mut<'a>(&'a mut self) -> impl Iterator<Item = &'a mut CollisionObjectWrapperTrait<Data = CollisionTestObject>> {
-        self.polys.iter_mut().map(|it| -> &'a mut CollisionObjectWrapperTrait<Data = CollisionTestObject> {it})
-        .chain(self.lines.iter_mut().map(|it| -> &'a mut CollisionObjectWrapperTrait<Data = CollisionTestObject> {it}))
-        .chain(self.circles.iter_mut().map(|it| -> &'a mut CollisionObjectWrapperTrait<Data = CollisionTestObject> {it}))
-        .chain(self.points.iter_mut().map(|it| -> &'a mut CollisionObjectWrapperTrait<Data = CollisionTestObject> {it}))    
+    fn get_collision_wrappers_mut<'a>(&'a mut self) -> impl Iterator<Item = &'a mut CollidableWrapperTrait> {
+        self.polys.iter_mut().map(|it| -> &'a mut CollidableWrapperTrait{it})
+        .chain(self.lines.iter_mut().map(|it| -> &'a mut CollidableWrapperTrait{it}))
+        .chain(self.circles.iter_mut().map(|it| -> &'a mut CollidableWrapperTrait{it}))
+        .chain(self.points.iter_mut().map(|it| -> &'a mut CollidableWrapperTrait{it}))    
     }
 
-    fn get_collision_objectects<'a>(&'a self) -> impl Iterator<Item = &'a CollisionObjectWrapperTrait<Data = CollisionTestObject>> {
-        self.polys.iter().map(|it| -> &'a CollisionObjectWrapperTrait<Data = CollisionTestObject> {it})
-        .chain(self.lines.iter().map(|it| -> &'a CollisionObjectWrapperTrait<Data = CollisionTestObject> {it}))        
-        .chain(self.circles.iter().map(|it| -> &'a CollisionObjectWrapperTrait<Data = CollisionTestObject> {it}))        
-        .chain(self.points.iter().map(|it| -> &'a CollisionObjectWrapperTrait<Data = CollisionTestObject> {it}))        
+    fn get_collision_wrappers<'a>(&'a self) -> impl Iterator<Item = &'a CollidableWrapperTrait> {
+        self.polys.iter().map(|it| -> &'a CollidableWrapperTrait{it})
+        .chain(self.lines.iter().map(|it| -> &'a CollidableWrapperTrait{it}))        
+        .chain(self.circles.iter().map(|it| -> &'a CollidableWrapperTrait{it}))        
+        .chain(self.points.iter().map(|it| -> &'a CollidableWrapperTrait{it}))        
     }
 
-    fn get_total_objects(&self) -> usize {
-        self.get_collision_objectects().count()
+    fn get_total_collidables(&self) -> usize {
+        self.get_collision_wrappers().count()
     }
 
     fn update_switches(&mut self) {
@@ -134,8 +134,8 @@ impl CollisionTestGame {
         
         let player_index = self.player_index;
 
-        for obj in self.get_collision_objectects_mut() {
-            let player_controlled_flag = obj.get_object_index() == player_index;
+        for obj in self.get_collision_wrappers_mut() {
+            let player_controlled_flag = obj.get_collidable_index() == player_index;
             obj.set_player_control(player_controlled_flag);
             if player_controlled_flag {
                 obj.reset_collision_flag();
@@ -145,10 +145,10 @@ impl CollisionTestGame {
 
     fn update_player_index(&mut self) {
         if self.player_index == 0 && self.game_input.left_switch.pressed() {
-            self.player_index = self.get_total_objects() - 1; 
+            self.player_index = self.get_total_collidables() - 1; 
             return;
         }
-        if self.player_index == self.get_total_objects() - 1 && self.game_input.right_switch.pressed() {
+        if self.player_index == self.get_total_collidables() - 1 && self.game_input.right_switch.pressed() {
             self.player_index = 0;
             return;
         }
@@ -159,8 +159,8 @@ impl CollisionTestGame {
     fn update_colors(&mut self) {
         let player_index = self.player_index;
 
-        for obj in self.get_collision_objectects_mut() {
-            let player_controlled_flag = obj.get_object_index() == player_index;
+        for obj in self.get_collision_wrappers_mut() {
+            let player_controlled_flag = obj.get_collidable_index() == player_index;
             match (player_controlled_flag, obj.has_collided_in_past()) {
                 (true, _) => obj.set_color(Vector4::new(1.0, 0.2, 0.2, 1.0)),
                 (false, false) => obj.set_color(Vector4::new(1.0, 1.0, 1.0, 1.0)),

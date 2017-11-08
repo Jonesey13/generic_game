@@ -5,10 +5,10 @@ use geometry::vect::get_normal_2d;
 use geometry::Poly;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
-use geometry::{TwoDTransformable, ToRenderable, Point, Line};
+use geometry::{TwoDTransformable, ToRenderables, Point, Line};
 use rendering;
 use rendering::{Renderable, Polygon};
-use collision::{CollObj, CollisionObjectState};
+use collision::{CollisionObject, CollisionObjectState, ToCollisionObjects};
 use collision;
 
 /// A (formally convex) polygon for collision detection
@@ -97,25 +97,18 @@ impl TwoDTransformable for ConPoly {
     }
 }
 
-impl ToRenderable for ConPoly {
-    fn to_renderable(&self, colour: Vector4<f64>, depth: f64, fixed: bool) -> Box<Renderable> {
-        Box::new(Polygon::new_regular(self.corners.clone(), self.get_average(), Vector3::new(0.0, 0.0, depth), colour, fixed))
+impl ToRenderables for ConPoly {
+    fn to_renderables(&self, colour: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<Renderable>> {
+        vec![
+            Box::new(Polygon::new_regular(self.corners.clone(), self.get_average(), Vector3::new(0.0, 0.0, depth), colour, fixed))
+        ]
     }
 }
 
-impl CollObj for ConPoly {
-    fn get_object_pair(&self, other: &Self) -> CollisionObjectState {
-        CollisionObjectState::ConPoly(self.clone(), other.clone())
-    }
-
-    fn render_collision_details(&self, collision_details: collision::CollisionObjectDetails, colour: Vector4<f64>, depth: f64, fixed: bool) 
+impl ConPoly {
+    pub fn render_collision_details(&self, coll_location: collision::ConPolyInfo, colour: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<Renderable>> {
-        let coll_location = match collision_details {
-            collision::CollisionObjectDetails::ConPoly(loc) => loc,
-            _ => return vec![]
-        };
-
-        let location_renderable: Box<ToRenderable> = match coll_location {
+        let location_renderable: Box<ToRenderables> = match coll_location {
             collision::ConPolyInfo::LineInfo(side, pos) => Box::new(Point::new(self.get_side(side).unwrap().get_point(pos))),
             collision::ConPolyInfo::CornerInfo(num, _) => Box::new(Point::new(self.get_corners()[num])),
             collision::ConPolyInfo::SideInfo(side) => Box::new(self.get_side(side).unwrap()),
@@ -137,11 +130,18 @@ impl CollObj for ConPoly {
             )
         );
 
-        vec![
-            location_renderable.to_renderable(colour, depth, fixed),
-            direction_renderable
-        ]
+        let mut renderables = location_renderable.to_renderables(colour, depth, fixed);
+        renderables.push(direction_renderable);
+        renderables
     }    
+}
+
+impl ToCollisionObjects for ConPoly {
+    fn to_collision_objects(&self) -> Vec<CollisionObject> {
+        vec![
+            CollisionObject::ConPoly(self.clone())
+        ]
+    }
 }
 
 #[test]

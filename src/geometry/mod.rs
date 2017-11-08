@@ -10,7 +10,7 @@ pub mod interval;
 pub mod interpolate;
 pub mod poly;
 pub mod twodtransformable;
-pub mod to_renderable;
+pub mod to_renderables;
 pub mod interval_collection;
 use na::{Vector2, norm, dot};
 use num::Zero;
@@ -25,7 +25,7 @@ pub use self::bezier_2d::BezierQuad;
 pub use self::con_poly::ConPoly;
 pub use self::poly::Poly;
 pub use self::twodtransformable::TwoDTransformable;
-pub use self::to_renderable::ToRenderable;
+pub use self::to_renderables::ToRenderables;
 
 const EPSILON: f64 = 0.0000001;
 
