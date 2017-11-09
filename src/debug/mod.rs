@@ -10,7 +10,7 @@ pub mod console;
 use std::sync::Mutex;
 
 pub static mut DEBUGGER: Debugger = Debugger {
-    flags: DEFAULTDEBUG,
+    flags: DebugFlags::DEFAULTDEBUG,
 };
 
 lazy_static! {
@@ -33,7 +33,7 @@ bitflags! {
         const DEBUGGAME       = 0b00100000;
         const DEBUGCLOCKS     = 0b01000000;
         const DEBUGALL        = 0b11111111;
-        const DEFAULTDEBUG    = WRITETOCONSOLE.bits | DEBUGCLOCKS.bits;
+        const DEFAULTDEBUG    = DebugFlags::WRITETOCONSOLE.bits | DebugFlags::DEBUGCLOCKS.bits;
     }
 }
 
@@ -44,7 +44,7 @@ pub fn debug(mes: &str) {
 
 pub fn log_to_file(mes: &str) {
     unsafe {
-        if DEBUGGER.flags.intersects(WRITETOFILE) {
+        if DEBUGGER.flags.intersects(DebugFlags::WRITETOFILE) {
             let mut file = match OpenOptions::new().write(true).append(true).create(true).open(LOGFILEPATH) {
                 Ok(f) => f,
                 Err(_) => panic!("Could not open log file at {}", LOGFILEPATH)
@@ -59,7 +59,7 @@ pub fn log_to_file(mes: &str) {
 
 pub fn log_to_file_bytes(mes: &[u8]) {
     unsafe {
-        if DEBUGGER.flags.intersects(WRITETOFILE) {
+        if DEBUGGER.flags.intersects(DebugFlags::WRITETOFILE) {
             let mut file = match OpenOptions::new().write(true).append(true).create(true).open(LOGFILEPATH) {
                 Ok(f) => f,
                 Err(_) => panic!("Could not open log file at {}", LOGFILEPATH)
@@ -74,7 +74,7 @@ pub fn log_to_file_bytes(mes: &[u8]) {
 
 fn log_to_console(mes: &str) {
     unsafe {
-        if DEBUGGER.flags.intersects(WRITETOCONSOLE) {
+        if DEBUGGER.flags.intersects(DebugFlags::WRITETOCONSOLE) {
             println!("{}", mes);
         }
     }
@@ -82,7 +82,7 @@ fn log_to_console(mes: &str) {
 
 pub fn debug_clock(mes: &str) {
     unsafe {
-        if DEBUGGER.flags.intersects(DEBUGCLOCKS) {
+        if DEBUGGER.flags.intersects(DebugFlags::DEBUGCLOCKS) {
             debug(mes);
         }
     }
@@ -90,7 +90,7 @@ pub fn debug_clock(mes: &str) {
 
 pub fn debug_clock_start(clock_name: &str) {
     unsafe {
-        if DEBUGGER.flags.intersects(DEBUGCLOCKS) {
+        if DEBUGGER.flags.intersects(DebugFlags::DEBUGCLOCKS) {
             CLOCKWRITER.lock().unwrap().start_clock(clock_name.to_string());
         }
     }
@@ -98,7 +98,7 @@ pub fn debug_clock_start(clock_name: &str) {
 
 pub fn debug_clock_start_main() {
     unsafe {
-        if DEBUGGER.flags.intersects(DEBUGCLOCKS) {
+        if DEBUGGER.flags.intersects(DebugFlags::DEBUGCLOCKS) {
             CLOCKWRITER.lock().unwrap().start();
         }
     }
@@ -106,7 +106,7 @@ pub fn debug_clock_start_main() {
 
 pub fn debug_clock_stop(clock_name: &str) {
     unsafe {
-        if DEBUGGER.flags.intersects(DEBUGCLOCKS) {
+        if DEBUGGER.flags.intersects(DebugFlags::DEBUGCLOCKS) {
             CLOCKWRITER.lock().unwrap().stop_clock(clock_name.to_string());
         }
     }
@@ -114,7 +114,7 @@ pub fn debug_clock_stop(clock_name: &str) {
 
 pub fn debug_clock_stop_main() {
     unsafe {
-        if DEBUGGER.flags.intersects(DEBUGCLOCKS) {
+        if DEBUGGER.flags.intersects(DebugFlags::DEBUGCLOCKS) {
             CLOCKWRITER.lock().unwrap().stop();
         }
     }
@@ -122,7 +122,7 @@ pub fn debug_clock_stop_main() {
 
 pub fn debug_inp(mes: &str) {
     unsafe {
-        if DEBUGGER.flags.intersects(DEBUGINPUT) {
+        if DEBUGGER.flags.intersects(DebugFlags::DEBUGINPUT) {
             debug(mes);
         }
     }
@@ -130,7 +130,7 @@ pub fn debug_inp(mes: &str) {
 
 pub fn debug_game(mes: &str) {
     unsafe {
-        if DEBUGGER.flags.intersects(DEBUGGAME) {
+        if DEBUGGER.flags.intersects(DebugFlags::DEBUGGAME) {
             debug(mes);
         }
     }
@@ -138,7 +138,7 @@ pub fn debug_game(mes: &str) {
 
 pub fn debug_rend(mes: &str) {
     unsafe {
-        if DEBUGGER.flags.intersects(DEBUGRENDERING) {
+        if DEBUGGER.flags.intersects(DebugFlags::DEBUGRENDERING) {
             debug(mes);
         }
     }
@@ -146,7 +146,7 @@ pub fn debug_rend(mes: &str) {
 
 pub fn debug_coll(mes: &str) {
     unsafe {
-        if DEBUGGER.flags.intersects(DEBUGCOLLISION) {
+        if DEBUGGER.flags.intersects(DebugFlags::DEBUGCOLLISION) {
             debug(mes);
         }
     }

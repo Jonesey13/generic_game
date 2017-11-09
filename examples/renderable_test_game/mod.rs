@@ -110,12 +110,10 @@ impl Game for RenderableTestGame {
         );
         
         vec![
-            /*Box::new(rect), 
-            Box::new(circ), 
             Box::new(text), 
             Box::new(bez_rect), 
             Box::new(bez_subrect), 
-            */ Box::new(poly), 
+            Box::new(poly), 
             Box::new(line),
             Box::new(arrow)
             ]
