@@ -68,7 +68,7 @@ use std::io::*;
 
 /// Handler
 pub trait Handler {
-    fn exit(&self) -> bool { false }
+    fn should_exit(&self) -> bool { false }
     fn on_exit(&mut self) {}
     fn init(&mut self) {}
     fn update_input(&mut self) {}

@@ -66,8 +66,8 @@ impl Handler for HandlerBasic {
         debug_clock_stop("Render");
     }
 
-    fn exit(&self) -> bool {
-        self.input_handler.escape_key_pressed() && self.window_handler.is_focused()
+    fn should_exit(&self) -> bool {
+        (self.input_handler.escape_key_pressed() && self.window_handler.is_focused()) || self.game.should_exit()
     }
 
     fn on_exit(&mut self) {

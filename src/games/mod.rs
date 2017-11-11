@@ -19,6 +19,7 @@ pub trait Game {
     fn get_view(&self) -> view_details::ViewDetails {
         view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default())
     }
+    fn should_exit(&self) -> bool {false}
     fn on_exit(&mut self) {}
     fn get_console_logs(&mut self) -> Vec<String> { vec![] }
     fn write_to_log(&mut self, &str) {}
