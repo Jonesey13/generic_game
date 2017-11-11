@@ -108,6 +108,15 @@ impl InputHandler for MultiInput {
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Escape)) {
                         kbd.escape = val;
                     }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Return)) {
+                        kbd.ret = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Backspace)) {
+                        kbd.backspace = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Space)) {
+                        kbd.space = val;
+                    }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Left)) {
                         kbd.left = val;
                     }
