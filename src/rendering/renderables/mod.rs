@@ -7,10 +7,12 @@ pub mod rectangle;
 pub mod text;
 pub mod line;
 pub mod arrow;
+pub mod box_border;
 use super::primitives::Primitive;
 
 pub use self::line::Line;
 pub use self::arrow::Arrow;
+pub use self::box_border::BoxBorder;
 
 pub trait Renderable {
     fn get_primitives(&mut self) -> Vec<Primitive>;

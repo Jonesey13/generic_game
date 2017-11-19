@@ -5,6 +5,7 @@ use na::{Vector2, Vector3, Vector4, Rotation2};
 use num::{Zero};
 use gg::rendering::{BezierRect, BezierQuadControl};
 use gg::rendering::{BezierSubrect, BezierLogic};
+use gg::rendering::renderables::BoxBorder;
 use gg::input::keyboard::KeyboardInput;
 use gg::rendering::{PlainText, TextAlign, Circle, Rectangle, Renderable, Polygon, Arrow};
 use gg::debug::console::Console;
@@ -108,6 +109,8 @@ impl Game for RenderableTestGame {
             0.0,
             false
         );
+
+        let box_border = BoxBorder::new(0.01, Vector3::new(0.0, 0.0, -0.2), 0.1, 0.1, Vector4::new(1.0, 1.0, 0.0, 1.0));
         
         vec![
             Box::new(text), 
@@ -115,7 +118,8 @@ impl Game for RenderableTestGame {
             Box::new(bez_subrect), 
             Box::new(poly), 
             Box::new(line),
-            Box::new(arrow)
+            Box::new(arrow),
+            Box::new(box_border)
             ]
     }
 
