@@ -1,7 +1,7 @@
 use super::Renderer;
 use super::shaders::make_program_from_shaders;
 use rendering::primitives::rectangle::{Rectangle, RectangleVertex};
-use rendering::primitives::circle::{Circle, CircleVertex};
+use rendering::primitives::circle_part::{CirclePart, CircleVertex};
 use rendering::primitives::polygon::{Polygon, PolygonVertex};
 use rendering::primitives::text::{RenderText, TextBuffer, PlainText};
 use rendering::primitives::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
@@ -26,7 +26,7 @@ pub struct GliumRenderer<'a> {
     display: Box<GlutinFacade>,
     draw_params: DrawParameters<'a>,
     rect_buffer: BasicBuffer<Rectangle>,
-    circ_buffer: BasicBuffer<Circle>,
+    circ_buffer: BasicBuffer<CirclePart>,
     polygon_buffer: BasicBuffer<Polygon>,
     bezier_rect_buffer: BasicBuffer<BezierRect>,
     bezier_subrect_buffer: BasicBuffer<BezierSubrect>,
@@ -53,7 +53,7 @@ impl<'a> GliumRenderer<'a> {
             display: display.clone(),
             draw_params: draw_params,
             rect_buffer: BasicBuffer::<Rectangle>::new(&display),
-            circ_buffer: BasicBuffer::<Circle>::new(&display),
+            circ_buffer: BasicBuffer::<CirclePart>::new(&display),
             polygon_buffer: BasicBuffer::<Polygon>::new(&display),
             bezier_rect_buffer: BasicBuffer::<BezierRect>::new(&display),
             bezier_subrect_buffer: BasicBuffer::<BezierSubrect>::new(&display),

@@ -7,7 +7,7 @@ use gg::rendering::{BezierRect, BezierQuadControl};
 use gg::rendering::{BezierSubrect, BezierLogic};
 use gg::rendering::renderables::BoxBorder;
 use gg::input::keyboard::KeyboardInput;
-use gg::rendering::{PlainText, TextAlign, Circle, Rectangle, Renderable, Polygon, Arrow};
+use gg::rendering::{PlainText, TextAlign, Circle, Annulus, Rectangle, Renderable, Polygon, Arrow};
 use gg::debug::console::Console;
 use gg::geometry;
 use gg::rendering::Line;
@@ -49,11 +49,18 @@ impl Game for RenderableTestGame {
         //     pos: Vector3::new(0.0, 0.0, 0.1),
         //     color: Vector4::new(0.0, 1.0, 0.0, 1.0)
         // };
-        // let circ = Circle {
-        //     radius: 1.0,
-        //     pos: Vector3::new(-0.0, -0.0, 0.1),
-        //     color: Vector4::new(1.0, 0.0, 0.0, 1.0)
-        // };
+        let circ = Circle {
+            radius: 0.7,
+            pos: Vector3::new(-0.5, 0.5, 0.1),
+            colour: Vector4::new(1.0, 0.0, 0.0, 1.0)
+        };
+
+        let ann = Annulus {
+            radial_dim: Vector2::new(0.4, 0.5),
+            pos: Vector3::new(0.2, -0.3, -0.1),
+            colour: Vector4::new(0.0, 0.0, 1.0, 1.0)
+        };
+
         let text = PlainText {
             content: "hello \r there! |".to_string(),
             position: Vector3::new(0.0, 0.0, 0.0),
@@ -113,13 +120,14 @@ impl Game for RenderableTestGame {
         let box_border = BoxBorder::new(0.01, Vector3::new(0.0, 0.0, -0.2), 0.1, 0.1, Vector4::new(1.0, 1.0, 0.0, 1.0));
         
         vec![
-            Box::new(text), 
+            Box::new(circ),
+            Box::new(ann)
+/*             Box::new(text), 
             Box::new(bez_rect), 
             Box::new(bez_subrect), 
             Box::new(poly), 
             Box::new(line),
-            Box::new(arrow),
-            Box::new(box_border)
+            Box::new(arrow) */
             ]
     }
 

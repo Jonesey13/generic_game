@@ -1,0 +1,39 @@
+#version 410 core
+uniform mat4 world_view;
+
+in vec2 radial_dim_cs[];
+in vec2 angular_dim_cs[];
+in vec3 pos_cs[];
+in vec4 colour_cs[];
+
+out vec2 circle_param;
+out vec4 colour_es;
+
+layout(quads, equal_spacing) in;
+
+vec3 circle_pos(vec2 uv);
+vec2 map_pos(vec2 uv, vec2 radial_dim, vec2 angular_dim);
+float interpolate(float t, float x, float y);
+
+#define pi 3.141592653589793238462643383279
+
+void main() {
+  circle_param = gl_TessCoord.xy;
+  colour_es = colour_cs[0];
+  gl_Position = vec4( circle_pos(map_pos(circle_param, radial_dim_cs[0], angular_dim_cs[0])), 1.0);
+  gl_Position = world_view * gl_Position;
+}
+
+float interpolate(float t, float x, float y) {
+  return (1.0 - t) * x + t * y;
+}
+
+vec2 map_pos(vec2 uv, vec2 radial_dim, vec2 angular_dim) {
+  return vec2(interpolate(uv.x, angular_dim.x, angular_dim.y), interpolate(uv.y, radial_dim.x, radial_dim.y));
+}
+
+vec3 circle_pos(vec2 uv) {
+  float theta = uv.x * 2.0 * pi;
+  float r = uv.y;
+  return (vec3(sin(theta), cos(theta), 0.0) * r + pos_cs[0]);
+}

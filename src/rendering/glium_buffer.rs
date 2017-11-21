@@ -1,6 +1,6 @@
 use super::shaders::make_program_from_shaders;
 use rendering::primitives::rectangle::{Rectangle, RectangleVertex};
-use rendering::primitives::circle::{Circle, CircleVertex};
+use rendering::primitives::circle_part::{CirclePart, CircleVertex};
 use rendering::primitives::text::{RenderText, PlainText};
 use rendering::primitives::Primitive;
 use super::render_by_shaders::GliumPrimitive;

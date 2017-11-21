@@ -39,12 +39,12 @@ impl TwoDTransformable for Circle {
 }
 
 impl ToRenderables for Circle {
-    fn to_renderables(&self, color: Vector4<f64>, depth: f64, _: bool) -> Vec<Box<rendering::Renderable>> {
+    fn to_renderables(&self, colour: Vector4<f64>, depth: f64, _: bool) -> Vec<Box<rendering::Renderable>> {
         vec![
             Box::new(rendering::Circle {
                 radius: self.rad,
                 pos: Vector3::new(self.center.x, self.center.y, depth),
-                color
+                colour
             })
         ]
     }

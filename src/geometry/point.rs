@@ -26,12 +26,12 @@ impl TwoDTransformable for Point {
 }
 
 impl ToRenderables for Point {
-    fn to_renderables(&self, color: Vector4<f64>, depth: f64, _: bool) -> Vec<Box<rendering::Renderable>> {
+    fn to_renderables(&self, colour: Vector4<f64>, depth: f64, _: bool) -> Vec<Box<rendering::Renderable>> {
         vec![
             Box::new(rendering::Circle {
                 radius: 0.01,
                 pos: Vector3::new(self.pos.x, self.pos.y, depth),
-                color
+                colour
             })
         ]
     }

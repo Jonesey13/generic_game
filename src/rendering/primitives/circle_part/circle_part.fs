@@ -1,11 +1,11 @@
 #version 410 core
 
 in vec2 circle_param;
-in vec4 color_es;
+in vec4 colour_es;
 
-out vec4 color;
+out vec4 colour;
 
 void main()
 {
-  color = color_es;
+  colour = colour_es;
 }

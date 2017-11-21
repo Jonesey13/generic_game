@@ -1,22 +1,25 @@
 #version 410 core
 
-in float radius_vs[];
+in vec2 radial_dim_vs[];
+in vec2 angular_dim_vs[];
 in vec3 pos_vs[];
-in vec4 color_vs[];
+in vec4 colour_vs[];
 
 layout(vertices = 4) out;
 
-out float radius_cs[];
+out vec2 radial_dim_cs[];
+out vec2 angular_dim_cs[];
 out vec3 pos_cs[];
-out vec4 color_cs[];
+out vec4 colour_cs[];
 
 uniform int tess_level_outer = 100;
-uniform int tess_level_inner = 20;
+uniform int tess_level_inner = 100;
 
 void main() {
-  radius_cs[gl_InvocationID] = radius_vs[0];
+  radial_dim_cs[gl_InvocationID] = radial_dim_vs[0];
+  angular_dim_cs[gl_InvocationID] = angular_dim_vs[0];
   pos_cs[gl_InvocationID] = pos_vs[0];
-  color_cs[gl_InvocationID] = color_vs[0];
+  colour_cs[gl_InvocationID] = colour_vs[0];
   gl_TessLevelOuter[0] = tess_level_outer;
   gl_TessLevelOuter[1] = tess_level_outer;
   gl_TessLevelOuter[2] = tess_level_outer;

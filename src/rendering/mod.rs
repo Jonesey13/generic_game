@@ -7,8 +7,8 @@ pub mod glium_buffer;
 use glium::backend::glutin_backend::GlutinFacade;
 
 pub use rendering::primitives::{
-    Primitive, Rectangle, Polygon, Circle, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
-pub use rendering::renderables::{Renderable, Line, Arrow, BoxBorder};
+    Primitive, Rectangle, Polygon, CirclePart, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
+pub use rendering::renderables::{Renderable, Line, Arrow, Circle, BoxBorder, Annulus};
 
 use games::view_details;
 
