@@ -1,12 +1,12 @@
 use na::Vector2;
 
-pub struct Rect {
+pub struct CartesianRectangle {
     center: Vector2<f64>,
     width: f64,
     height: f64
 }
 
-impl Rect {
+impl CartesianRectangle {
     pub fn x_bounds(&self) -> Vector2<f64> {
         Vector2::new(self.center.x - self.width / 2.0, self.center.x + self.width / 2.0)
     }

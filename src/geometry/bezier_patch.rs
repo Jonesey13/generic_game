@@ -1,6 +1,6 @@
 use na::{Vector2, Matrix2, Vector4, Rotation2};
 use geometry::bezier_2d::BezierQuad;
-use geometry::rect::Rect;
+use geometry::cartesian_rectangle::CartesianRectangle;
 
 #[derive(Clone)]
 pub struct BezierPatch {
@@ -11,7 +11,7 @@ pub struct BezierPatch {
 }
 
 impl BezierPatch {
-    pub fn get_subpatch(&self, sub_region: Rect) -> BezierPatch {
+    pub fn get_subpatch(&self, sub_region: CartesianRectangle) -> BezierPatch {
         let x_bounds = sub_region.x_bounds();
         let sub_width = x_bounds.y - x_bounds.x;
         let x_mid = (x_bounds.y + x_bounds.x) / 2.0;

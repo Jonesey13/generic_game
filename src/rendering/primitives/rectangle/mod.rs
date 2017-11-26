@@ -31,6 +31,23 @@ impl Rectangle {
         }
     }
 
+    pub fn new_with_rotation(
+            length: f64, 
+            height: f64, 
+            pos: Vector3<f64>,
+            rotation: Rotation2<f64>,
+            color: Vector4<f64>
+        ) -> Rectangle {
+        Rectangle {
+            length,
+            height,
+            rot: rotation,
+            pos,
+            color,
+            fixed: false
+        }
+    }
+
     pub fn new_regular_fixed(
             length: f64, 
             height: f64, 

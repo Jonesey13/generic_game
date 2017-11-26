@@ -1,10 +1,11 @@
 pub mod point;
 pub mod line;
 pub mod circle;
+pub mod rectangle;
 pub mod vect;
 pub mod con_poly;
 pub mod bezier_2d;
-pub mod rect;
+pub mod cartesian_rectangle;
 pub mod bezier_patch;
 pub mod interval;
 pub mod interpolate;
@@ -26,6 +27,8 @@ pub use self::con_poly::ConPoly;
 pub use self::poly::Poly;
 pub use self::twodtransformable::TwoDTransformable;
 pub use self::to_renderables::ToRenderables;
+pub use self::cartesian_rectangle::CartesianRectangle;
+pub use self::rectangle::Rectangle;
 
 const EPSILON: f64 = 0.0000001;
 

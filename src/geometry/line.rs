@@ -30,8 +30,21 @@ impl Line {
         self.beg * (1.0 - alpha) + self.end * alpha
     }
 
+    pub fn get_midpoint(&self) -> Vector2<f64> {
+        self.get_point(0.5)
+    }
+
     pub fn get_diff(&self) -> Vector2<f64> {
         self.end - self.beg
+    }
+
+    pub fn get_length(&self) -> f64 {
+        (self.end - self.beg).norm()
+    }
+
+    pub fn get_angle(&self) -> f64 {
+        let shifted_end = self.end - self.beg;
+        shifted_end.y.atan2(shifted_end.x)
     }
 
     pub fn get_direction(&self) -> Vector2<f64> {
