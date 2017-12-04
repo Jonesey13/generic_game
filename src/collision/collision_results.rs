@@ -1,6 +1,6 @@
 use super::{CollisionDetails, CollisionObjectResults};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CollisionResults<T: Clone> {
     pub collided: bool,
     pub details: Option<CollisionDetails>,
