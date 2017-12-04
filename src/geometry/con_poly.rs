@@ -5,7 +5,7 @@ use geometry::vect::get_normal_2d;
 use geometry::Poly;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
-use geometry::{TwoDTransformable, ToRenderables, Point, Line};
+use geometry::{TwoDTransformable, ToRenderables, Point, Line, Rectangle};
 use rendering;
 use rendering::{Renderable, Polygon};
 use collision::{CollisionObject, CollisionObjectState, ToCollisionObjects};
@@ -28,10 +28,9 @@ impl Poly for ConPoly {
 }
 
 impl ConPoly {
-    /// Length <=> x-axis, Height <=> y-axis
-    pub fn new_from_rect(length:f64, height:f64, pos: Vector2<f64>, rot: Rotation2<f64>) -> ConPoly {
-        let xshift = Vector2::<f64>::new(length, 0.0);
-        let yshift = Vector2::<f64>::new(0.0, height);
+    pub fn new_from_rect(rect: Rectangle) -> ConPoly {
+        let xshift = Vector2::<f64>::new(rect.length, 0.0);
+        let yshift = Vector2::<f64>::new(0.0, rect.height);
         let bottom_left = Vector2::zero();
         let bottom_right = bottom_left + xshift;
         let top_right = bottom_left + xshift + yshift;
@@ -40,7 +39,7 @@ impl ConPoly {
 
         let average = average_vec2(corners.clone());
         for vector in corners.iter_mut() {
-            *vector = rot * (*vector - average) + pos;
+            *vector = rect.rot * (*vector - average) + rect.pos;
         }
         ConPoly {
             corners: corners
