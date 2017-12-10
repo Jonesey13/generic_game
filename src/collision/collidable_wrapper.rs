@@ -7,7 +7,7 @@ use na::{Vector2, Vector4, Rotation2};
 #[derive(Clone)]
 pub struct CollidableWrapper<C: ToCollisionObjects + Clone, D: Clone> {
     collidable: C,
-    coll_results: CollisionResults<D>,
+    coll_results: Option<CollisionResults<D>>,
     collidable_index: usize,
     collidable_prev: Option<C>,
     data: D,
@@ -21,7 +21,7 @@ impl<C: ToCollisionObjects + Clone, D: Clone> CollidableWrapper<C, D> {
     pub fn new(collidable: C, collidable_index: usize, data: D) -> Self {
         CollidableWrapper {
             collidable,
-            coll_results: CollisionResults::no_collision(),
+            coll_results: None,
             collidable_index,
             collidable_prev: None,
             data,
@@ -121,11 +121,11 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> Collidable for
         vec![]
     }
 
-    fn get_collision_results(&self) -> CollisionResults<Self::Data> {
+    fn get_earliest_collision_results(&self) -> Option<CollisionResults<Self::Data>> {
         self.coll_results.clone().into()
     }
 
-    fn set_collision_results(&mut self, new_results: CollisionResults<Self::Data>) {
+    fn add_collision_results(&mut self, new_results: CollisionResults<Self::Data>) {
         self.coll_results = new_results.clone().into();
         if new_results.collided {
             self.has_collided_in_past = true;
@@ -133,7 +133,7 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> Collidable for
         }
     }
 
-    fn get_collision_data(&self) -> Self::Data { self.data.clone() }
+    fn get_own_collision_data(&self) -> Self::Data { self.data.clone() }
 }
 
 impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> TwoDTransformable for CollidableWrapper<C, D> {

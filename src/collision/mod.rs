@@ -30,12 +30,22 @@ pub use self::collider::Collider;
 pub trait Collidable {
     type Data: Clone;
     fn get_collision_objects(&self) -> Vec<CollisionObjectState> { vec![] }
-    fn get_collision_results(&self) -> CollisionResults<Self::Data>;
-    fn set_collision_results(&mut self, CollisionResults<Self::Data>);
-    fn get_collision_time(&mut self) -> Option<f64> {self.get_collision_results().time}
-    fn has_collided(&self) -> bool { self.get_collision_results().collided }
-    fn get_collision_details(&self) -> Option<CollisionDetails> { self.get_collision_results().details }
-    fn get_collision_data(&self) -> Self::Data;
+    fn get_earliest_collision_results(&self) -> Option<CollisionResults<Self::Data>>;
+    fn add_collision_results(&mut self, CollisionResults<Self::Data>);
+    fn get_earliest_collision_time(&mut self) -> Option<f64> {
+        self.get_earliest_collision_results()
+        .and_then(|res| {res.time})
+    }
+    fn has_collided(&self) -> bool { self.get_earliest_collision_results().is_some() }
+    fn get_earliest_collision_details(&self) -> Option<CollisionDetails> { 
+        self.get_earliest_collision_results()
+        .and_then(|res| {res.details })
+    }
+    fn get_earliest_collision_data(&self) -> Option<Self::Data> { 
+        self.get_earliest_collision_results()
+        .and_then(|res| {res.data })
+    }
+    fn get_own_collision_data(&self) -> Self::Data;
 }
 
 #[derive(Clone)]

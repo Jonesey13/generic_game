@@ -16,7 +16,7 @@ use std::io::*;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "full");
-    debug::set_flags(DEFAULTDEBUG);
+    debug::set_flags(DebugFlags::DEFAULTDEBUG);
     debug(&format!("Starting Up - Date: {}", time::now_utc().ctime()));
     let error_writer = Box::new(ErrorWriter::new());
     set_panic(Some(error_writer));
@@ -51,7 +51,7 @@ fn main() {
     let mut handler: Box<Handler> = Box::new(HandlerBasicWithConsole::new(renderer, input_handler, window_handler, game));
 
     handler.init();
-    while !handler.exit() {
+    while !handler.should_exit() {
         debug_clock_start_main();
         handler.update_input();
         handler.update_rendering();

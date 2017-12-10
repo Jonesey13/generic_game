@@ -143,7 +143,7 @@ impl CollRect {
         debug_coll(&format!("Rectangle Collision with collision_details = {:?}", self.get_collision_details()));
         self.set_velocity(coll_dir * -speed);
         if let Some(ref prev) = self.prev.clone() {
-            let collision_time = self.get_collision_time().unwrap();
+            let collision_time = self.get_earliest_collision_time().unwrap();
             let next_position = self.get_pos().clone();
             self.set_pos(prev.pos + (next_position - prev.pos) * collision_time);
         }

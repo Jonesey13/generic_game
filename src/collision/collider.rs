@@ -4,27 +4,23 @@ pub struct Collider;
 
 impl Collider {
     pub fn process_all<T: Clone> (mut collidables: Vec<&mut Collidable<Data=T>>) {
-        for collidable in collidables.iter_mut() {
-            collidable.set_collision_results(CollisionResults::no_collision());
-        }
-
         loop {
             if let Some ((first_collidable, rest)) = collidables.split_last_mut() {
                 for second_collidable in rest.into_iter() {
                     let (mut results1, mut results2) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable);
 
                     if results1.collided || results2.collided {
-                        let data1 = first_collidable.get_collision_data();
-                        let data2 = second_collidable.get_collision_data();
+                        let data1 = first_collidable.get_own_collision_data();
+                        let data2 = second_collidable.get_own_collision_data();
 
                         if results1.collided {
                             results1.data = Some(data2);
-                            first_collidable.set_collision_results(results1);
+                            first_collidable.add_collision_results(results1);
                         }
 
                         if results2.collided {
                             results2.data = Some(data1);
-                            second_collidable.set_collision_results(results2);
+                            second_collidable.add_collision_results(results2);
                         }
                     }
                 }
