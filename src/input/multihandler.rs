@@ -103,187 +103,198 @@ impl InputHandler for MultiInput {
 
     fn pass_on_input<'a>(&self, game_input: Option<&'a mut GameInput>) {
         if let Some(input) = game_input {
-            if let Some(kbd) = input.get_kbd_inp() {
+            if let Some(kbds) = input.get_kbd_inp() {
                 for index in 0..self.raw_states.device_stats.number_of_keyboards {
+                    if kbds.devices.iter().nth(index).is_none() {
+                        kbds.devices.push(Default::default());
+                    }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Escape)) {
-                        kbd.escape = val;
+                        kbds.devices[index].escape = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Return)) {
-                        kbd.ret = val;
+                        kbds.devices[index].ret = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Backspace)) {
-                        kbd.backspace = val;
+                        kbds.devices[index].backspace = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Space)) {
-                        kbd.space = val;
+                        kbds.devices[index].space = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Left)) {
-                        kbd.left = val;
+                        kbds.devices[index].left = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Right)) {
-                        kbd.right = val;
+                        kbds.devices[index].right = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Up)) {
-                        kbd.up = val;
+                        kbds.devices[index].up = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Down)) {
-                        kbd.down = val;
+                        kbds.devices[index].down = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::A)) {
-                        kbd.a = val;
+                        kbds.devices[index].a = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::B)) {
-                        kbd.b = val;
+                        kbds.devices[index].b = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::C)) {
-                        kbd.c = val;
+                        kbds.devices[index].c = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::D)) {
-                        kbd.d = val;
+                        kbds.devices[index].d = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::E)) {
-                        kbd.e = val;
+                        kbds.devices[index].e = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::F)) {
-                        kbd.f = val;
+                        kbds.devices[index].f = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::G)) {
-                        kbd.g = val;
+                        kbds.devices[index].g = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::H)) {
-                        kbd.h = val;
+                        kbds.devices[index].h = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::I)) {
-                        kbd.i = val;
+                        kbds.devices[index].i = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::J)) {
-                        kbd.j = val;
+                        kbds.devices[index].j = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::K)) {
-                        kbd.k = val;
+                        kbds.devices[index].k = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::L)) {
-                        kbd.l = val;
+                        kbds.devices[index].l = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::M)) {
-                        kbd.m = val;
+                        kbds.devices[index].m = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::N)) {
-                        kbd.n = val;
+                        kbds.devices[index].n = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::O)) {
-                        kbd.o = val;
+                        kbds.devices[index].o = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::P)) {
-                        kbd.p = val;
+                        kbds.devices[index].p = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Q)) {
-                        kbd.q = val;
+                        kbds.devices[index].q = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::R)) {
-                        kbd.r = val;
+                        kbds.devices[index].r = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::S)) {
-                        kbd.s = val;
+                        kbds.devices[index].s = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::T)) {
-                        kbd.t = val;
+                        kbds.devices[index].t = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::U)) {
-                        kbd.u = val;
+                        kbds.devices[index].u = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::V)) {
-                        kbd.v = val;
+                        kbds.devices[index].v = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::W)) {
-                        kbd.w = val;
+                        kbds.devices[index].w = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::X)) {
-                        kbd.x = val;
+                        kbds.devices[index].x = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Y)) {
-                        kbd.y = val;
+                        kbds.devices[index].y = val;
                     }
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Z)) {
-                        kbd.z = val;
+                        kbds.devices[index].z = val;
                     }
                 }
             }
 
-
-            if let Some(mouse) = input.get_mouse_inp() {
-                mouse.movement = (0, 0);
+            if let Some(mice) = input.get_mouse_inp() {
+                for mouse in &mut mice.devices {
+                    mouse.movement = (0, 0);
+                } 
                 for index in 0..self.raw_states.device_stats.number_of_mice {
+                    if mice.devices.iter().nth(index).is_none() {
+                        mice.devices.push(Default::default());
+                    }
                     if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Left)) {
-                        mouse.left = val;
+                        mice.devices[index].left = val;
                     }
                     if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Right)) {
-                        mouse.left = val;
+                        mice.devices[index].left = val;
                     }
                     if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Middle)) {
-                        mouse.middle = val;
+                        mice.devices[index].middle = val;
                     }
                     if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Button4)) {
-                        mouse.button4 = val;
+                        mice.devices[index].button4 = val;
                     }
                     if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Button5)) {
-                        mouse.button5 = val;
+                        mice.devices[index].button5 = val;
                     }
                     if let Some(&val) = self.raw_states.mouse_move_states.get(&index) {
-                        mouse.movement = val;
+                        mice.devices[index].movement = val;
                     }
                 }
             }
 
-            if let Some(joystick) = input.get_joystick_inp() {
+            if let Some(joysticks) = input.get_joystick_inp() {
                 for index in 0..self.raw_states.device_stats.number_of_joysticks {
+                    if joysticks.devices.iter().nth(index).is_none() {
+                        joysticks.devices.push(Default::default());
+                    }
+
                     if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 0)) {
-                        joystick.button_1 = val;
+                        joysticks.devices[index].button_1 = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 1)) {
-                        joystick.button_2 = val;
+                        joysticks.devices[index].button_2 = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 2)) {
-                        joystick.button_3 = val;
+                        joysticks.devices[index].button_3 = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 3)) {
-                        joystick.button_4 = val;
+                        joysticks.devices[index].button_4 = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 4)) {
-                        joystick.button_5 = val;
+                        joysticks.devices[index].button_5 = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 5)) {
-                        joystick.button_6 = val;
+                        joysticks.devices[index].button_6 = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 6)) {
-                        joystick.button_7 = val;
+                        joysticks.devices[index].button_7 = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 7)) {
-                        joystick.button_8 = val;
+                        joysticks.devices[index].button_8 = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 8)) {
-                        joystick.button_9 = val;
+                        joysticks.devices[index].button_9 = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_button_states.get(&JoystickButton(index, 9)) {
-                        joystick.button_10 = val;
+                        joysticks.devices[index].button_10 = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::X)) {
-                        joystick.x_axis = val;
+                        joysticks.devices[index].x_axis = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::Y)) {
-                        joystick.y_axis = val;
+                        joysticks.devices[index].y_axis = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::Z)) {
-                        joystick.z_axis = val;
+                        joysticks.devices[index].z_axis = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::RX)) {
-                        joystick.rx_axis = val;
+                        joysticks.devices[index].rx_axis = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::RY)) {
-                        joystick.ry_axis = val;
+                        joysticks.devices[index].ry_axis = val;
                     }
                     if let Some(&val) = self.raw_states.joystick_axis_states.get(&JoystickAxis(index, Axis::RZ)) {
-                        joystick.rz_axis = val;
+                        joysticks.devices[index].rz_axis = val;
                     }
                     if let Some(&ref val) = self.raw_states.joystick_hatswitch_states.get(&JoystickHatSwitch(index)) {
                         let converted_val = match *val {
@@ -297,7 +308,7 @@ impl InputHandler for MultiInput {
                             HatSwitch::Left => input::HatSwitch::Left,
                             HatSwitch::UpLeft => input::HatSwitch::UpLeft,
                         };
-                        joystick.hat_switch = converted_val;
+                        joysticks.devices[index].hat_switch = converted_val;
                     }
                 }
             }

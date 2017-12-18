@@ -89,8 +89,10 @@ impl CollisionTestGame {
     }
 
     fn set_mouse(&mut self) {
-        let ext_mouse_mov = self.external_input.mouse.movement;
-        self.mouse_mov = Vector2::new(ext_mouse_mov.0 as f64, -ext_mouse_mov.1 as f64) * self.mouse_speed;
+        if let Some(mouse) = self.external_input.mouse.devices.iter().nth(0) {
+            let ext_mouse_mov = mouse.movement;
+            self.mouse_mov = Vector2::new(ext_mouse_mov.0 as f64, -ext_mouse_mov.1 as f64) * self.mouse_speed;
+        }
     }
 
     fn get_collidables_mut<'a>(&'a mut self) -> impl Iterator<Item = &'a mut Collidable<Data = CollisionTestObject>> {
@@ -119,14 +121,14 @@ impl CollisionTestGame {
     }
 
     fn update_switches(&mut self) {
-        self.game_input.right_switch.update_state(self.external_input.kbd.right);
-        self.game_input.left_switch.update_state(self.external_input.kbd.left);        
+        self.game_input.right_switch.update_state(self.external_input.kbd.devices[0].right);
+        self.game_input.left_switch.update_state(self.external_input.kbd.devices[0].left);        
     }
 
     fn update_object_controls(&mut self) {
-        self.game_input.mov_horizontal = self.external_input.kbd.d as isize - (self.external_input.kbd.a as isize);
-        self.game_input.mov_vertical = self.external_input.kbd.w as isize - (self.external_input.kbd.s as isize);
-        self.game_input.rot = self.external_input.kbd.e as isize - (self.external_input.kbd.q as isize);
+        self.game_input.mov_horizontal = self.external_input.kbd.devices[0].d as isize - (self.external_input.kbd.devices[0].a as isize);
+        self.game_input.mov_vertical = self.external_input.kbd.devices[0].w as isize - (self.external_input.kbd.devices[0].s as isize);
+        self.game_input.rot = self.external_input.kbd.devices[0].e as isize - (self.external_input.kbd.devices[0].q as isize);
     }
 
     fn update_player_control(&mut self) {
