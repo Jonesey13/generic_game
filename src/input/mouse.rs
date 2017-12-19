@@ -12,6 +12,16 @@ impl Default for MouseInput {
 }
 
 impl MouseInput {
+    pub fn button_pressed(&self, device_index: usize) -> bool {
+        let current = self.devices[device_index];
+
+        current.left ||
+        current.middle ||
+        current.right ||
+        current.button4 ||
+        current.button5 
+    }
+
     pub fn get_left_button(&self) -> bool {
         self.devices.iter().fold(false, |acc, device| {acc || device.left})
     }

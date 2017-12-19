@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BoolSwitch {
     press_state: PressState, // Current state of button
     switch_flag: Option<PressState> // Indicates if a press has just happened

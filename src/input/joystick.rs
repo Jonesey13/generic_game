@@ -12,6 +12,21 @@ impl Default for JoystickInput {
 }
 
 impl JoystickInput {
+    pub fn button_pressed(&self, device_index: usize) -> bool {
+        let current = self.devices[device_index];
+
+        current.button_1 ||
+        current.button_2 ||
+        current.button_3 ||
+        current.button_4 ||
+        current.button_5 ||
+        current.button_6 ||
+        current.button_7 ||
+        current.button_8 ||
+        current.button_9 ||
+        current.button_10
+    }
+
     pub fn get_button_1(&self) -> bool {
         self.devices.iter().fold(false, |acc, device| {acc || device.button_1})
     } 
