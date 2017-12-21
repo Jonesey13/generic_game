@@ -42,13 +42,9 @@ impl RenderText for PlainText {
                  (screen_rect.min.y + screen_rect.max.y) as f32 / 2.0]
                 }).collect();
 
-        let mut average_glyph_pos: [f32; 2] = glyph_positions
-            .iter()
-            .fold([0.0, 0.0], |acc, rect| 
-                [acc[0] + rect[0], acc[1] + rect[1]]
-            );
-        average_glyph_pos = [average_glyph_pos[0] / (glyph_positions.len() as f32),
-                             average_glyph_pos[1] / (glyph_positions.len() as f32)];
+        let average_glyph_pos: [f32; 2] = 
+            [(glyph_positions[0][0] + glyph_positions[glyph_positions.len() - 1][0]) / 2.0,
+             (glyph_positions[0][1] + glyph_positions[glyph_positions.len() - 1][1]) / 2.0];
         let far_left_pos = glyph_pos_data[0].1.min.x as f32;
         
         let global_pos = [self.position.x as f32 ,self.position.y as f32, self.position.z as f32];

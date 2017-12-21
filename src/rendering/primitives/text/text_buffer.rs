@@ -186,18 +186,18 @@ fn layout_paragraph<'a>(font: &'a Font,
     use unicode_normalization::UnicodeNormalization;
     let mut result = Vec::new();
     let v_metrics = font.v_metrics(scale);
-    let advance_height = v_metrics.ascent - v_metrics.descent;
+    // let advance_height = v_metrics.ascent - v_metrics.descent;
     let mut caret = point(0.0, v_metrics.ascent);
     let mut last_glyph_id = None;
     for c in text.nfc() {
         if c.is_control() {
-            match c {
-                '\r' => {
-                    caret = point(0.0, caret.y + advance_height);
-                }
-                '\n' => {},
-                _ => {}
-            }
+            // match c {
+            //     '\r' => {
+            //         caret = point(0.0, caret.y + advance_height);
+            //     }
+            //     '\n' => {},
+            //     _ => {}
+            // }
             continue;
         }
         let base_glyph = if let Some(glyph) = font.glyph(c) {

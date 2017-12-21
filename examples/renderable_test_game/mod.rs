@@ -22,10 +22,10 @@ pub struct RenderableTestGame {
 
 impl Game for RenderableTestGame {
     fn update_input(&mut self) {
-        self.user_input.right_left = self.external_input.kbd.d as isize - (self.external_input.kbd.a as isize);
-        self.user_input.up_down = self.external_input.kbd.w as isize - (self.external_input.kbd.s as isize);
-        self.user_input.in_out = self.external_input.kbd.r as isize - (self.external_input.kbd.f as isize);
-        self.user_input.anticlockwise_clockwise = self.external_input.kbd.e as isize - (self.external_input.kbd.q as isize);
+        self.user_input.right_left = self.external_input.kbd.get_d() as isize - (self.external_input.kbd.get_a() as isize);
+        self.user_input.up_down = self.external_input.kbd.get_w() as isize - (self.external_input.kbd.get_s() as isize);
+        self.user_input.in_out = self.external_input.kbd.get_r() as isize - (self.external_input.kbd.get_f() as isize);
+        self.user_input.anticlockwise_clockwise = self.external_input.kbd.get_e() as isize - (self.external_input.kbd.get_q() as isize);
     }
 
     fn update_logic(&mut self, t_step: f64) {
@@ -62,13 +62,13 @@ impl Game for RenderableTestGame {
         };
 
         let text = PlainText {
-            content: "hello \r there! |".to_string(),
+            content: "llllllll there! |".to_string(),
             position: Vector3::new(0.0, 0.0, 0.0),
             scale: Vector2::new(0.2, 0.2),
             transform: *Rotation2::new(0.0).matrix(),
             color: Vector4::new(1.0, 1.0, 1.0, 1.0),
             fixed: false,
-            align: TextAlign::Left
+            align: TextAlign::Center
         };
 
         let quad_control = BezierQuadControl {
@@ -121,9 +121,9 @@ impl Game for RenderableTestGame {
         
         vec![
             Box::new(circ),
-            Box::new(ann)
-/*             Box::new(text), 
-            Box::new(bez_rect), 
+            Box::new(ann),
+            Box::new(text), 
+            /* Box::new(bez_rect), 
             Box::new(bez_subrect), 
             Box::new(poly), 
             Box::new(line),
