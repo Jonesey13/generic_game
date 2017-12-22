@@ -4,11 +4,13 @@ pub mod shaders;
 pub mod glium_renderer;
 pub mod render_by_shaders;
 pub mod glium_buffer;
+pub mod display_settings;
 use glium::backend::glutin_backend::GlutinFacade;
 
 pub use rendering::primitives::{
     Primitive, Rectangle, Polygon, CirclePart, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
 pub use rendering::renderables::{Renderable, Line, Arrow, Circle, BoxBorder, Annulus};
+pub use self::display_settings::DisplaySettings;
 
 use games::view_details;
 

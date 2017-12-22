@@ -7,6 +7,7 @@ use rendering::primitives::text::{RenderText, TextBuffer, PlainText};
 use rendering::primitives::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
 use rendering::primitives::Primitive; 
 use rendering::renderables::Renderable;
+use rendering::DisplaySettings;
 use super::glium_buffer::{GliumBuffer, BasicBuffer};
 use super::render_by_shaders::GliumPrimitive;
 use super::{BezierRect, BezierSubrect};
@@ -33,15 +34,13 @@ pub struct GliumRenderer<'a> {
     polar_buffer: PolarBuffer,
     text_processor: TextBuffer<'a, PlainText>,
     view_details: view_details::ViewDetails,
+    display_settings: DisplaySettings
 }
 
 impl<'a> GliumRenderer<'a> {
-    pub fn new(res: (u32, u32)) -> GliumRenderer<'a> {
-        let display = Box::new(glium::glutin::WindowBuilder::new()
-                               //.with_fullscreen(glium::glutin::get_primary_monitor())
-                               .with_dimensions(res.0, res.1)
-                               .with_multisampling(2)
-                               .build_glium().unwrap());
+    pub fn new(settings: DisplaySettings) -> GliumRenderer<'a> {
+        let display = Self::build_display(settings);
+
         let draw_params = DrawParameters {
             depth: Depth {
                 test: DepthTest::IfLessOrEqual,
@@ -49,6 +48,7 @@ impl<'a> GliumRenderer<'a> {
             },
             ..Default::default()
         };
+
         GliumRenderer {
             display: display.clone(),
             draw_params: draw_params,
@@ -58,9 +58,41 @@ impl<'a> GliumRenderer<'a> {
             bezier_rect_buffer: BasicBuffer::<BezierRect>::new(&display),
             bezier_subrect_buffer: BasicBuffer::<BezierSubrect>::new(&display),
             polar_buffer: PolarBuffer::new(&display),
-            text_processor: TextBuffer::new(display),
-            view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default())
+            text_processor: TextBuffer::new(&display, settings),
+            view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default()),
+            display_settings: settings
         }
+    }
+
+    pub fn change_window_settings(&mut self, settings: DisplaySettings) {
+        let display = Self::build_display(settings);
+        
+        self.display = display.clone();
+        self.display_settings = settings;
+        self.reset_buffers();
+    }
+
+    fn reset_buffers(&mut self) {
+        let display = &self.display;
+        self.rect_buffer = BasicBuffer::<Rectangle>::new(display);
+        self.circ_buffer = BasicBuffer::<CirclePart>::new(display);
+        self.polygon_buffer = BasicBuffer::<Polygon>::new(display);
+        self.bezier_rect_buffer = BasicBuffer::<BezierRect>::new(display);
+        self.bezier_subrect_buffer = BasicBuffer::<BezierSubrect>::new(display);
+        self.polar_buffer = PolarBuffer::new(display);
+        self.text_processor = TextBuffer::new(display, self.display_settings);
+    }
+
+    fn build_display(settings: DisplaySettings) -> Box<GlutinFacade> {
+        let mut display_builder = glium::glutin::WindowBuilder::new()
+                               .with_dimensions(settings.res.0, settings.res.1)
+                               .with_multisampling(settings.multisample_level);
+
+        if settings.fullscreen {
+            display_builder = display_builder.with_fullscreen(glium::glutin::get_primary_monitor());
+        }
+
+        Box::new(display_builder.build_glium().unwrap())
     }
 
     fn flush_buffers(&mut self) {

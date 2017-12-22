@@ -13,6 +13,7 @@ use rendering;
 use rendering::shaders;
 use rendering::glium_buffer::GliumBuffer;
 use rendering::render_by_shaders::GliumPrimitive;
+use rendering::DisplaySettings;
 use games::view_details;
 use std::sync::Mutex;
 use debug::*;
@@ -33,13 +34,13 @@ pub struct TextBuffer<'a, T: RenderText> {
 }
 
 impl<'a, T: RenderText> TextBuffer<'a, T> {
-    pub fn new(display: Box<GlutinFacade>) -> Self {
+    pub fn new(display: &GlutinFacade, settings: DisplaySettings) -> Self {
         let dpi_factor = display.get_window().unwrap().hidpi_factor();
 
         let (cache_width, cache_height) = (10000 * dpi_factor as u32, 10000 * dpi_factor as u32);
         let cache = rusttype::gpu_cache::Cache::new(cache_width, cache_height, 0.1, 0.1);
         let cache_tex = glium::texture::Texture2d::with_format(
-            &*display,
+            display,
             glium::texture::RawImage2d {
                 data: Cow::Owned(vec![0u8; cache_width as usize * cache_height as usize]),
                 width: cache_width,
@@ -55,7 +56,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
             cache_tex: cache_tex,
             program: shaders::make_program_from_shaders(T::get_shaders(), &display),
             font: FontCollection::from_bytes(OPEN_SANS).into_font().unwrap(),
-            glyph_scale: 128.0 * dpi_factor
+            glyph_scale: settings.text_glyph_detail * dpi_factor
         }
     }
 
@@ -149,7 +150,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
                     format: glium::texture::ClientFormat::U8
                 });
             },
-            4).unwrap();
+            10).unwrap();
         debug_clock_stop("Render::glium_load::text::queue_cache");
 
         debug_clock_start("Render::glium_load::text::glyph_pos_data");
