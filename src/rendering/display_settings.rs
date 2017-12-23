@@ -13,7 +13,7 @@ impl Default for DisplaySettings {
             res: (1280, 720),
             fullscreen: false,
             multisample_level: 2,
-            text_glyph_detail: 1024.0
+            text_glyph_detail: 128.0
         }
     }
 }

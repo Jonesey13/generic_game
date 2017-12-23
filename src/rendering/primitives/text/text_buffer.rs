@@ -105,7 +105,10 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
             let cache_tex = &self.cache_tex;
             let v_metrics = self.font.v_metrics(Scale::uniform(self.glyph_scale));
             let uniforms = uniform! {
-                tex: cache_tex.sampled().magnify_filter(glium::uniforms::MagnifySamplerFilter::Nearest),
+                tex: cache_tex
+                    .sampled()
+                    .magnify_filter(glium::uniforms::MagnifySamplerFilter::Linear)
+                    .minify_filter(glium::uniforms::MinifySamplerFilter::Linear),
                 screen_width: width,
                 screen_height: height,
                 max_char_height_pix: v_metrics.ascent - v_metrics.descent,
