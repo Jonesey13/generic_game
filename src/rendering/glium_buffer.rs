@@ -6,8 +6,7 @@ use rendering::primitives::Primitive;
 use super::render_by_shaders::GliumPrimitive;
 use glium;
 use glium::Frame;
-use glium::backend::glutin_backend::GlutinFacade;
-use glium::{DisplayBuild, Surface, DrawParameters, Depth, DepthTest, Program};
+use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
 use na;
 use na::Matrix4;
 use num::One;
@@ -25,7 +24,7 @@ pub trait GliumBuffer<T: GliumPrimitive> {
     fn draw_at_target<Unif: glium::uniforms::Uniforms> (
         &mut self,
         target: &mut Frame,
-        display: &GlutinFacade,
+        display: &Display,
         view_details: ViewDetails,
         draw_params: &DrawParameters,
         uniforms: &Unif,
@@ -49,7 +48,7 @@ impl<T: GliumPrimitive> GliumBuffer<T> for BasicBuffer<T> {
     fn draw_at_target<Unif: glium::uniforms::Uniforms> (
         &mut self,
         target: &mut Frame,
-        display: &GlutinFacade,
+        display: &Display,
         _: ViewDetails,
         draw_params: &DrawParameters,
         uniforms: &Unif,
@@ -70,7 +69,7 @@ impl<T: GliumPrimitive> GliumBuffer<T> for BasicBuffer<T> {
 }
 
 impl<T: GliumPrimitive> BasicBuffer<T> {
-    pub fn new(display: &GlutinFacade) -> Self {
+    pub fn new(display: &Display) -> Self {
         BasicBuffer {
             vertices: Vec::new(),
             program: make_program_from_shaders(T::get_shaders(), display),

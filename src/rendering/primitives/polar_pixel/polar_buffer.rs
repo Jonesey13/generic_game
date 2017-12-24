@@ -1,7 +1,6 @@
 use na::{Vector2, Vector4, Matrix2};
 use glium;
-use glium::{Surface, Frame, DrawParameters, Blend};
-use glium::backend::glutin_backend::GlutinFacade;
+use glium::{Display, Surface, Frame, DrawParameters, Blend};
 use glium::index::PrimitiveType;
 use super::{PolarPixel, PolarPixelVertex};
 use rendering;
@@ -22,7 +21,7 @@ impl GliumBuffer<PolarPixel> for PolarBuffer {
     fn draw_at_target<Unif: glium::uniforms::Uniforms> (
         &mut self,
         target: &mut Frame,
-        display: &GlutinFacade,
+        display: &Display,
         view_details: ViewDetails,
         _: &DrawParameters,
         _: &Unif,
@@ -68,7 +67,7 @@ impl GliumBuffer<PolarPixel> for PolarBuffer {
 }
 
 impl PolarBuffer {
-    pub fn new(display: &GlutinFacade) -> Self {
+    pub fn new(display: &Display) -> Self {
         PolarBuffer {
             vertices: Vec::new(),
             program: make_program_from_shaders(PolarPixel::get_shaders(), display),

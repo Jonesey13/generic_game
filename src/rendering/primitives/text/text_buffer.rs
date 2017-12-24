@@ -5,8 +5,7 @@ use rusttype::gpu_cache::{Cache};
 use rusttype;
 use rusttype::Rect;
 use glium;
-use glium::{Surface, Frame, DrawParameters, Depth, DepthTest};
-use glium::backend::glutin_backend::GlutinFacade;
+use glium::{Surface, Display, Frame, DrawParameters, Depth, DepthTest};
 use std::borrow::Cow;
 use super::{RenderText};
 use rendering;
@@ -34,8 +33,8 @@ pub struct TextBuffer<'a, T: RenderText> {
 }
 
 impl<'a, T: RenderText> TextBuffer<'a, T> {
-    pub fn new(display: &GlutinFacade, settings: DisplaySettings) -> Self {
-        let dpi_factor = display.get_window().unwrap().hidpi_factor();
+    pub fn new(display: &Display, settings: DisplaySettings) -> Self {
+        let dpi_factor = display.gl_window().hidpi_factor();
 
         let (cache_width, cache_height) = (10000 * dpi_factor as u32, 10000 * dpi_factor as u32);
         let cache = rusttype::gpu_cache::Cache::new(cache_width, cache_height, 0.1, 0.1);
@@ -64,7 +63,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
         vertices: &Vec<T::TextVert>,
         program: &glium::Program,
         target: &mut Frame,
-        display: &GlutinFacade,
+        display: &Display,
         _: &DrawParameters,
         uniforms: &Unif)
     {
@@ -92,7 +91,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
     fn draw_at_target<Unif: glium::uniforms::Uniforms>(
         &mut self,
         target: &mut Frame,
-        display: &GlutinFacade,
+        display: &Display,
         view_details: view_details::ViewDetails,
         draw_params: &DrawParameters,
         _: &Unif

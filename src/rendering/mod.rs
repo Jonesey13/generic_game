@@ -5,7 +5,7 @@ pub mod glium_renderer;
 pub mod render_by_shaders;
 pub mod glium_buffer;
 pub mod display_settings;
-use glium::backend::glutin_backend::GlutinFacade;
+use glium::Display;
 
 pub use rendering::primitives::{
     Primitive, Rectangle, Polygon, CirclePart, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
@@ -13,13 +13,14 @@ pub use rendering::renderables::{Renderable, Line, Arrow, Circle, BoxBorder, Ann
 pub use self::display_settings::DisplaySettings;
 
 use games::view_details;
+use glium::glutin::EventsLoop;
 
 pub trait Renderer {
     fn init(&mut self) {}
     fn load_renderables(&mut self, _: Vec<Box<renderables::Renderable>>) {}
     fn render(&mut self) {}
     fn set_worldview(&mut self, _: view_details::ViewDetails) {}
-    fn get_glutin_window(&mut self) -> Option<&mut GlutinFacade> { None }
+    fn get_events_loop(&mut self) -> Option<&mut EventsLoop> { None }
     fn get_window_spec(&self) -> WindowSpec { WindowSpec::default() }
 }
 

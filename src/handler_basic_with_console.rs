@@ -43,7 +43,7 @@ impl Handler for HandlerBasicWithConsole {
 
     fn update_input(&mut self) {
         debug_clock_start("Input");
-        self.window_handler.receive_input(self.renderer.get_glutin_window().unwrap());
+        self.window_handler.receive_input(self.renderer.get_events_loop().unwrap());
         if self.window_handler.is_focused() {
             self.input_handler.receive_input();
             self.input_handler.pass_on_input(self.game.get_input());

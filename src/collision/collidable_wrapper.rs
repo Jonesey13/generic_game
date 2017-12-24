@@ -1,5 +1,4 @@
-use collision::{Collidable, CollisionObject, CollisionObjectState, CollisionResults, CollisionObjectResults, 
-CollisionObjectDetails, CollisionDetails, ToCollisionObjects};
+use collision::{Collidable, CollisionObject, CollisionObjectState, CollisionResults, CollisionObjectResults, CollisionObjectDetails, CollisionDetails, ToCollisionObjects};
 use geometry::{TwoDTransformable};
 use rendering::Renderable;
 use na::{Vector2, Vector4, Rotation2};

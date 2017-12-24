@@ -13,8 +13,8 @@ use super::render_by_shaders::GliumPrimitive;
 use super::{BezierRect, BezierSubrect};
 use glium;
 use glium::Frame;
-use glium::backend::glutin_backend::GlutinFacade;
-use glium::{DisplayBuild, Surface, DrawParameters, Depth, DepthTest, Program};
+use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
+use glium::glutin::EventsLoop;
 use na;
 use na::Matrix4;
 use num::One;
@@ -24,7 +24,8 @@ use utils::transforms_2d;
 use debug::*;
 
 pub struct GliumRenderer<'a> {
-    display: Box<GlutinFacade>,
+    display: Box<Display>,
+    events_loop: Box<EventsLoop>,
     draw_params: DrawParameters<'a>,
     rect_buffer: BasicBuffer<Rectangle>,
     circ_buffer: BasicBuffer<CirclePart>,
@@ -39,7 +40,7 @@ pub struct GliumRenderer<'a> {
 
 impl<'a> GliumRenderer<'a> {
     pub fn new(settings: DisplaySettings) -> GliumRenderer<'a> {
-        let display = Self::build_display(settings);
+        let (display, events_loop) = Self::build_display_and_events_loop(settings);
 
         let draw_params = DrawParameters {
             depth: Depth {
@@ -50,7 +51,8 @@ impl<'a> GliumRenderer<'a> {
         };
 
         GliumRenderer {
-            display: display.clone(),
+            display: Box::new(display.clone()),
+            events_loop: Box::new(events_loop),
             draw_params: draw_params,
             rect_buffer: BasicBuffer::<Rectangle>::new(&display),
             circ_buffer: BasicBuffer::<CirclePart>::new(&display),
@@ -65,9 +67,10 @@ impl<'a> GliumRenderer<'a> {
     }
 
     pub fn change_window_settings(&mut self, settings: DisplaySettings) {
-        let display = Self::build_display(settings);
+        let (display, events_loop) = Self::build_display_and_events_loop(settings);
         
-        self.display = display.clone();
+        self.display = Box::new(display);
+        self.events_loop = Box::new(events_loop);
         self.display_settings = settings;
         self.reset_buffers();
     }
@@ -83,16 +86,20 @@ impl<'a> GliumRenderer<'a> {
         self.text_processor = TextBuffer::new(display, self.display_settings);
     }
 
-    fn build_display(settings: DisplaySettings) -> Box<GlutinFacade> {
-        let mut display_builder = glium::glutin::WindowBuilder::new()
-                               .with_dimensions(settings.res.0, settings.res.1)
-                               .with_multisampling(settings.multisample_level);
+    fn build_display_and_events_loop(settings: DisplaySettings) -> (Display, EventsLoop) {
+        let events_loop = glium::glutin::EventsLoop::new();
+        
+        let mut window = glium::glutin::WindowBuilder::new()
+            .with_dimensions(settings.res.0, settings.res.1);
 
-        if settings.fullscreen {
-            display_builder = display_builder.with_fullscreen(glium::glutin::get_primary_monitor());
+        if settings.fullscreen { 
+            window = window.with_fullscreen(Some(events_loop.get_primary_monitor())); 
         }
+        
+        let context = glium::glutin::ContextBuilder::new().with_multisampling(settings.multisample_level);
+        let display = glium::Display::new(window, context, &events_loop).unwrap();
 
-        Box::new(display_builder.build_glium().unwrap())
+        (display, events_loop)
     }
 
     fn flush_buffers(&mut self) {
@@ -149,6 +156,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
         target.clear_depth(1.0);
 
         let (width, height) = target.get_dimensions();
+        let dpi = self.display.gl_window().hidpi_factor();
         let aspect_ratio = width as f64 / height as f64;
         let uniforms = uniform! {
             screen_width: width,
@@ -173,12 +181,12 @@ impl<'a> Renderer for GliumRenderer<'a> {
         self.view_details = view_details;
     }
 
-    fn get_glutin_window(&mut self) -> Option<&mut GlutinFacade> {
-        Some(&mut self.display)
+    fn get_events_loop(&mut self) -> Option<&mut EventsLoop> {
+        Some(&mut self.events_loop)
     }
 
     fn get_window_spec(&self) -> super::WindowSpec {
-        let (width, height) = self.display.get_window().unwrap().get_inner_size().unwrap();
+        let (width, height) = self.display.gl_window().get_inner_size().unwrap();
 
         super::WindowSpec {
             aspect_ratio: width as f64 / height as f64

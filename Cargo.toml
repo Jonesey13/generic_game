@@ -4,9 +4,9 @@ version = "0.0.2"
 authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 
 [dependencies]
-multiinput = "0.0.7"
-glium = "0.16.0"
+multiinput = "0.0.8"
 nalgebra = "*"
+glium = { version = "*", features = ["glutin"] }
 num = "*"
 time = "*"
 unicode-normalization = "*"
@@ -16,3 +16,5 @@ lazy_static = "*"
 
 [dependencies.bitflags]
 version = "*"
+
+

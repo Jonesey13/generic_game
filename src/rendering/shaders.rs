@@ -1,6 +1,5 @@
-use glium::Program;
+use glium::{Program, Display};
 use glium::program::SourceCode;
-use glium::backend::glutin_backend::GlutinFacade;
 
 #[allow(dead_code)]
 pub enum Shaders {
@@ -11,7 +10,7 @@ pub enum Shaders {
     VertexTesselationGeometryFragment(&'static str, &'static str, &'static str, &'static str, &'static str),
 }
 
-pub fn make_program_from_shaders(shaders: Shaders, display: &GlutinFacade) -> Program {
+pub fn make_program_from_shaders(shaders: Shaders, display: &Display) -> Program {
     match shaders {
         Shaders::None => panic!("Cannot build a Program when there are no Shaders!"),
         Shaders::VertexFragment(vert, frag) => Program::from_source(display, vert, frag, None).unwrap(),
