@@ -72,6 +72,9 @@ impl Handler for HandlerBasicWithConsole {
 
     fn update_rendering(&mut self) {
         debug_clock_start("Render");
+        if let Some(display_settings) = self.game.change_display_settings() {
+            self.renderer.change_window_settings(display_settings);
+        }
         let window_spec = self.renderer.get_window_spec();
         self.console.write_lines(self.game.get_console_logs());
         self.renderer.load_renderables(self.game.get_renderables());

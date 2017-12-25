@@ -6,6 +6,7 @@ use games::Game;
 use time;
 use debug::*;
 
+/// DEPRECATED: Use HandlerBasicWithConsole
 pub struct HandlerBasic {
     renderer: Box<Renderer>,
     input_handler: Box<InputHandler>,

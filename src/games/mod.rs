@@ -7,6 +7,7 @@ use input::joystick::JoystickInput;
 use na::{Matrix4, Vector2};
 use num::{One, Zero};
 use debug::console::Console;
+use rendering::DisplaySettings;
 
 /// Game
 pub trait Game {
@@ -23,6 +24,7 @@ pub trait Game {
     fn on_exit(&mut self) {}
     fn get_console_logs(&mut self) -> Vec<String> { vec![] }
     fn write_to_log(&mut self, &str) {}
+    fn change_display_settings(&self) -> Option<DisplaySettings> {None}
 }
 
 #[allow(dead_code)]
