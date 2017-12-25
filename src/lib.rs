@@ -14,6 +14,8 @@ extern crate unicode_normalization;
 extern crate rusttype;
 #[macro_use]
 extern crate lazy_static;
+extern crate libloading;
+extern crate winapi;
 
 pub mod rendering;
 pub mod input;

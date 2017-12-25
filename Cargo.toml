@@ -13,6 +13,8 @@ unicode-normalization = "*"
 rusttype = { git = "https://github.com/Jonesey13/rusttype.git", rev = "a809432" }
 rand = "*"
 lazy_static = "*"
+libloading = "*"
+winapi = { version = "0.3", features = ["winnt", "shellscalingapi"] }
 
 [dependencies.bitflags]
 version = "*"

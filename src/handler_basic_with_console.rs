@@ -6,6 +6,11 @@ use games::Game;
 use time;
 use debug::*;
 use debug::console;
+use winapi;
+
+use libloading::{Library, Symbol};
+
+type SetProcessDpiAwareness<'a> = Symbol<'a, unsafe extern "system" fn(awareness: winapi::um::shellscalingapi::PROCESS_DPI_AWARENESS) -> winapi::um::winnt::HRESULT>;
 
 pub struct HandlerBasicWithConsole {
     renderer: Box<Renderer>,
@@ -39,6 +44,7 @@ impl Handler for HandlerBasicWithConsole {
         self.input_handler.init();
         self.game.init();
         self.last_time = time::precise_time_s();
+        set_process_dpi_aware();
     }
 
     fn update_input(&mut self) {
@@ -82,4 +88,20 @@ impl Handler for HandlerBasicWithConsole {
     fn on_exit(&mut self) {
         self.game.on_exit();
     }
+}
+
+fn set_process_dpi_aware() {
+    match Library::new("Shcore.dll") {
+        Ok(shcore_lib) => {
+            unsafe {
+                match shcore_lib.get::<SetProcessDpiAwareness>(b"SetProcessDpiAwareness") {
+                    Ok(set_aware) => {
+                        set_aware(winapi::um::shellscalingapi::PROCESS_PER_MONITOR_DPI_AWARE);
+                    },
+                    Err(_) => ()
+                }
+            }
+        },
+        Err(_) => ()
+    };
 }

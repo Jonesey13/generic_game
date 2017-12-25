@@ -156,7 +156,6 @@ impl<'a> Renderer for GliumRenderer<'a> {
         target.clear_depth(1.0);
 
         let (width, height) = target.get_dimensions();
-        let dpi = self.display.gl_window().hidpi_factor();
         let aspect_ratio = width as f64 / height as f64;
         let uniforms = uniform! {
             screen_width: width,
