@@ -1,5 +1,5 @@
 use Handler;
-use rendering::Renderer;
+use rendering::{GliumRenderer, Renderer};
 use input::InputHandler;
 use window::WindowHandler;
 use games::Game;
@@ -12,8 +12,8 @@ use libloading::{Library, Symbol};
 
 type SetProcessDpiAwareness<'a> = Symbol<'a, unsafe extern "system" fn(awareness: winapi::um::shellscalingapi::PROCESS_DPI_AWARENESS) -> winapi::um::winnt::HRESULT>;
 
-pub struct HandlerBasicWithConsole {
-    renderer: Box<Renderer>,
+pub struct HandlerBasicWithConsole<'a> {
+    renderer: GliumRenderer<'a>,
     input_handler: Box<InputHandler>,
     window_handler: Box<WindowHandler>,
     game: Box<Game>,
@@ -21,9 +21,9 @@ pub struct HandlerBasicWithConsole {
     console: console::Console
 }
 
-impl HandlerBasicWithConsole {
+impl<'a> HandlerBasicWithConsole<'a> {
     pub fn new(
-        renderer: Box<Renderer>,
+        renderer: GliumRenderer<'a>,
         input_handler: Box<InputHandler>,
         window_handler: Box<WindowHandler>,
         game: Box<Game>) -> Self {
@@ -38,7 +38,7 @@ impl HandlerBasicWithConsole {
     }
 }
 
-impl Handler for HandlerBasicWithConsole {
+impl<'a> Handler for HandlerBasicWithConsole<'a> {
     fn init(&mut self) {
         self.renderer.init();
         self.input_handler.init();
@@ -73,7 +73,7 @@ impl Handler for HandlerBasicWithConsole {
     fn update_rendering(&mut self) {
         debug_clock_start("Render");
         if let Some(display_settings) = self.game.change_display_settings() {
-            self.renderer.change_window_settings(display_settings);
+            self.renderer = GliumRenderer::new(display_settings);
         }
         let window_spec = self.renderer.get_window_spec();
         self.console.write_lines(self.game.get_console_logs());

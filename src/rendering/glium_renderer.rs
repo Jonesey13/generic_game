@@ -66,15 +66,6 @@ impl<'a> GliumRenderer<'a> {
         }
     }
 
-    pub fn change_window_settings(&mut self, settings: DisplaySettings) {
-        let (display, events_loop) = Self::build_display_and_events_loop(settings);
-        
-        self.display = Box::new(display);
-        self.events_loop = Box::new(events_loop);
-        self.display_settings = settings;
-        self.reset_buffers();
-    }
-
     fn reset_buffers(&mut self) {
         let display = &self.display;
         self.rect_buffer = BasicBuffer::<Rectangle>::new(display);

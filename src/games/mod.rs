@@ -24,7 +24,7 @@ pub trait Game {
     fn on_exit(&mut self) {}
     fn get_console_logs(&mut self) -> Vec<String> { vec![] }
     fn write_to_log(&mut self, &str) {}
-    fn change_display_settings(&self) -> Option<DisplaySettings> {None}
+    fn change_display_settings(&mut self) -> Option<DisplaySettings> {None}
 }
 
 #[allow(dead_code)]

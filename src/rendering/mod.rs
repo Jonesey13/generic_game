@@ -11,6 +11,7 @@ pub use rendering::primitives::{
     Primitive, Rectangle, Polygon, CirclePart, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
 pub use rendering::renderables::{Renderable, Line, Arrow, Circle, BoxBorder, Annulus};
 pub use self::display_settings::DisplaySettings;
+pub use self::glium_renderer::GliumRenderer;
 
 use games::view_details;
 use glium::glutin::EventsLoop;
@@ -22,7 +23,6 @@ pub trait Renderer {
     fn set_worldview(&mut self, _: view_details::ViewDetails) {}
     fn get_events_loop(&mut self) -> Option<&mut EventsLoop> { None }
     fn get_window_spec(&self) -> WindowSpec { WindowSpec::default() }
-    fn change_window_settings(&mut self, _settings: DisplaySettings) {}
 }
 
 #[allow(dead_code)]
