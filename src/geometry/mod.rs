@@ -17,6 +17,7 @@ use na::{Vector2, norm, dot};
 use num::Zero;
 
 pub use self::interval::{Interval, IntervalEnd, IntervalCollisionObject};
+pub use self::interval_collection::IntervalCollection;
 pub use self::point::Point;
 pub use self::circle::Circle;
 pub use self::line::{Line, line_line_intersect_2d};

@@ -2,14 +2,23 @@ use super::{Interval, IntervalEnd, IntervalCollisionObject};
 use collision::Collidable;
 use na::{Vector2, Rotation2};
 
+#[derive(Debug, Clone)]
 pub struct IntervalCollection {
-    start: IntervalEnd,
-    end: IntervalEnd,
+    pub start: IntervalEnd,
+    pub end: IntervalEnd,
     intervals: Vec<Interval>
 }
 
 impl IntervalCollection {
     const ERRORMARGIN: f64 = 0.0001;
+
+    pub fn new(start: IntervalEnd, end: IntervalEnd, intervals: Vec<Interval>) -> Self {
+        Self {
+            start,
+            end,
+            intervals
+        }
+    }
 
     fn relative_error_margin(&self) -> f64 {
         Self::ERRORMARGIN * (self.end.value() - self.start.value())
@@ -21,6 +30,10 @@ impl IntervalCollection {
 
     fn get_ends(&self) -> Vec<IntervalEnd> {
         self.intervals.iter().map(|end| { end.get_end().clone() }).collect()
+    }
+
+    pub fn get_start_end_interval(&self) -> Interval {
+        Interval::new(self.start, self.end)
     }
 
     pub fn invert(&self) -> IntervalCollection {
@@ -49,8 +62,17 @@ impl IntervalCollection {
         }
     }
 
+    pub fn contains(&self, point: f64) -> bool {
+        self.intervals.iter().fold(false, |acc, int| {int.contains(point) || acc})
+    }
+
     pub fn get_collision_objects(&self) -> Vec<IntervalCollisionObject> {
         self.intervals.iter().map(|interval| {interval.get_collision_object()} ).collect()
+    }
+
+    pub fn wrap_to_interval(&self, int: Interval) -> IntervalCollection {
+        let wrapped_intervals = self.intervals.iter().flat_map(|inner_int| {int.wrap_interval_to(*inner_int)}).collect();
+        Self::new(int.start, int.end, wrapped_intervals)
     }
 }
 

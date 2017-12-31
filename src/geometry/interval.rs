@@ -1,11 +1,12 @@
 use std::ops::Mul;
 use super::{Point, Line};
 use na::{Vector2, Rotation2};
+use std::ops::Rem;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Interval {
-    start: IntervalEnd,
-    end: IntervalEnd
+    pub start: IntervalEnd,
+    pub end: IntervalEnd
 }
 
 impl Interval {
@@ -72,6 +73,37 @@ impl Interval {
 
     pub fn get_end_value(&self) -> f64 {
        self.end.value()
+    }
+
+    pub fn wrap_value_to(&self, point: f64) -> f64 {
+        let start = self.get_start_value();
+        let end = self.get_end_value();
+        let diff = start - end;
+        let shifted_value = point - start;
+        (shifted_value.rem(diff)).abs() + start
+    }
+
+    // TODO: Fix for end types
+    pub fn wrap_interval_to(&self, int: Interval) -> Vec<Interval> {
+        let int_start = int.get_start_value();
+        let int_end = int.get_end_value();
+        let start = self.get_start_value();
+        let end = self.get_end_value();
+        let diff = start - end;
+        if int_end - int_start >= diff {
+            return vec![self.clone()];
+        }   
+        let wrapped_start = self.wrap_value_to(int_start);
+        let wrapped_end = self.wrap_value_to(int_end);
+
+        if wrapped_start <= wrapped_end {
+            vec![Interval::new_closed(wrapped_start, wrapped_end)]
+        }
+        else {
+            vec![
+                Interval::new_closed(start, wrapped_end), Interval::new_closed(wrapped_start, end)
+            ]
+        }
     }
 
     pub fn contains(&self, value: f64) -> bool {
