@@ -13,7 +13,7 @@ pub struct CollidableWrapper<C: ToCollisionObjects + Clone, D: Clone> {
     player_controlled: bool,
     color: Vector4<f64>,
     has_collided_in_past: bool,
-    last_collision_details: CollisionDetails
+    last_collision_details: Option<CollisionDetails>
 }
 
 impl<C: ToCollisionObjects + Clone, D: Clone> CollidableWrapper<C, D> {
@@ -27,7 +27,7 @@ impl<C: ToCollisionObjects + Clone, D: Clone> CollidableWrapper<C, D> {
             player_controlled: false,
             color: Vector4::new(1.0, 1.0, 1.0, 1.0),
             has_collided_in_past: false,
-            last_collision_details: CollisionDetails::new(0, CollisionObjectDetails::None),
+            last_collision_details: None,
         }
     }
 
@@ -56,8 +56,8 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> CollidableWrap
 
     fn render_coll_results(&self, depth: f64) -> Vec<Box<Renderable>> {
         if self.has_collided_in_past {
-            let collision_object_details = self.last_collision_details.object_details.clone();
-            let collision_location = self.last_collision_details.location;
+            let collision_object_details = self.last_collision_details.clone().unwrap().object_details;
+            let collision_location = self.last_collision_details.clone().unwrap().location;
 
             self.collidable
             .to_collision_objects()[collision_location]
@@ -102,7 +102,7 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> CollidableWrap
 
     fn reset_collision_flag(&mut self) {
         self.has_collided_in_past = false;
-        self.last_collision_details = CollisionDetails::new(0, CollisionObjectDetails::None);
+        self.last_collision_details = None;
     }
 }
 
@@ -126,10 +126,8 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> Collidable for
 
     fn add_collision_results(&mut self, new_results: CollisionResults<Self::Data>) {
         self.coll_results = new_results.clone().into();
-        if new_results.collided {
-            self.has_collided_in_past = true;
-            self.last_collision_details = new_results.details.unwrap();
-        }
+        self.has_collided_in_past = true;
+        self.last_collision_details = Some(new_results.details);
     }
 
     fn get_own_collision_data(&self) -> Self::Data { self.data.clone() }

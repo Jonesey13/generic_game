@@ -1,50 +1,30 @@
 use super::{CollisionObjectDetails, CollisionResults};
 
 #[derive(Clone, Debug)]
-pub struct CollisionObjectResults<T: Clone> {
-    pub collided: bool,
-    pub details: Option<CollisionObjectDetails>,
-    pub time: Option<f64>,
-    pub data: Option<T>
+pub struct CollisionObjectResults {
+    pub details: CollisionObjectDetails,
+    pub time: f64
 }
 
-impl<T: Clone> CollisionObjectResults<T> {
-    pub fn no_collision() -> CollisionObjectResults<T> {
+impl CollisionObjectResults {
+    pub fn collided(details: CollisionObjectDetails, time: f64) -> CollisionObjectResults {
         CollisionObjectResults {
-            collided: false,
-            details: None,
-            time: None,
-            data: None,
+            details: details,
+            time: time,
         }
     }
 
-    pub fn collided(details: CollisionObjectDetails, time: f64) -> CollisionObjectResults<T> {
-        CollisionObjectResults {
-            collided: true,
-            details: Some(details),
-            time: Some(time),
-            data: None,
-        }
-    }
-
-    pub fn to_line_results(mut self) -> CollisionObjectResults<T> {
-        if self.collided {
-            self.details = self.details.and_then(|d| {Some(CollisionObjectDetails::Line(d.to_line_info()))});
-        }
+    pub fn to_line_results(mut self) -> CollisionObjectResults {
+        self.details = CollisionObjectDetails::Line(self.details.to_line_info());
         self
     }
 }
 
-impl<T: Clone> From<CollisionResults<T>> for CollisionObjectResults<T> {
+impl<T: Clone> From<CollisionResults<T>> for CollisionObjectResults {
     fn from(coll_results: CollisionResults<T>) -> Self {
         CollisionObjectResults {
-            collided: coll_results.collided,
-            details: match coll_results.details {
-                None => None,
-                Some(details) => Some(details.object_details)
-            },
-            time: coll_results.time,
-            data: coll_results.data
+            details: coll_results.details.object_details,
+            time: coll_results.details.time
         }
     }
 }

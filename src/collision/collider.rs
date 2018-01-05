@@ -1,4 +1,4 @@
-use super::{CollisionObjectResults, Collidable, CollisionObjectState, collision_logic, CollisionResults};
+use super::{CollisionObjectResults, Collidable, CollisionDetails, CollisionObjectState, collision_logic, CollisionResults};
 
 pub struct Collider;
 
@@ -7,21 +7,13 @@ impl Collider {
         loop {
             if let Some ((first_collidable, rest)) = collidables.split_last_mut() {
                 for second_collidable in rest.into_iter() {
-                    let (mut results1, mut results2) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable);
+                    if let Some((mut details1, mut details2)) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable) {
 
-                    if results1.collided || results2.collided {
                         let data1 = first_collidable.get_own_collision_data();
                         let data2 = second_collidable.get_own_collision_data();
 
-                        if results1.collided {
-                            results1.data = Some(data2);
-                            first_collidable.add_collision_results(results1);
-                        }
-
-                        if results2.collided {
-                            results2.data = Some(data1);
-                            second_collidable.add_collision_results(results2);
-                        }
+                        first_collidable.add_collision_results(CollisionResults::new(details1, data2));
+                        second_collidable.add_collision_results(CollisionResults::new(details2, data1));
                     }
                 }
             }
@@ -33,35 +25,38 @@ impl Collider {
     }
 
     fn process_pair_of_collidables<T: Clone> (first: &Collidable<Data=T>, second: &Collidable<Data=T>) 
-        -> (CollisionResults<T>, CollisionResults<T>) {
+        -> Option<(CollisionDetails, CollisionDetails)> {
 
-        let (mut results1, mut results2) = (CollisionObjectResults::no_collision(), CollisionObjectResults::no_collision());
+        let mut results: Option<(CollisionObjectResults, CollisionObjectResults)> = None;
         let (mut location1, mut location2) = (0, 0);
         
         for (obj_loc1, first_obj) in first.get_collision_objects().iter().enumerate() {
             for (obj_loc2, second_obj) in second.get_collision_objects().iter().enumerate() {
-                let (obj_results1, obj_results2): (CollisionObjectResults<T>, CollisionObjectResults<T>) 
-                    = Collider::process_pair_of_object_states(first_obj, second_obj);
+                if let Some((obj_results1, obj_results2))
+                    = Collider::process_pair_of_object_states(first_obj, second_obj) {
 
-                if let Some(new_time) = obj_results1.time {
-                    if let Some(old_time) = results1.time {
-                        if new_time > old_time {
+                    if let Some(old_time) = results.clone().and_then(|res| {Some(res.0.time)}) {
+                        if obj_results1.time > old_time {
                             continue
                         }
                     }
-                    results1 = obj_results1;
-                    results2 = obj_results2;
+                    results = Some((obj_results1, obj_results2));
                     location1 = obj_loc1;
                     location2 = obj_loc2;
                 }
             }
         }
 
-        (CollisionResults::new_with_location(location1, results1), CollisionResults::new_with_location(location2,results2))
+        if let Some((results1, results2)) = results {
+            Some((CollisionDetails::new(location1, results1.details, results1.time)
+                , CollisionDetails::new(location2, results2.details, results2.time)))
+        } else {
+            None
+        }
     }
 
-    fn process_pair_of_object_states<T: Clone> (first: &CollisionObjectState, second: &CollisionObjectState) 
-        -> (CollisionObjectResults<T>, CollisionObjectResults<T>) {
+    fn process_pair_of_object_states (first: &CollisionObjectState, second: &CollisionObjectState) 
+        -> Option<(CollisionObjectResults, CollisionObjectResults)> {
         match (first, second) {
             // Reflexive (points can't collide with points)
             (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
@@ -69,40 +64,50 @@ impl Collider {
             (&CollisionObjectState::ConPoly(ref n1, ref p1), &CollisionObjectState::ConPoly(ref n2, ref p2)) 
                 => collision_logic::poly_poly_coll(n1, p1, n2, p2),
             (&CollisionObjectState::Line(ref n1, ref p1), &CollisionObjectState::Line(ref n2, ref p2))
-                => {let res = collision_logic::poly_poly_coll(n1, p1, n2, p2); (res.0.to_line_results(), res.1.to_line_results())},
+                => {let res = collision_logic::poly_poly_coll(n1, p1, n2, p2); 
+                res.and_then(|(res0, res1)| {Some((res0.to_line_results(), res1.to_line_results()))})},
 
             // Symmetric
             (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::ConPoly(ref n2, ref p2)) 
                 => collision_logic::circ_poly_coll(&n1, &p1, n2, p2),
             (&CollisionObjectState::ConPoly(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
-                => {let res = collision_logic::circ_poly_coll(&n2, &p2, n1, p1); (res.1, res.0)},
+                => {let res = collision_logic::circ_poly_coll(&n2, &p2, n1, p1); 
+                res.and_then(|(res0, res1)|{Some((res1, res0))})},
 
             (&CollisionObjectState::Line(ref n1, ref p1), &CollisionObjectState::ConPoly(ref n2, ref p2)) 
-                => {let res = collision_logic::poly_poly_coll(n2, p2, n1, p1); (res.1.to_line_results(), res.0)},
+                => {let res = collision_logic::poly_poly_coll(n2, p2, n1, p1); 
+                res.and_then(|(res0, res1)| {Some((res1.to_line_results(), res0))})},
             (&CollisionObjectState::ConPoly(ref n1, ref p1), &CollisionObjectState::Line(ref n2, ref p2)) 
-                => {let res = collision_logic::poly_poly_coll(n1, p1, n2, p2); (res.0, res.1.to_line_results())},
+                => {let res = collision_logic::poly_poly_coll(n1, p1, n2, p2); 
+                res.and_then(|(res0, res1)| {Some((res0, res1.to_line_results()))})},
 
             (&CollisionObjectState::Point(ref n1, ref p1), &CollisionObjectState::ConPoly(ref n2, ref p2)) 
-                => {let res = collision_logic::poly_point_coll(n2, p2, &n1, &p1); (res.1, res.0)},
+                => {let res = collision_logic::poly_point_coll(n2, p2, &n1, &p1); 
+                res.and_then(|(res0, res1)|{Some((res1, res0))})},
             (&CollisionObjectState::ConPoly(ref n1, ref p1), &CollisionObjectState::Point(ref n2, ref p2)) 
                 => collision_logic::poly_point_coll(n1, p1, &n2, &p2),
 
             (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Line(ref n2, ref p2)) 
-                => {let res = collision_logic::circ_poly_coll(&n1, &p1, n2, p2); (res.0, res.1.to_line_results())},
+                => {let res = collision_logic::circ_poly_coll(&n1, &p1, n2, p2); 
+                res.and_then(|(res0, res1)| {Some((res0, res1.to_line_results()))})},
             (&CollisionObjectState::Line(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
-                => {let res = collision_logic::circ_poly_coll(&n2, &p2, n1, p1); (res.1.to_line_results(), res.0)},
+                => {let res = collision_logic::circ_poly_coll(&n2, &p2, n1, p1); 
+                res.and_then(|(res0, res1)| {Some((res1.to_line_results(), res0))})},
             
             (&CollisionObjectState::Line(ref n1, ref p1), &CollisionObjectState::Point(ref n2, ref p2)) 
-                => {let res = collision_logic::poly_point_coll(n1, p1, n2, p2); (res.0.to_line_results(), res.1)},
+                => {let res = collision_logic::poly_point_coll(n1, p1, n2, p2); 
+                res.and_then(|(res0, res1)| {Some((res0.to_line_results(), res1))})},
             (&CollisionObjectState::Point(ref n1, ref p1), &CollisionObjectState::Line(ref n2, ref p2)) 
-                => {let res = collision_logic::poly_point_coll(n2, p2, n1, p1); (res.1, res.0.to_line_results())},
+                => {let res = collision_logic::poly_point_coll(n2, p2, n1, p1); 
+                res.and_then(|(res0, res1)| {Some((res1, res0.to_line_results()))})},
             
             (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Point(ref n2, ref p2)) 
                 => collision_logic::circ_point_coll(&n1, &p1, n2, p2),
             (&CollisionObjectState::Point(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
-                => {let res = collision_logic::circ_point_coll(&n2, &p2, n1, p1); (res.1, res.0)},
+                => {let res = collision_logic::circ_point_coll(&n2, &p2, n1, p1); 
+                res.and_then(|(res0, res1)| {Some((res1, res0))})},
             
-            _ => (CollisionObjectResults::no_collision(), CollisionObjectResults::no_collision()),
+            _ => None,
         }
     }
 }

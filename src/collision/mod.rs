@@ -32,20 +32,21 @@ pub trait Collidable {
     fn get_collision_objects(&self) -> Vec<CollisionObjectState> { vec![] }
     fn get_earliest_collision_results(&self) -> Option<CollisionResults<Self::Data>>;
     fn add_collision_results(&mut self, CollisionResults<Self::Data>);
+    fn get_own_collision_data(&self) -> Self::Data;
+
     fn get_earliest_collision_time(&mut self) -> Option<f64> {
         self.get_earliest_collision_results()
-        .and_then(|res| {res.time})
+        .and_then(|res| {Some(res.details.time)})
     }
     fn has_collided(&self) -> bool { self.get_earliest_collision_results().is_some() }
     fn get_earliest_collision_details(&self) -> Option<CollisionDetails> { 
         self.get_earliest_collision_results()
-        .and_then(|res| {res.details })
+        .and_then(|res| {Some(res.details)})
     }
     fn get_earliest_collision_data(&self) -> Option<Self::Data> { 
         self.get_earliest_collision_results()
-        .and_then(|res| {res.data })
+        .and_then(|res| {Some(res.data)})
     }
-    fn get_own_collision_data(&self) -> Self::Data;
 }
 
 #[derive(Clone)]

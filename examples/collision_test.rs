@@ -8,6 +8,7 @@ use na::{Vector2, Rotation2};
 use gg::debug::*;
 use gg::debug;
 use gg::{rendering, input, window, Handler, games};
+use gg::rendering::DisplaySettings;
 use gg::collision::{CollisionTestGame, CollisionTestBuilder};
 use gg::handler_basic_with_console::HandlerBasicWithConsole;
 use gg::geometry::{ConPoly, Circle, Line, Point};
@@ -21,7 +22,14 @@ fn main() {
     let error_writer = Box::new(ErrorWriter::new());
     set_panic(Some(error_writer));
 
-    let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new((1600, 1024)));
+    let display_settings = DisplaySettings {
+        res: (1920, 1080),
+        fullscreen: true,
+        text_glyph_detail: 128.0,
+            ..Default::default()
+    };
+
+    let renderer = rendering::glium_renderer::GliumRenderer::new(display_settings);
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
     let game: Box<games::Game> = Box::new(
