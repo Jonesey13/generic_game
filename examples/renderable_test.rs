@@ -26,7 +26,7 @@ fn main() {
             ..Default::default()
     };
 
-    let renderer: Box<rendering::Renderer> = Box::new(rendering::glium_renderer::GliumRenderer::new(display_settings));
+    let renderer= rendering::glium_renderer::GliumRenderer::new(display_settings);
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
     let game: Box<games::Game> = Box::new(renderable_test_game::RenderableTestGame::default());

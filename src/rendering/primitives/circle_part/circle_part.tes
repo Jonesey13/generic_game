@@ -1,10 +1,12 @@
 #version 410 core
 uniform mat4 world_view;
+uniform float aspect_ratio;
 
 in vec2 radial_dim_cs[];
 in vec2 angular_dim_cs[];
 in vec3 pos_cs[];
 in vec4 colour_cs[];
+in uint fixed_pos_cs[];
 
 out vec2 circle_param;
 out vec4 colour_es;
@@ -14,6 +16,7 @@ layout(quads, equal_spacing) in;
 vec3 circle_pos(vec2 uv);
 vec2 map_pos(vec2 uv, vec2 radial_dim, vec2 angular_dim);
 float interpolate(float t, float x, float y);
+vec4 transform(vec4 pos, bool fixed_pos);
 
 #define pi 3.141592653589793238462643383279
 
@@ -21,7 +24,8 @@ void main() {
   circle_param = gl_TessCoord.xy;
   colour_es = colour_cs[0];
   gl_Position = vec4( circle_pos(map_pos(circle_param, radial_dim_cs[0], angular_dim_cs[0])), 1.0);
-  gl_Position = world_view * gl_Position;
+  bool fixed_pos = bool(fixed_pos_cs[0]);
+  gl_Position = transform(gl_Position, fixed_pos);
 }
 
 float interpolate(float t, float x, float y) {
@@ -36,4 +40,14 @@ vec3 circle_pos(vec2 uv) {
   float theta = uv.x * 2.0 * pi;
   float r = uv.y;
   return (vec3(sin(theta), cos(theta), 0.0) * r + pos_cs[0]);
+}
+
+vec4 transform(vec4 pos, bool fixed_pos)
+{
+  if (fixed_pos) {
+    return vec4(pos.x / aspect_ratio, pos.yzw);
+  }
+  else {
+    return world_view * pos;
+  }
 }

@@ -86,7 +86,7 @@ impl Console {
         let pos = Vector3::new(posx, posy, -1.0);
         let color = 0.2 * Vector4::new(1.0, 1.0, 1.0, 1.0);
 
-        Box::new(Rectangle::new_regular_fixed(length, height, pos, color))
+        Box::new(Rectangle::new_regular(length, height, pos, color, true))
     }
 
     fn get_log_line_renderables(&self, window_spec: WindowSpec) -> Vec<Box<Renderable>> {

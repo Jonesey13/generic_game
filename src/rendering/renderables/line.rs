@@ -77,13 +77,15 @@ impl Renderable for Line {
                 let beg_circ = Circle {
                     radius: self.thickness / 2.0,
                     pos: Vector3::new(self.start.x, self.start.y, self.depth),
-                    colour: self.colour
+                    colour: self.colour,
+                    fixed: self.fixed
                 };
 
                 let end_circ = Circle {
                     radius: self.thickness / 2.0,
                     pos: Vector3::new(self.end.x, self.end.y, self.depth),
-                    colour: self.colour
+                    colour: self.colour,
+                    fixed: self.fixed
                 };
                 return vec![Primitive::Circ(beg_circ.into()), Primitive::Circ(end_circ.into()), Primitive::Rect(line_middle)]
             }

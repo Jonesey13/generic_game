@@ -52,13 +52,15 @@ impl Game for RenderableTestGame {
         let circ = Circle {
             radius: 0.7,
             pos: Vector3::new(-0.0, 0.0, 0.1),
-            colour: Vector4::new(1.0, 0.0, 0.0, 1.0)
+            colour: Vector4::new(1.0, 0.0, 0.0, 1.0),
+            fixed: true
         };
 
         let ann = Annulus {
             radial_dim: Vector2::new(0.4, 0.5),
             pos: Vector3::new(0.2, -0.3, -0.1),
-            colour: Vector4::new(0.0, 0.0, 1.0, 1.0)
+            colour: Vector4::new(0.0, 0.0, 1.0, 1.0),
+            fixed: false
         };
 
         let text = PlainText {
@@ -117,12 +119,15 @@ impl Game for RenderableTestGame {
             false
         );
 
-        let box_border = BoxBorder::new(0.01, Vector3::new(0.0, 0.0, -0.2), 0.1, 0.1, Vector4::new(1.0, 1.0, 0.0, 1.0));
-        
+        let box_border_fixed = BoxBorder::new_rounded(0.01, 0.1, Vector3::new(0.0, 0.0, -0.2), 0.5, 0.5, Vector4::new(1.0, 1.0, 0.0, 1.0), true);
+        let box_border = BoxBorder::new_rounded(0.01, 0.1, Vector3::new(0.0, 0.0, -0.2), 0.5, 0.5, Vector4::new(1.0, 1.0, 0.0, 1.0), false);        
+
         vec![
             Box::new(circ),
             Box::new(ann),
-            Box::new(text), 
+            Box::new(text),
+            Box::new(box_border),
+            Box::new(box_border_fixed) 
             /* Box::new(bez_rect), 
             Box::new(bez_subrect), 
             Box::new(poly), 

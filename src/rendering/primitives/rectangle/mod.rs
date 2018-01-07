@@ -19,7 +19,8 @@ impl Rectangle {
             length: f64, 
             height: f64, 
             pos: Vector3<f64>, 
-            color: Vector4<f64>
+            color: Vector4<f64>,
+            fixed: bool
         ) -> Rectangle {
         Rectangle {
             length,
@@ -27,7 +28,7 @@ impl Rectangle {
             rot: Rotation2::new(0.0),
             pos,
             color,
-            fixed: false
+            fixed
         }
     }
 
@@ -36,7 +37,8 @@ impl Rectangle {
             height: f64, 
             pos: Vector3<f64>,
             rotation: Rotation2<f64>,
-            color: Vector4<f64>
+            color: Vector4<f64>,
+            fixed: bool
         ) -> Rectangle {
         Rectangle {
             length,
@@ -44,23 +46,7 @@ impl Rectangle {
             rot: rotation,
             pos,
             color,
-            fixed: false
-        }
-    }
-
-    pub fn new_regular_fixed(
-            length: f64, 
-            height: f64, 
-            pos: Vector3<f64>, 
-            color: Vector4<f64>
-        ) -> Rectangle {
-        Rectangle {
-            length,
-            height,
-            rot: Rotation2::new(0.0),
-            pos,
-            color,
-            fixed: true
+            fixed
         }
     }
 }

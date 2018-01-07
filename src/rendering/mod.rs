@@ -9,7 +9,7 @@ use glium::Display;
 
 pub use rendering::primitives::{
     Primitive, Rectangle, Polygon, CirclePart, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
-pub use rendering::renderables::{Renderable, Line, Arrow, Circle, BoxBorder, Annulus};
+pub use rendering::renderables::{Renderable, Line, Arrow, Circle, BoxBorder, Annulus, AnnularSegment};
 pub use self::display_settings::DisplaySettings;
 pub use self::glium_renderer::GliumRenderer;
 
