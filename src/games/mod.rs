@@ -9,6 +9,8 @@ use num::{One, Zero};
 use debug::console::Console;
 use rendering::DisplaySettings;
 
+pub use self::view_details::{ViewDetails, ViewDetails2D, ViewDetails3D};
+
 /// Game
 pub trait Game {
     fn init(&mut self) {}
