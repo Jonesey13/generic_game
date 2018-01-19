@@ -30,6 +30,7 @@ pub use self::twodtransformable::TwoDTransformable;
 pub use self::to_renderables::ToRenderables;
 pub use self::cartesian_rectangle::CartesianRectangle;
 pub use self::rectangle::Rectangle;
+pub use self::vect::{get_normal_2d, get_rot90_2d};
 
 const EPSILON: f64 = 0.0000001;
 

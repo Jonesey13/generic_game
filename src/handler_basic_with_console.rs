@@ -85,7 +85,7 @@ impl<'a> Handler for HandlerBasicWithConsole<'a> {
     }
 
     fn should_exit(&self) -> bool {
-        (self.input_handler.escape_key_pressed() && self.window_handler.is_focused()) || self.game.should_exit()
+        self.game.should_exit()
     }
 
     fn on_exit(&mut self) {
