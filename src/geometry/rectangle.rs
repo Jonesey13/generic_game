@@ -1,8 +1,10 @@
 use na::{Vector2, Vector3, Vector4, Rotation2};
 use super::Line;
-use geometry::ToRenderables;
+use geometry::{ToRenderables, TwoDTransformable};
 use rendering;
+use std::f64::consts::PI;
 
+#[derive(Copy, Clone, Debug)]
 pub struct Rectangle {
     pub length: f64,  /// x-axis
     pub height: f64,  /// y-axis
@@ -38,6 +40,20 @@ impl Rectangle {
         }
     }
 
+    pub fn new_with_whole_rotation_angle(
+            length: f64, 
+            height: f64, 
+            pos: Vector2<f64>,
+            angle: f64,
+        ) -> Rectangle {
+        Rectangle {
+            length,
+            height,
+            rot: Rotation2::new(2.0 * PI * angle),
+            pos,
+        }
+    }
+
     pub fn new_regular_fixed(
             length: f64, 
             height: f64, 
@@ -60,6 +76,17 @@ impl Rectangle {
             rot: Rotation2::new(line.get_angle()),
             pos: line.get_midpoint(),            
         }
+    }
+}
+
+impl TwoDTransformable for Rectangle {
+    fn shift_by(&mut self, shift: Vector2<f64>) {
+        self.pos += shift;
+    }
+
+    fn rotate(&mut self, rot_angle: f64) {
+        let rot_mat = Rotation2::new(rot_angle);
+        self.rot = rot_mat * self.rot;
     }
 }
 
