@@ -109,11 +109,11 @@ impl Game for RenderableTestGame {
             false
         );
 
-        let arrow = Arrow::new(
+        let arrow = Arrow::new_rounded(
+            Vector2::new(0.5, 0.0),
             Vector2::new(-0.5, 0.0),
-            Vector2::new(-0.5, 0.3),
             0.05,
-            0.2,
+            Vector2::new(0.2, 0.2),
             Vector4::new(0.5, 0.5, 1.0, 1.0),
             0.0,
             false
@@ -123,17 +123,17 @@ impl Game for RenderableTestGame {
         let box_border = BoxBorder::new_rounded(0.01, 0.1, Vector3::new(0.0, 0.0, -0.2), 0.5, 0.5, Vector4::new(1.0, 1.0, 0.0, 1.0), false);        
 
         vec![
-            Box::new(circ),
-            Box::new(ann),
-            Box::new(text),
-            Box::new(box_border),
-            Box::new(box_border_fixed) 
-            /* Box::new(bez_rect), 
-            Box::new(bez_subrect), 
-            Box::new(poly), 
-            Box::new(line),
-            Box::new(arrow) */
-            ]
+        //     Box::new(circ),
+        //     Box::new(ann),
+        //     Box::new(text),
+        //     Box::new(box_border),
+        //     Box::new(box_border_fixed) 
+        //     Box::new(bez_rect), 
+        //     Box::new(bez_subrect), 
+        //     Box::new(poly), 
+        //     Box::new(line),
+            Box::new(arrow)
+        ]
     }
 
     fn get_input<'a>(&'a mut self) -> Option <&'a mut GameInput> {

@@ -1,6 +1,7 @@
 use rendering::{Rectangle, Circle, Primitive, Renderable};
 use na::{Vector2, Vector3, Vector4, Rotation2, norm};
 
+#[derive(Clone, Debug)]
 pub struct Line {
     start: Vector2<f64>,
     end: Vector2<f64>,
@@ -12,6 +13,26 @@ pub struct Line {
 }
 
 impl Line {
+    pub fn new(
+        start: Vector2<f64>,
+        end: Vector2<f64>,
+        thickness: f64,
+        shape: LineShape,
+        colour: Vector4<f64>,
+        depth: f64,
+        fixed: bool
+    ) -> Self {
+        Line {
+            start,
+            end,
+            thickness,
+            shape,
+            colour,
+            depth,
+            fixed
+        }
+    }
+
     pub fn new_square(
         start: Vector2<f64>,
         end: Vector2<f64>,
@@ -51,6 +72,7 @@ impl Line {
     }
 }
 
+#[derive(Debug, Clone)]
 pub enum LineShape {
     Square,
     Rounded

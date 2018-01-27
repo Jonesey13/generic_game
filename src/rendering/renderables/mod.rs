@@ -12,7 +12,7 @@ pub mod annular_segment;
 pub mod box_border;
 use super::primitives::Primitive;
 
-pub use self::line::Line;
+pub use self::line::{Line, LineShape};
 pub use self::arrow::Arrow;
 pub use self::circle::Circle;
 pub use self::annulus::Annulus;
