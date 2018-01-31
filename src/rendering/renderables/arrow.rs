@@ -5,8 +5,8 @@ use geometry;
 
 #[derive(Clone, Debug)]
 pub struct Arrow {
-    start: Vector2<f64>,
-    end: Vector2<f64>,
+    pub start: Vector2<f64>,
+    pub end: Vector2<f64>,
     thickness: f64,
     arrow_dim: Vector2<f64>,
     color: Vector4<f64>,
