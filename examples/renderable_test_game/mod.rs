@@ -7,7 +7,7 @@ use gg::rendering::{BezierRect, BezierQuadControl};
 use gg::rendering::{BezierSubrect, BezierLogic};
 use gg::rendering::renderables::BoxBorder;
 use gg::input::keyboard::KeyboardInput;
-use gg::rendering::{PlainText, TextAlign, Circle, Annulus, Rectangle, Renderable, Polygon, Arrow};
+use gg::rendering::{PlainText, TextAlign, Circle, Annulus, Rectangle, Renderable, Polygon, Arrow, TextureRect};
 use gg::debug::console::Console;
 use gg::geometry;
 use gg::rendering::Line;
@@ -119,6 +119,24 @@ impl Game for RenderableTestGame {
             false
         );
 
+        let tex_rect1 = TextureRect::new_regular(
+            0.5, 
+            0.5, 
+            Vector3::new(0.5, 0.5, 0.0), 
+            Vector3::new(0.0, 0.0, 0.0),
+            Vector2::new(1.0, 1.0),
+            true
+        );
+
+        let tex_rect2 = TextureRect::new_regular(
+            0.5, 
+            0.5, 
+            Vector3::new(-0.5, -0.5, 0.0), 
+            Vector3::new(0.0, 0.0, 1.0),
+            Vector2::new(1.0, 1.0),
+            true
+        );
+
         let box_border_fixed = BoxBorder::new_rounded(0.01, 0.1, Vector3::new(0.0, 0.0, -0.2), 0.5, 0.5, Vector4::new(1.0, 1.0, 0.0, 1.0), true);
         let box_border = BoxBorder::new_rounded(0.01, 0.1, Vector3::new(0.0, 0.0, -0.2), 0.5, 0.5, Vector4::new(1.0, 1.0, 0.0, 1.0), false);        
 
@@ -132,7 +150,8 @@ impl Game for RenderableTestGame {
         //     Box::new(bez_subrect), 
         //     Box::new(poly), 
         //     Box::new(line),
-            Box::new(arrow)
+            Box::new(tex_rect1),
+            Box::new(tex_rect2)
         ]
     }
 

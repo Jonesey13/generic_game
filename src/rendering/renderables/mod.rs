@@ -10,6 +10,7 @@ pub mod arrow;
 pub mod annulus;
 pub mod annular_segment;
 pub mod box_border;
+pub mod texture_rect;
 use super::primitives::Primitive;
 
 pub use self::line::{Line, LineShape};

@@ -5,7 +5,7 @@ use rendering::primitives::circle_part::{CirclePart, CircleVertex};
 use rendering::primitives::polygon::{Polygon, PolygonVertex};
 use rendering::primitives::text::{RenderText, TextBuffer, PlainText};
 use rendering::primitives::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
-use rendering::primitives::Primitive; 
+use rendering::primitives::{Primitive, TextureRect}; 
 use rendering::renderables::Renderable;
 use rendering::DisplaySettings;
 use super::glium_buffer::{GliumBuffer, BasicBuffer};
@@ -14,7 +14,9 @@ use super::{BezierRect, BezierSubrect};
 use glium;
 use glium::Frame;
 use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
+use glium::texture;
 use glium::glutin::EventsLoop;
+use std::io::Cursor;
 use na;
 use na::Matrix4;
 use num::One;
@@ -22,12 +24,14 @@ use rusttype;
 use games::view_details;
 use utils::transforms_2d;
 use debug::*;
+use image;
 
 pub struct GliumRenderer<'a> {
     display: Box<Display>,
     events_loop: Box<EventsLoop>,
     draw_params: DrawParameters<'a>,
     rect_buffer: BasicBuffer<Rectangle>,
+    texture_rect_buffer: BasicBuffer<TextureRect>,
     circ_buffer: BasicBuffer<CirclePart>,
     polygon_buffer: BasicBuffer<Polygon>,
     bezier_rect_buffer: BasicBuffer<BezierRect>,
@@ -35,7 +39,8 @@ pub struct GliumRenderer<'a> {
     polar_buffer: PolarBuffer,
     text_processor: TextBuffer<'a, PlainText>,
     view_details: view_details::ViewDetails,
-    display_settings: DisplaySettings
+    display_settings: DisplaySettings,
+    texture_array: texture::texture2d_array::Texture2dArray
 }
 
 impl<'a> GliumRenderer<'a> {
@@ -55,6 +60,7 @@ impl<'a> GliumRenderer<'a> {
             events_loop: Box::new(events_loop),
             draw_params: draw_params,
             rect_buffer: BasicBuffer::<Rectangle>::new(&display),
+            texture_rect_buffer: BasicBuffer::<TextureRect>::new(&display),
             circ_buffer: BasicBuffer::<CirclePart>::new(&display),
             polygon_buffer: BasicBuffer::<Polygon>::new(&display),
             bezier_rect_buffer: BasicBuffer::<BezierRect>::new(&display),
@@ -62,13 +68,23 @@ impl<'a> GliumRenderer<'a> {
             polar_buffer: PolarBuffer::new(&display),
             text_processor: TextBuffer::new(&display, settings),
             view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default()),
-            display_settings: settings
+            display_settings: settings,
+            texture_array: texture::texture2d_array::Texture2dArray::empty(&display, 1024, 1024, 1).unwrap()
         }
+    }
+
+    pub fn reset(&mut self, settings: DisplaySettings) {
+        let window = Self::build_window(settings, &self.events_loop);
+        
+        let context = Self::build_context(settings);
+
+        self.display.rebuild(window, context, &self.events_loop).unwrap();
     }
 
     fn reset_buffers(&mut self) {
         let display = &self.display;
         self.rect_buffer = BasicBuffer::<Rectangle>::new(display);
+        self.texture_rect_buffer = BasicBuffer::<TextureRect>::new(display);
         self.circ_buffer = BasicBuffer::<CirclePart>::new(display);
         self.polygon_buffer = BasicBuffer::<Polygon>::new(display);
         self.bezier_rect_buffer = BasicBuffer::<BezierRect>::new(display);
@@ -80,21 +96,32 @@ impl<'a> GliumRenderer<'a> {
     fn build_display_and_events_loop(settings: DisplaySettings) -> (Display, EventsLoop) {
         let events_loop = glium::glutin::EventsLoop::new();
         
+        let window = Self::build_window(settings, &events_loop);
+        
+        let context = Self::build_context(settings);
+        let display = glium::Display::new(window, context, &events_loop).unwrap();
+
+        (display, events_loop)
+    }
+
+    fn build_window(settings: DisplaySettings, events_loop: &glium::glutin::EventsLoop) -> glium::glutin::WindowBuilder {
         let mut window = glium::glutin::WindowBuilder::new()
             .with_dimensions(settings.res.0, settings.res.1);
 
         if settings.fullscreen { 
             window = window.with_fullscreen(Some(events_loop.get_primary_monitor())); 
         }
-        
-        let context = glium::glutin::ContextBuilder::new().with_multisampling(settings.multisample_level);
-        let display = glium::Display::new(window, context, &events_loop).unwrap();
 
-        (display, events_loop)
+        window
+    }
+
+    fn build_context(settings: DisplaySettings) -> glium::glutin::ContextBuilder<'a> {
+        glium::glutin::ContextBuilder::new().with_multisampling(settings.multisample_level)
     }
 
     fn flush_buffers(&mut self) {
         self.rect_buffer.flush_buffer();
+        self.texture_rect_buffer.flush_buffer();
         self.circ_buffer.flush_buffer();
         self.polar_buffer.flush_buffer();
         self.polygon_buffer.flush_buffer();
@@ -128,6 +155,7 @@ impl<'a> Renderer for GliumRenderer<'a> {
             for primitive in renderable.get_primitives() {
                 match primitive {
                         Primitive::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
+                        Primitive::TextureRect(rect) => self.texture_rect_buffer.load_renderable(rect),
                         Primitive::Circ(circle) => self.circ_buffer.load_renderable(circle),
                         Primitive::Text(text) => self.text_processor.load_renderable(text),
                         Primitive::BezierRect(bezier_rect) => self.bezier_rect_buffer.load_renderable(bezier_rect),
@@ -148,21 +176,28 @@ impl<'a> Renderer for GliumRenderer<'a> {
 
         let (width, height) = target.get_dimensions();
         let aspect_ratio = width as f64 / height as f64;
-        let uniforms = uniform! {
-            screen_width: width,
-            screen_height: height,
-            aspect_ratio: aspect_ratio as f32,
-            world_view: GliumRenderer::create_worldview_mat(self.view_details, aspect_ratio)
-        };
         
-        self.rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
-        self.circ_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
-        self.polygon_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);        
-        self.bezier_rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
-        self.bezier_subrect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
-        self.polar_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
-        self.text_processor.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
-        target.finish().unwrap();
+        {
+            let uniforms = uniform! {
+                screen_width: width,
+                screen_height: height,
+                aspect_ratio: aspect_ratio as f32,
+                world_view: GliumRenderer::create_worldview_mat(self.view_details, aspect_ratio),
+                tex: &self.texture_array
+            };
+            
+            self.rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+            self.texture_rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+            self.circ_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+            self.polygon_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);        
+            self.bezier_rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+            self.bezier_subrect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+            self.polar_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+            self.text_processor.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+            
+            target.finish().unwrap();
+        }
+        
         self.flush_buffers();
         debug_clock_stop("Render::glium_render");
     }
@@ -184,3 +219,12 @@ impl<'a> Renderer for GliumRenderer<'a> {
     }
 }
 
+pub fn build_renderer_with_textures<T: glium::texture::PixelValue>(settings: DisplaySettings, texture_array: Vec<texture::RawImage2d<T>>) -> GliumRenderer {
+    let mut renderer = GliumRenderer::new(settings);
+
+    let texture = glium::texture::texture2d_array::Texture2dArray::new(renderer.display.as_ref(), texture_array).unwrap();
+
+    renderer.texture_array = texture;
+ 
+    renderer
+}

@@ -73,7 +73,7 @@ impl<'a> Handler for HandlerBasicWithConsole<'a> {
     fn update_rendering(&mut self) {
         debug_clock_start("Render");
         if let Some(display_settings) = self.game.change_display_settings() {
-            self.renderer = GliumRenderer::new(display_settings);
+            self.renderer.reset(display_settings);
         }
         let window_spec = self.renderer.get_window_spec();
         self.console.write_lines(self.game.get_console_logs());

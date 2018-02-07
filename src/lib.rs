@@ -16,6 +16,7 @@ extern crate rusttype;
 extern crate lazy_static;
 extern crate libloading;
 extern crate winapi;
+extern crate image;
 
 pub mod rendering;
 pub mod input;

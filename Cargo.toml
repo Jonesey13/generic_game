@@ -15,6 +15,7 @@ rand = "*"
 lazy_static = "*"
 libloading = "*"
 winapi = { version = "0.3", features = ["winnt", "shellscalingapi"] }
+image = "*"
 
 [dependencies.bitflags]
 version = "*"

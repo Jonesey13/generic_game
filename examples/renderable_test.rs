@@ -3,6 +3,8 @@ extern crate generic_game as gg;
 extern crate nalgebra as na;
 extern crate time;
 extern crate num;
+extern crate image;
+extern crate glium;
 
 use gg::debug::*;
 use gg::{debug, rendering, input, window, games, Handler};
@@ -26,7 +28,13 @@ fn main() {
             ..Default::default()
     };
 
-    let renderer= rendering::glium_renderer::GliumRenderer::new(display_settings);
+    let image1 = image::load(Cursor::new(&include_bytes!("./renderable_test_game/squirrel.jpg")[..]),
+                        image::JPEG).unwrap().to_rgba();
+    let image1_dimensions = image1.dimensions();
+    let image1 = glium::texture::RawImage2d::from_raw_rgba_reversed(&image1.into_raw(), image1_dimensions);
+    let texture_array = vec![image1];
+
+    let renderer = rendering::build_renderer_with_textures(display_settings, texture_array);
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
     let game: Box<games::Game> = Box::new(renderable_test_game::RenderableTestGame::default());

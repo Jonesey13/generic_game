@@ -25,6 +25,7 @@ const LOGFILEPATH: &'static str = concat!(env!("CARGO_MANIFEST_DIR"), r"\log.txt
 
 bitflags! {
     pub struct DebugFlags: u32 {
+        const NOLOGGING       = 0b00000000;
         const WRITETOCONSOLE  = 0b00000001;
         const WRITETOFILE     = 0b00000010;
         const DEBUGCOLLISION  = 0b00000100;

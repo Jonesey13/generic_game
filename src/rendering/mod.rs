@@ -8,10 +8,10 @@ pub mod display_settings;
 use glium::Display;
 
 pub use rendering::primitives::{
-    Primitive, Rectangle, Polygon, CirclePart, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
+    Primitive, Rectangle, TextureRect, Polygon, CirclePart, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
 pub use rendering::renderables::{Renderable, Line, LineShape, Arrow, Circle, BoxBorder, Annulus, AnnularSegment};
 pub use self::display_settings::DisplaySettings;
-pub use self::glium_renderer::GliumRenderer;
+pub use self::glium_renderer::{GliumRenderer, build_renderer_with_textures};
 
 use games::view_details;
 use glium::glutin::EventsLoop;
