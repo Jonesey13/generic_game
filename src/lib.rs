@@ -28,6 +28,7 @@ pub mod geometry;
 pub mod utils;
 pub mod debug;
 pub mod window;
+pub mod animation;
 
 use na::{Vector2, Vector1, Rotation2};
 use debug::*;
