@@ -28,13 +28,11 @@ fn main() {
             ..Default::default()
     };
 
-    let image1 = image::load(Cursor::new(&include_bytes!("./renderable_test_game/squirrel.jpg")[..]),
-                        image::JPEG).unwrap().to_rgba();
-    let image1_dimensions = image1.dimensions();
-    let image1 = glium::texture::RawImage2d::from_raw_rgba_reversed(&image1.into_raw(), image1_dimensions);
+    let image1 = image::load(Cursor::new(&include_bytes!("./renderable_test_game/Racing2.png")[..]),
+                        image::PNG).unwrap();
     let texture_array = vec![image1];
 
-    let renderer = rendering::build_renderer_with_textures(display_settings, texture_array);
+    let renderer = rendering::GliumRenderer::new_with_textures(display_settings, texture_array);
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
     let game: Box<games::Game> = Box::new(renderable_test_game::RenderableTestGame::default());

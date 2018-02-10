@@ -11,7 +11,7 @@ pub use rendering::primitives::{
     Primitive, Rectangle, TextureRect, Polygon, CirclePart, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
 pub use rendering::renderables::{Renderable, Line, LineShape, Arrow, Circle, BoxBorder, Annulus, AnnularSegment};
 pub use self::display_settings::DisplaySettings;
-pub use self::glium_renderer::{GliumRenderer, build_renderer_with_textures};
+pub use self::glium_renderer::{GliumRenderer};
 
 use games::view_details;
 use glium::glutin::EventsLoop;

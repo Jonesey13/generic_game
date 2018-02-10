@@ -146,6 +146,25 @@ impl<'a> GliumRenderer<'a> {
         let single_mat: Matrix4<f32> = na::convert(view_mat);
         *single_mat.as_ref()
     }
+
+    pub fn new_with_textures(settings: DisplaySettings, mut image_array: Vec<image::DynamicImage>) -> Self {
+        let texture_array = image_array
+            .iter_mut()
+            .map(|image| {image.to_rgba()})
+            .map(|image| {
+                let image_dimensions = image.dimensions();
+                glium::texture::RawImage2d::from_raw_rgba_reversed(&image.into_raw(), image_dimensions)
+            })
+            .collect();
+
+        let mut renderer = GliumRenderer::new(settings);
+
+        let texture = glium::texture::srgb_texture2d_array::SrgbTexture2dArray::new(renderer.display.as_ref(), texture_array).unwrap();
+
+        renderer.texture_array = texture;
+    
+        renderer
+    }
 }
 
 impl<'a> Renderer for GliumRenderer<'a> {
@@ -217,14 +236,4 @@ impl<'a> Renderer for GliumRenderer<'a> {
             aspect_ratio: width as f64 / height as f64
         }
     }
-}
-
-pub fn build_renderer_with_textures<T: glium::texture::PixelValue>(settings: DisplaySettings, texture_array: Vec<texture::RawImage2d<T>>) -> GliumRenderer {
-    let mut renderer = GliumRenderer::new(settings);
-
-    let texture = glium::texture::srgb_texture2d_array::SrgbTexture2dArray::new(renderer.display.as_ref(), texture_array).unwrap();
-
-    renderer.texture_array = texture;
- 
-    renderer
 }
