@@ -162,3 +162,9 @@ fn point_inside_poly_test() {
 
     assert!(norm(&(overlap.unwrap() - Vector2::new(-0.2, 0.0))) < 0.00001);
 }
+
+impl From<Rectangle> for ConPoly {
+    fn from(rect: Rectangle) -> Self {
+        ConPoly::new_from_rect(rect)
+    }
+}

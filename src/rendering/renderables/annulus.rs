@@ -18,6 +18,17 @@ impl Annulus {
             fixed
         }
     }
+
+    pub fn new_from_radius_and_thickness(radius: f64, thickness: f64,  pos: Vector3<f64>, colour: Vector4<f64>, fixed: bool) -> Self {
+        let radial_dim = Vector2::new(radius - thickness / 2.0, radius + thickness / 2.0);
+
+        Self {
+            radial_dim,
+            pos,
+            colour,
+            fixed
+        }
+    }
 }
 
 impl Renderable for Annulus {
