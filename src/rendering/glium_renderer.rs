@@ -6,11 +6,13 @@ use rendering::primitives::polygon::{Polygon, PolygonVertex};
 use rendering::primitives::text::{RenderText, TextBuffer, PlainText};
 use rendering::primitives::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
 use rendering::primitives::{Primitive, TextureRect}; 
+use rendering::primitives::bezier_branch_rect::{BezierBranchRect, BezierBranchRectVertex};
+use rendering::primitives::bezier_branch_circ::{BezierBranchCirc, BezierBranchCircVertex};
 use rendering::renderables::Renderable;
 use rendering::DisplaySettings;
 use super::glium_buffer::{GliumBuffer, BasicBuffer};
 use super::render_by_shaders::GliumPrimitive;
-use super::{BezierRect, BezierSubrect};
+use super::{BezierRect};
 use glium;
 use glium::Frame;
 use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
@@ -35,7 +37,8 @@ pub struct GliumRenderer<'a> {
     circ_buffer: BasicBuffer<CirclePart>,
     polygon_buffer: BasicBuffer<Polygon>,
     bezier_rect_buffer: BasicBuffer<BezierRect>,
-    bezier_subrect_buffer: BasicBuffer<BezierSubrect>,
+    bezier_branch_rect_buffer: BasicBuffer<BezierBranchRect>,
+    bezier_branch_circ_buffer: BasicBuffer<BezierBranchCirc>,    
     polar_buffer: PolarBuffer,
     text_processor: TextBuffer<'a, PlainText>,
     view_details: view_details::ViewDetails,
@@ -64,7 +67,8 @@ impl<'a> GliumRenderer<'a> {
             circ_buffer: BasicBuffer::<CirclePart>::new(&display),
             polygon_buffer: BasicBuffer::<Polygon>::new(&display),
             bezier_rect_buffer: BasicBuffer::<BezierRect>::new(&display),
-            bezier_subrect_buffer: BasicBuffer::<BezierSubrect>::new(&display),
+            bezier_branch_rect_buffer: BasicBuffer::<BezierBranchRect>::new(&display),
+            bezier_branch_circ_buffer: BasicBuffer::<BezierBranchCirc>::new(&display),            
             polar_buffer: PolarBuffer::new(&display),
             text_processor: TextBuffer::new(&display, settings),
             view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default()),
@@ -88,7 +92,8 @@ impl<'a> GliumRenderer<'a> {
         self.circ_buffer = BasicBuffer::<CirclePart>::new(display);
         self.polygon_buffer = BasicBuffer::<Polygon>::new(display);
         self.bezier_rect_buffer = BasicBuffer::<BezierRect>::new(display);
-        self.bezier_subrect_buffer = BasicBuffer::<BezierSubrect>::new(display);
+        self.bezier_branch_rect_buffer = BasicBuffer::<BezierBranchRect>::new(display);
+        self.bezier_branch_circ_buffer = BasicBuffer::<BezierBranchCirc>::new(display);                  
         self.polar_buffer = PolarBuffer::new(display);
         self.text_processor = TextBuffer::new(display, self.display_settings);
     }
@@ -126,7 +131,8 @@ impl<'a> GliumRenderer<'a> {
         self.polar_buffer.flush_buffer();
         self.polygon_buffer.flush_buffer();
         self.bezier_rect_buffer.flush_buffer();
-        self.bezier_subrect_buffer.flush_buffer();
+        self.bezier_branch_rect_buffer.flush_buffer();
+        self.bezier_branch_circ_buffer.flush_buffer();              
         self.text_processor.flush_buffer();
     }
     
@@ -178,7 +184,8 @@ impl<'a> Renderer for GliumRenderer<'a> {
                         Primitive::Circ(circle) => self.circ_buffer.load_renderable(circle),
                         Primitive::Text(text) => self.text_processor.load_renderable(text),
                         Primitive::BezierRect(bezier_rect) => self.bezier_rect_buffer.load_renderable(bezier_rect),
-                        Primitive::BezierSubrect(bezier_subrect) => self.bezier_subrect_buffer.load_renderable(bezier_subrect),
+                        Primitive::BezierBranchRect(bezier_branch_rect) => self.bezier_branch_rect_buffer.load_renderable(bezier_branch_rect),                        
+                        Primitive::BezierBranchCirc(bezier_branch_circ) => self.bezier_branch_circ_buffer.load_renderable(bezier_branch_circ),                          
                         Primitive::PolarPix(polar) => self.polar_buffer.load_renderable(polar),
                         Primitive::Poly(polygon) => self.polygon_buffer.load_renderable(polygon)
                 }
@@ -210,7 +217,8 @@ impl<'a> Renderer for GliumRenderer<'a> {
             self.circ_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
             self.polygon_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);        
             self.bezier_rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
-            self.bezier_subrect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+            self.bezier_branch_rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
+            self.bezier_branch_circ_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);                            
             self.polar_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
             self.text_processor.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
             

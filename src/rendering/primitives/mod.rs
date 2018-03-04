@@ -1,5 +1,6 @@
 pub mod bezier_rect;
-pub mod bezier_subrect;
+pub mod bezier_branch_rect;
+pub mod bezier_branch_circ;
 pub mod circle_part;
 pub mod polar_pixel;
 pub mod polygon;
@@ -7,7 +8,8 @@ pub mod text;
 pub mod rectangle;
 pub mod texture_rect;
 pub use self::bezier_rect::{BezierRect, BezierQuadControl};
-pub use self::bezier_subrect::{BezierSubrect, BezierLogic};
+pub use self::bezier_branch_rect::BezierBranchRect;
+pub use self::bezier_branch_circ::BezierBranchCirc;
 pub use self::circle_part::CirclePart;
 pub use self::polar_pixel::PolarPixel;
 pub use self::polygon::Polygon;
@@ -25,5 +27,6 @@ pub enum Primitive {
     PolarPix(PolarPixel),
     Text(PlainText),
     BezierRect(BezierRect),
-    BezierSubrect(BezierSubrect),
+    BezierBranchRect(BezierBranchRect),
+    BezierBranchCirc(BezierBranchCirc),    
 }

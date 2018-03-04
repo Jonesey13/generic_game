@@ -1,5 +1,6 @@
 pub mod bezier_rect;
-pub mod bezier_subrect;
+pub mod bezier_branch_rect;
+pub mod bezier_branch_circ;
 pub mod circle;
 pub mod polar_pixel;
 pub mod polygon;

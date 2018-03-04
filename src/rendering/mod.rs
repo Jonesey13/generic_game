@@ -8,7 +8,8 @@ pub mod display_settings;
 use glium::Display;
 
 pub use rendering::primitives::{
-    Primitive, Rectangle, TextureRect, Polygon, CirclePart, BezierRect, BezierSubrect, PolarPixel, PlainText, BezierQuadControl, TextAlign, BezierLogic};
+    Primitive, Rectangle, TextureRect, Polygon, CirclePart, BezierRect, PolarPixel, PlainText, BezierQuadControl, TextAlign,
+    BezierBranchRect, BezierBranchCirc};
 pub use rendering::renderables::{Renderable, Line, LineShape, Arrow, Circle, BoxBorder, Annulus, AnnularSegment};
 pub use self::display_settings::DisplaySettings;
 pub use self::glium_renderer::{GliumRenderer};

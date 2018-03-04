@@ -3,8 +3,7 @@ use gg::games::GameInput;
 use gg::games::view_details::{ViewDetails2D, ViewDetails};
 use na::{Vector2, Vector3, Vector4, Rotation2};
 use num::{Zero};
-use gg::rendering::{BezierRect, BezierQuadControl};
-use gg::rendering::{BezierSubrect, BezierLogic};
+use gg::rendering::{BezierRect, BezierQuadControl, BezierBranchRect, BezierBranchCirc};
 use gg::rendering::renderables::BoxBorder;
 use gg::input::keyboard::KeyboardInput;
 use gg::rendering::{PlainText, TextAlign, Circle, Annulus, Rectangle, Renderable, Polygon, Arrow, TextureRect};
@@ -78,18 +77,24 @@ impl Game for RenderableTestGame {
             two: Vector2::new(0.5, 0.2),
             three: Vector2::new(1.0, 0.2),
         };
-        let bez_rect = BezierRect::new(quad_control, Vector2::new(0.0, 1.0), 1.0, Vector2::zero(), Vector4::new(0.0, 0.0, 1.0, 1.0));
-
-        let bez_logic = BezierLogic::new(1.0, 1.0, 4.0);
-        let bez_subrect = BezierSubrect::new(
-            bez_rect,
-            bez_logic,
+        let bez_rect = BezierRect::new_with_colour(quad_control, 0.25, Vector3::zero(), Vector4::new(0.1, 0.1, 0.1, 1.0));
+        let bez_branch_rect = BezierBranchRect::new(bez_rect, 
+            0.1,
+            0.2,
             1.0,
+            0.5,
             1.0,
             Vector2::new(0.5, 0.0),
-            Vector4::new(0.5, 0.5, 0.5, 0.5)
-        );
+            Vector4::new(1.0, 1.0, 1.0, 1.0));
 
+        let bez_branch_circ = BezierBranchCirc::new(bez_rect, 
+            0.1,
+            1.0,
+            0.5,
+            1.0,
+            Vector2::new(0.5, 0.25),
+            Vector4::new(1.0, 1.0, 1.0, 1.0));
+        
         let poly_corners = vec![
             Vector2::new(0.5, 0.5),
             Vector2::new(0.0, 0.5),
@@ -146,8 +151,9 @@ impl Game for RenderableTestGame {
         //     Box::new(text),
         //     Box::new(box_border),
         //     Box::new(box_border_fixed) 
-        //     Box::new(bez_rect), 
-        //     Box::new(bez_subrect), 
+            Box::new(bez_rect), 
+            //Box::new(bez_branch_rect), 
+            Box::new(bez_branch_circ),             
         //     Box::new(poly), 
         //     Box::new(line),
             Box::new(tex_rect1),

@@ -1,0 +1,71 @@
+#version 410 core
+uniform mat4 world_view;
+
+in vec2 c0_cs[];
+in vec2 c1_cs[];
+in vec2 c2_cs[];
+in float branch_height_cs[];
+in vec3 branch_pos_cs[];
+in float width_cs[];
+in float height_cs[];
+in float branch_logical_length_cs[];
+in float branch_logical_height_left_cs[];
+in float branch_logical_height_right_cs[];
+in vec2 logical_pos_cs[];
+in vec4 color_cs[];
+
+out vec4 color_es;
+
+layout(quads, equal_spacing) in;
+
+vec2 to_local_pos(vec2 uv, vec2 local_pos, float width, float height);
+vec2 logical_to_regular(vec2 uv, float logical_height_left, float logical_height_right, float logical_length);
+vec2 clamp_to_regular(vec2 uv);
+vec3 bezier_pos(vec2 uv, float width, vec2 c0, vec2 c1, vec2 c2, vec3 pos);
+
+void main() {
+  vec2 tess_coords = gl_TessCoord.xy;
+  color_es = color_cs[0];
+  vec2 local_pos = to_local_pos(tess_coords, logical_pos_cs[0], width_cs[0], height_cs[0]);
+  vec2 regularised_pos = logical_to_regular(
+    local_pos, 
+    branch_logical_height_left_cs[0], 
+    branch_logical_height_right_cs[0], 
+    branch_logical_length_cs[0]
+  );
+  vec2 clamped_pos = clamp_to_regular(regularised_pos);
+
+  vec4 bezier_pos = vec4(bezier_pos(clamped_pos, branch_height_cs[0], c0_cs[0], c1_cs[0], c2_cs[0], branch_pos_cs[0]), 1.0);
+  gl_Position = world_view * bezier_pos;
+}
+
+vec2 to_local_pos(vec2 uv, vec2 local_pos, float width, float height) {
+  float hori_pos = (uv.x - 0.5) * width;
+  float vert_pos = (uv.y - 0.5) * height;
+  return local_pos + vec2(hori_pos, vert_pos);
+}
+
+vec2 logical_to_regular(vec2 uv, float logical_height_left, float logical_height_right, float logical_length) {
+  float hori_pos = uv.x / logical_length;
+  float logical_height_at_pos = (1.0 - hori_pos) * logical_height_left + hori_pos * logical_height_right;
+  float vert_pos = 0.5 + uv.y / logical_height_at_pos;
+  return vec2(hori_pos, vert_pos);
+}
+
+vec2 clamp_to_regular(vec2 uv) {
+  float hori_pos = max(min(uv.x, 1.0), 0.0);
+  float vert_pos = max(min(uv.y, 1.0), 0.0);
+  return vec2(hori_pos, vert_pos);
+}
+
+vec3 bezier_pos(vec2 uv, float height, vec2 c0, vec2 c1, vec2 c2, vec3 pos) {
+  float t = uv.x;
+  vec2 vert_dir = vec2(0.0, 1.0);
+  vec2 bezier_line_pos =
+    (1 - t) * (1 - t) * c0
+    + 2 * t * (1 - t) * c1
+    + t * t * c2;
+  float vertical_pos = uv.y - 0.5;
+  vec2 local_pos = bezier_line_pos + vertical_pos * height * vert_dir; 
+  return vec3(local_pos.xy, 0.0) + pos;
+}
