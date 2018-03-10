@@ -7,7 +7,7 @@ use input::joystick::JoystickInput;
 use na::{Matrix4, Vector2};
 use num::{One, Zero};
 use debug::console::Console;
-use rendering::DisplaySettings;
+use rendering::{DisplaySettings, WindowSpec};
 
 pub use self::view_details::{ViewDetails, ViewDetails2D, ViewDetails3D};
 
@@ -17,7 +17,7 @@ pub trait Game {
     fn update_input(&mut self) {}
     #[allow(unused_variables)]
     fn update_logic(&mut self, t_step: f64) {}
-    fn get_renderables(&self) -> Vec<Box<Renderable>> { Vec::new()  }
+    fn get_renderables(&self, _window_spec: WindowSpec) -> Vec<Box<Renderable>> { Vec::new()  }
     fn get_input<'a>(&'a mut self) -> Option<&'a mut GameInput> { None }
     fn get_view(&self) -> view_details::ViewDetails {
         view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default())

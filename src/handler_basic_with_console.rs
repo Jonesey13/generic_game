@@ -77,7 +77,7 @@ impl<'a> Handler for HandlerBasicWithConsole<'a> {
         }
         let window_spec = self.renderer.get_window_spec();
         self.console.write_lines(self.game.get_console_logs());
-        self.renderer.load_renderables(self.game.get_renderables());
+        self.renderer.load_renderables(self.game.get_renderables(window_spec));
         self.renderer.load_renderables(self.console.get_renderables(window_spec));
         self.renderer.set_worldview(self.game.get_view());
         self.renderer.render();

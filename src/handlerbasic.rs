@@ -61,7 +61,8 @@ impl Handler for HandlerBasic {
 
     fn update_rendering(&mut self) {
         debug_clock_start("Render");
-        self.renderer.load_renderables(self.game.get_renderables());
+        let window_spec = self.renderer.get_window_spec();
+        self.renderer.load_renderables(self.game.get_renderables(window_spec));
         self.renderer.set_worldview(self.game.get_view());
         self.renderer.render();
         debug_clock_stop("Render");

@@ -22,6 +22,24 @@ pub struct BezierQuadControl {
     pub three: Vector2<f64>
 }
 
+impl BezierQuadControl {
+    pub fn new(one: Vector2<f64>, two: Vector2<f64>, three: Vector2<f64>) -> Self {
+        Self {
+            one,
+            two,
+            three
+        }
+    }
+
+    pub fn new_linear(pos: Vector2<f64>, change: Vector2<f64>) -> Self {
+        Self {
+            one: pos,
+            two: pos + change / 2.0,
+            three: pos + change
+        }
+    }
+}
+
 impl BezierRect {
     /// Intended for Standalone use
     pub fn new_with_colour (

@@ -2,6 +2,7 @@ use collision::{Collider, Collidable};
 use na::{Vector2, Vector4};
 use games::Game;
 use rendering::renderables::Renderable;
+use rendering::WindowSpec;
 use input::mouse::MouseInput;
 use input::keyboard::KeyboardInput;
 use input::bool_switch::BoolSwitch;
@@ -68,7 +69,7 @@ impl Game for CollisionTestGame {
         self.update_colors();
     }
 
-    fn get_renderables(&self) -> Vec<Box<Renderable>> {
+    fn get_renderables(&self, _: WindowSpec) -> Vec<Box<Renderable>> {
         let mut output: Vec<Box<Renderable>> = vec![];
         for obj in self.get_collision_wrappers() {
             output.append(&mut obj.render(0.0));
