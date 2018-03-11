@@ -16,7 +16,7 @@ pub struct BezierBranchRect {
     pub branch_logical_length: f64,
     pub branch_logical_height_left: f64,
     pub branch_logical_height_right: f64,
-    pub logical_pos: Vector2<f64>,
+    pub logical_pos: Vector3<f64>,
     pub color: Vector4<f64>
 }
 
@@ -28,7 +28,7 @@ impl BezierBranchRect {
         branch_logical_length: f64,
         branch_logical_height_left: f64,
         branch_logical_height_right: f64,
-        logical_pos: Vector2<f64>,
+        logical_pos: Vector3<f64>,
         color: Vector4<f64>
     ) -> BezierBranchRect {
         BezierBranchRect { 
@@ -74,7 +74,7 @@ pub struct BezierBranchRectVertex {
     pub branch_logical_length: f32,
     pub branch_logical_height_left: f32,
     pub branch_logical_height_right: f32,
-    pub logical_pos: [f32; 2],
+    pub logical_pos: [f32; 3],
     pub color: [f32; 4]
 }
 
@@ -107,7 +107,7 @@ impl From<BezierBranchRect> for BezierBranchRectVertex {
             branch_logical_length: rect.branch_logical_length as f32,
             branch_logical_height_left: rect.branch_logical_height_left as f32,
             branch_logical_height_right: rect.branch_logical_height_right as f32,
-            logical_pos: *na::convert::<_, Vector2<f32>>(rect.logical_pos).as_ref(),
+            logical_pos: *na::convert::<_, Vector3<f32>>(rect.logical_pos).as_ref(),
             color: *na::convert::<_, Vector4<f32>>(rect.color).as_ref(),
         };
         output

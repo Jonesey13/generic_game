@@ -9,7 +9,7 @@ in float radius_vs[];
 in float branch_logical_length_vs[];
 in float branch_logical_height_left_vs[];
 in float branch_logical_height_right_vs[];
-in vec2 logical_pos_vs[];
+in vec3 logical_pos_vs[];
 in vec4 color_vs[];
 
 layout(vertices = 4) out;
@@ -23,7 +23,7 @@ out float radius_cs[];
 out float branch_logical_length_cs[];
 out float branch_logical_height_left_cs[];
 out float branch_logical_height_right_cs[];
-out vec2 logical_pos_cs[];
+out vec3 logical_pos_cs[];
 out vec4 color_cs[];
 
 uniform int tess_level_outer = 100;

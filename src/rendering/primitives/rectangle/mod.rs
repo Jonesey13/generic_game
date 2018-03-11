@@ -4,7 +4,7 @@ use rendering::primitives::Primitive;
 use rendering::render_by_shaders::GliumPrimitive;
 use rendering::shaders::Shaders;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Rectangle {
     pub length: f64,  /// x-axis
     pub height: f64,  /// y-axis

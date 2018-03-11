@@ -29,24 +29,24 @@ impl CollisionObject {
         }
     }
 
-    pub fn render_collision_details(&self, object_details: CollisionObjectDetails, colour: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<Renderable>> {
+    pub fn render_collision_details(&self, object_details: CollisionObjectDetails, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<Renderable>> {
         match (self, object_details) {
             (&CollisionObject::None, CollisionObjectDetails::None) => vec![],
-            (&CollisionObject::Circ(ref circle), CollisionObjectDetails::Circ(dir)) => circle.render_collision_details(dir, colour, depth, fixed),
-            (&CollisionObject::ConPoly(ref con_poly), CollisionObjectDetails::ConPoly(ref poly_info)) => con_poly.render_collision_details(poly_info.clone(), colour, depth, fixed),
-            (&CollisionObject::Line(line), CollisionObjectDetails::Line(line_info)) => line.render_collision_details(line_info, colour, depth, fixed),
-            (&CollisionObject::Point(point), CollisionObjectDetails::Point(dir)) => Point::new(point).render_collision_details(dir, colour, depth, fixed),
+            (&CollisionObject::Circ(ref circle), CollisionObjectDetails::Circ(dir)) => circle.render_collision_details(dir, color, depth, fixed),
+            (&CollisionObject::ConPoly(ref con_poly), CollisionObjectDetails::ConPoly(ref poly_info)) => con_poly.render_collision_details(poly_info.clone(), color, depth, fixed),
+            (&CollisionObject::Line(line), CollisionObjectDetails::Line(line_info)) => line.render_collision_details(line_info, color, depth, fixed),
+            (&CollisionObject::Point(point), CollisionObjectDetails::Point(dir)) => Point::new(point).render_collision_details(dir, color, depth, fixed),
             _ => vec![]
         }
     }
 
-    pub fn render(&self, colour: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<Renderable>> {
+    pub fn render(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<Renderable>> {
         match self {
             &CollisionObject::None => vec![],
-            &CollisionObject::Circ(ref circle) => circle.to_renderables(colour, depth, fixed),
-            &CollisionObject::ConPoly(ref con_poly) => con_poly.to_renderables(colour, depth, fixed),
-            &CollisionObject::Line(line) => line.to_renderables(colour, depth, fixed),
-            &CollisionObject::Point(point) => Point::new(point).to_renderables(colour, depth, fixed),
+            &CollisionObject::Circ(ref circle) => circle.to_renderables(color, depth, fixed),
+            &CollisionObject::ConPoly(ref con_poly) => con_poly.to_renderables(color, depth, fixed),
+            &CollisionObject::Line(line) => line.to_renderables(color, depth, fixed),
+            &CollisionObject::Point(point) => Point::new(point).to_renderables(color, depth, fixed),
         }
     }
 }

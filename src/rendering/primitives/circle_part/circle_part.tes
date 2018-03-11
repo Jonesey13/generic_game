@@ -5,11 +5,11 @@ uniform float aspect_ratio;
 in vec2 radial_dim_cs[];
 in vec2 angular_dim_cs[];
 in vec3 pos_cs[];
-in vec4 colour_cs[];
+in vec4 color_cs[];
 in uint fixed_pos_cs[];
 
 out vec2 circle_param;
-out vec4 colour_es;
+out vec4 color_es;
 
 layout(quads, equal_spacing) in;
 
@@ -22,7 +22,7 @@ vec4 transform(vec4 pos, bool fixed_pos);
 
 void main() {
   circle_param = gl_TessCoord.xy;
-  colour_es = colour_cs[0];
+  color_es = color_cs[0];
   gl_Position = vec4( circle_pos(map_pos(circle_param, radial_dim_cs[0], angular_dim_cs[0])), 1.0);
   bool fixed_pos = bool(fixed_pos_cs[0]);
   gl_Position = transform(gl_Position, fixed_pos);

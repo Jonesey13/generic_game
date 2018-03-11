@@ -10,6 +10,7 @@ use gg::rendering::{PlainText, TextAlign, Circle, Annulus, Rectangle, Renderable
 use gg::debug::console::Console;
 use gg::geometry;
 use gg::rendering::Line;
+use gg::rendering::WindowSpec;
 
 #[allow(dead_code)]
 #[derive(Default, Clone)]
@@ -40,7 +41,7 @@ impl Game for RenderableTestGame {
         ViewDetails::TwoDim(self.view_details.clone())
     }
     
-    fn get_renderables(&self) -> Vec<Box<Renderable>> {
+    fn get_renderables(&self, _: WindowSpec) -> Vec<Box<Renderable>> {
         // let rect = Rectangle {
         //     length: 1.0,
         //     height: 1.0,
@@ -51,14 +52,14 @@ impl Game for RenderableTestGame {
         let circ = Circle {
             radius: 0.7,
             pos: Vector3::new(-0.0, 0.0, 0.1),
-            colour: Vector4::new(1.0, 0.0, 0.0, 1.0),
+            color: Vector4::new(1.0, 0.0, 0.0, 1.0),
             fixed: true
         };
 
         let ann = Annulus {
             radial_dim: Vector2::new(0.4, 0.5),
             pos: Vector3::new(0.2, -0.3, -0.1),
-            colour: Vector4::new(0.0, 0.0, 1.0, 1.0),
+            color: Vector4::new(0.0, 0.0, 1.0, 1.0),
             fixed: false
         };
 
@@ -77,14 +78,14 @@ impl Game for RenderableTestGame {
             two: Vector2::new(0.5, 0.2),
             three: Vector2::new(1.0, 0.2),
         };
-        let bez_rect = BezierRect::new_with_colour(quad_control, 0.25, Vector3::zero(), Vector4::new(0.1, 0.1, 0.1, 1.0));
+        let bez_rect = BezierRect::new_with_color(quad_control, 0.25, Vector3::zero(), Vector4::new(0.1, 0.1, 0.1, 1.0));
         let bez_branch_rect = BezierBranchRect::new(bez_rect, 
             0.1,
             0.2,
             1.0,
             0.5,
             1.0,
-            Vector2::new(0.5, 0.0),
+            Vector3::new(0.5, 0.0, -0.1),
             Vector4::new(1.0, 1.0, 1.0, 1.0));
 
         let bez_branch_circ = BezierBranchCirc::new(bez_rect, 
@@ -92,7 +93,7 @@ impl Game for RenderableTestGame {
             1.0,
             0.5,
             1.0,
-            Vector2::new(0.5, 0.25),
+            Vector3::new(0.5, 0.25, -0.1),
             Vector4::new(1.0, 1.0, 1.0, 1.0));
         
         let poly_corners = vec![
@@ -152,7 +153,7 @@ impl Game for RenderableTestGame {
         //     Box::new(box_border),
         //     Box::new(box_border_fixed) 
             Box::new(bez_rect), 
-            //Box::new(bez_branch_rect), 
+            Box::new(bez_branch_rect), 
             Box::new(bez_branch_circ),             
         //     Box::new(poly), 
         //     Box::new(line),

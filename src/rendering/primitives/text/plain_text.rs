@@ -69,7 +69,7 @@ impl RenderText for PlainText {
                 tex_coords_max: [uv_rect.max.x, uv_rect.max.y],
                 scale: [self.scale.x as f32, self.scale.y as f32 ],
                 transform: *na::convert::<_, Matrix2<f32>>(self.transform).as_ref(),
-                colour: color,
+                color: color,
                 fixed_pos: self.fixed as u32
                 }
             } 
@@ -127,7 +127,7 @@ pub struct TextVertex {
     tex_coords_max: [f32; 2],
     scale: [f32; 2],
     transform: [[f32; 2]; 2],
-    colour: [f32; 4],
+    color: [f32; 4],
     fixed_pos: u32
 }
 
@@ -141,6 +141,6 @@ implement_vertex!(
     tex_coords_max, 
     scale, 
     transform, 
-    colour, 
+    color, 
     fixed_pos
 );

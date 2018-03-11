@@ -26,12 +26,12 @@ impl TwoDTransformable for Point {
 }
 
 impl ToRenderables for Point {
-    fn to_renderables(&self, colour: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::Renderable>> {
+    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::Renderable>> {
         vec![
             Box::new(rendering::Circle {
                 radius: 0.01,
                 pos: Vector3::new(self.pos.x, self.pos.y, depth),
-                colour,
+                color,
                 fixed
             })
         ]
@@ -47,15 +47,15 @@ impl ToCollisionObjects for Point {
 }
 
 impl Point {
-    pub fn render_collision_details(&self, coll_dir: Vector2<f64>, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    pub fn render_collision_details(&self, coll_dir: Vector2<f64>, color: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::Renderable>> {
-        let mut renderables = self.to_renderables(colour, depth, fixed);
+        let mut renderables = self.to_renderables(color, depth, fixed);
 
         renderables.push(
             Box::new(rendering::Arrow::new_for_coll_test(
                 self.pos,
                 coll_dir,
-                colour,
+                color,
                 depth,
                 fixed
         )));

@@ -97,15 +97,15 @@ impl TwoDTransformable for ConPoly {
 }
 
 impl ToRenderables for ConPoly {
-    fn to_renderables(&self, colour: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<Renderable>> {
+    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<Renderable>> {
         vec![
-            Box::new(Polygon::new_regular(self.corners.clone(), self.get_average(), Vector3::new(0.0, 0.0, depth), colour, fixed))
+            Box::new(Polygon::new_regular(self.corners.clone(), self.get_average(), Vector3::new(0.0, 0.0, depth), color, fixed))
         ]
     }
 }
 
 impl ConPoly {
-    pub fn render_collision_details(&self, coll_location: collision::ConPolyInfo, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    pub fn render_collision_details(&self, coll_location: collision::ConPolyInfo, color: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<Renderable>> {
         let location_renderable: Box<ToRenderables> = match coll_location {
             collision::ConPolyInfo::LineInfo(side, pos) => Box::new(Point::new(self.get_side(side).unwrap().get_point(pos))),
@@ -123,13 +123,13 @@ impl ConPoly {
             rendering::Arrow::new_for_coll_test(
                     coll_pos,
                     coll_dir,
-                    colour,
+                    color,
                     depth,
                     fixed
             )
         );
 
-        let mut renderables = location_renderable.to_renderables(colour, depth, fixed);
+        let mut renderables = location_renderable.to_renderables(color, depth, fixed);
         renderables.push(direction_renderable);
         renderables
     }    

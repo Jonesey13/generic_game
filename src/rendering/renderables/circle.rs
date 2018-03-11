@@ -5,16 +5,16 @@ use na::{Vector2, Vector3, Vector4};
 pub struct Circle {
     pub radius: f64,
     pub pos: Vector3<f64>,
-    pub colour: Vector4<f64>,
+    pub color: Vector4<f64>,
     pub fixed: bool
 }
 
 impl Circle {
-    pub fn new(radius: f64, pos: Vector3<f64>, colour: Vector4<f64>, fixed: bool) -> Self {
+    pub fn new(radius: f64, pos: Vector3<f64>, color: Vector4<f64>, fixed: bool) -> Self {
         Self {
             radius,
             pos,
-            colour,
+            color,
             fixed
         }
     }
@@ -30,7 +30,7 @@ impl From<Circle> for CirclePart {
             radial_dim: Vector2::new(0.0, circ.radius),
             angular_dim: Vector2::new(0.0, 1.0),
             pos: circ.pos,
-            colour: circ.colour,
+            color: circ.color,
             fixed: circ.fixed
         }
     }

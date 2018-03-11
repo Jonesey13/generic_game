@@ -39,12 +39,12 @@ impl TwoDTransformable for Circle {
 }
 
 impl ToRenderables for Circle {
-    fn to_renderables(&self, colour: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::Renderable>> {
+    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::Renderable>> {
         vec![
             Box::new(rendering::Circle {
                 radius: self.rad,
                 pos: Vector3::new(self.center.x, self.center.y, depth),
-                colour,
+                color,
                 fixed
             })
         ]
@@ -52,7 +52,7 @@ impl ToRenderables for Circle {
 }
 
 impl Circle {
-    pub fn render_collision_details(&self, coll_dir: Vector2<f64>, colour: Vector4<f64>, depth: f64, fixed: bool) 
+    pub fn render_collision_details(&self, coll_dir: Vector2<f64>, color: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::Renderable>> {
         let coll_location = self.center + self.rad * coll_dir;
         let location_renderable: Box<ToRenderables> = Box::new(Point::new(coll_location));
@@ -61,13 +61,13 @@ impl Circle {
             rendering::Arrow::new_for_coll_test(
                     coll_location,
                     coll_dir,
-                    colour,
+                    color,
                     depth,
                     fixed
             )
         );
 
-        let mut renderables = location_renderable.to_renderables(colour, depth, fixed);
+        let mut renderables = location_renderable.to_renderables(color, depth, fixed);
         renderables.push(direction_renderable);
         renderables
     }

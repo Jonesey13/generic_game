@@ -7,7 +7,7 @@ pub struct Line {
     end: Vector2<f64>,
     thickness: f64,
     shape: LineShape,
-    colour: Vector4<f64>,
+    color: Vector4<f64>,
     depth: f64,
     fixed: bool
 }
@@ -18,7 +18,7 @@ impl Line {
         end: Vector2<f64>,
         thickness: f64,
         shape: LineShape,
-        colour: Vector4<f64>,
+        color: Vector4<f64>,
         depth: f64,
         fixed: bool
     ) -> Self {
@@ -27,7 +27,7 @@ impl Line {
             end,
             thickness,
             shape,
-            colour,
+            color,
             depth,
             fixed
         }
@@ -37,7 +37,7 @@ impl Line {
         start: Vector2<f64>,
         end: Vector2<f64>,
         thickness: f64,
-        colour: Vector4<f64>,
+        color: Vector4<f64>,
         depth: f64,
         fixed: bool
     ) -> Self {
@@ -45,7 +45,7 @@ impl Line {
             start,
             end,
             thickness,
-            colour,
+            color,
             depth,
             fixed,
             shape: LineShape::Square
@@ -56,7 +56,7 @@ impl Line {
         start: Vector2<f64>,
         end: Vector2<f64>,
         thickness: f64,
-        colour: Vector4<f64>,
+        color: Vector4<f64>,
         depth: f64,
         fixed: bool
     ) -> Self {
@@ -64,7 +64,7 @@ impl Line {
             start,
             end,
             thickness,
-            colour,
+            color,
             depth,
             fixed,
             shape: LineShape::Rounded
@@ -89,7 +89,7 @@ impl Renderable for Line {
             height: self.thickness,
             pos: Vector3::new(midpoint.x, midpoint.y, self.depth),
             rot: Rotation2::new(line_angle),
-            color: self.colour,
+            color: self.color,
             fixed: self.fixed
         };
 
@@ -99,14 +99,14 @@ impl Renderable for Line {
                 let beg_circ = Circle {
                     radius: self.thickness / 2.0,
                     pos: Vector3::new(self.start.x, self.start.y, self.depth),
-                    colour: self.colour,
+                    color: self.color,
                     fixed: self.fixed
                 };
 
                 let end_circ = Circle {
                     radius: self.thickness / 2.0,
                     pos: Vector3::new(self.end.x, self.end.y, self.depth),
-                    colour: self.colour,
+                    color: self.color,
                     fixed: self.fixed
                 };
                 return vec![Primitive::Circ(beg_circ.into()), Primitive::Circ(end_circ.into()), Primitive::Rect(line_middle)]

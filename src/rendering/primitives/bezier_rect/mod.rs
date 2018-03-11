@@ -42,7 +42,7 @@ impl BezierQuadControl {
 
 impl BezierRect {
     /// Intended for Standalone use
-    pub fn new_with_colour (
+    pub fn new_with_color (
         control_points: BezierQuadControl,
         height: f64,
         pos: Vector3<f64>,

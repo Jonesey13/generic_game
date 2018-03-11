@@ -12,11 +12,11 @@ in vec2 tex_coords_min_vs[];
 in vec2 tex_coords_max_vs[];
 in vec2 scale_vs[];
 in mat2 transform_vs[];
-in vec4 colour_vs[];
+in vec4 color_vs[];
 in uint fixed_pos_vs[];
 
 out vec4 rect_pos;
-out vec4 colour_ges;
+out vec4 color_ges;
 out vec2 tex_pos;
 
 layout(points) in;
@@ -33,22 +33,22 @@ void main()
   gl_Position = Transform(local_pos, position_vs[0], transform_vs[0], scale_vs[0], fixed_pos);
   tex_pos = vec2(tex_coords_min_vs[0].x, tex_coords_max_vs[0].y);
   rect_pos =  gl_Position;
-  colour_ges = colour_vs[0];
+  color_ges = color_vs[0];
   EmitVertex();
   gl_Position = Transform(local_pos + vec2(length_vs[0], 0.0) , position_vs[0], transform_vs[0], scale_vs[0], fixed_pos);
   tex_pos = vec2(tex_coords_max_vs[0].x, tex_coords_max_vs[0].y);
   rect_pos =  gl_Position;
-  colour_ges = colour_vs[0];
+  color_ges = color_vs[0];
   EmitVertex();
   gl_Position = Transform(local_pos + vec2(0.0, height_vs[0]), position_vs[0], transform_vs[0], scale_vs[0], fixed_pos);
   tex_pos = vec2(tex_coords_min_vs[0].x, tex_coords_min_vs[0].y);
   rect_pos = gl_Position;
-  colour_ges = colour_vs[0];
+  color_ges = color_vs[0];
   EmitVertex();
   gl_Position = Transform(local_pos + vec2(length_vs[0], height_vs[0]), position_vs[0], transform_vs[0], scale_vs[0], fixed_pos);
   tex_pos = vec2(tex_coords_max_vs[0].x, tex_coords_min_vs[0].y);
   rect_pos = gl_Position;
-  colour_ges = colour_vs[0];
+  color_ges = color_vs[0];
   EmitVertex();
 
   EndPrimitive();

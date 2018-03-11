@@ -10,7 +10,7 @@ in float height;
 in float branch_logical_length;
 in float branch_logical_height_left;
 in float branch_logical_height_right;
-in vec2 logical_pos;
+in vec3 logical_pos;
 in vec4 color;
 
 out vec2 c0_vs;
@@ -23,7 +23,7 @@ out float height_vs;
 out float branch_logical_length_vs;
 out float branch_logical_height_left_vs;
 out float branch_logical_height_right_vs;
-out vec2 logical_pos_vs;
+out vec3 logical_pos_vs;
 out vec4 color_vs;
 
 void main()
