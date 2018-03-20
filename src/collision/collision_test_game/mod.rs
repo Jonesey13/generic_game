@@ -69,7 +69,7 @@ impl Game for CollisionTestGame {
         self.update_colors();
     }
 
-    fn get_renderables(&self, _: WindowSpec) -> Vec<Box<Renderable>> {
+    fn get_renderables(&mut self, _: WindowSpec) -> Vec<Box<Renderable>> {
         let mut output: Vec<Box<Renderable>> = vec![];
         for obj in self.get_collision_wrappers() {
             output.append(&mut obj.render(0.0));
