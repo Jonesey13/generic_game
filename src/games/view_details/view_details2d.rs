@@ -7,6 +7,7 @@ pub struct ViewDetails2D {
     pub camera_pos: Vector2<f64>,
     pub up_vector: Vector2<f64>,
     pub viewport_height: f64,
+    pub viewport_length: f64,
     pub use_aspect_ratio: bool
 }
 
@@ -27,6 +28,7 @@ impl Default for ViewDetails2D {
             camera_pos: Vector2::zero(),
             up_vector: Vector2::y(),
             viewport_height: 1.0,
+            viewport_length: 1.0,
             use_aspect_ratio: true
         }
     }

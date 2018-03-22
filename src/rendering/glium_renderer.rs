@@ -143,6 +143,7 @@ impl<'a> GliumRenderer<'a> {
                 transforms_2d::build_worldview_mat(
                     view.camera_pos,
                     view.viewport_height,
+                    view.viewport_length,
                     aspect_ratio,
                     view.up_vector,
                     view.use_aspect_ratio),

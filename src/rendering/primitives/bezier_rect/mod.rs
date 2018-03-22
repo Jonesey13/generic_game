@@ -38,6 +38,12 @@ impl BezierQuadControl {
             three: pos + change
         }
     }
+
+    pub fn get_point(&self, t: f64) -> Vector2<f64> {
+        (1.0 - t) * (1.0 - t) * self.one
+        + 2.0 * t * (1.0 - t) * self.two
+        + t * t * self.three
+    }
 }
 
 impl BezierRect {
