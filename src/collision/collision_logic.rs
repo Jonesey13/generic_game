@@ -248,7 +248,7 @@ fn points_side_coll(lines: &Vec<Line>, poly: &Poly) -> Option<(usize, usize, f64
 
     collisions.sort_by(|&(_, _, time1, _), &(_, _, time2, _)| {time1.partial_cmp(&time2).unwrap_or(Equal) });
 
-    collisions.iter().cloned().nth(0)
+    collisions.into_iter().nth(0)
 }
 
 /// Determines when and how the path of a point enters a polygon (outside -> inside)
@@ -274,7 +274,7 @@ fn point_side_coll(line: &Line, poly: &Poly) -> Option<(usize, f64, f64)> {
 
     collisions.sort_by(|&(_, time1, _), &(_, time2, _)| { time1.partial_cmp(&time2).unwrap_or(Equal) });
 
-    collisions.iter().cloned().nth(0)
+    collisions.into_iter().nth(0)
 }
 
 // Checks if two lines are parallel

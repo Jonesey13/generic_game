@@ -19,7 +19,7 @@ pub trait Poly {
     // Normals face outwards
     fn normals(&self) -> Vec<Vector2<f64>> {
         let corners_it_shift = self.get_corners().into_iter().cycle().skip(1);
-        self.get_corners().iter().cloned().zip(corners_it_shift).map(|(beg, end)| {-get_normal_2d(end - beg)}).collect()
+        self.get_corners().into_iter().zip(corners_it_shift).map(|(beg, end)| {-get_normal_2d(end - beg)}).collect()
     }
 
     fn get_normal(&self, index: usize) -> Vector2<f64> {
@@ -56,8 +56,8 @@ pub trait Poly {
     }
 
     fn get_corner_lines(&self, other: &Poly) -> Vec<Line> {
-        self.get_corners().iter().cloned()
-        .zip(other.get_corners().iter().cloned())
+        self.get_corners().into_iter()
+        .zip(other.get_corners().into_iter())
         .map(|(beg, end)| { Line::new(beg, end) })
         .collect()
     }

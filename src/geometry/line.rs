@@ -156,8 +156,8 @@ impl ToCollisionObjects for Line {
 pub fn line_line_intersect_2d(line1: &Line, line2: &Line) -> DualSoln {
     let dir1 = line1.get_diff();
     let dir2 = line2.get_diff();
-    let normal1 = line1.get_normal();
-    let normal2 = line2.get_normal();
+    let normal1 = line1.get_unnormalized_normal();
+    let normal2 = line2.get_unnormalized_normal();
     if dot(&dir1, &normal2) != 0.0 {
         let t1 = dot(&(line2.beg - line1.beg), &normal2) / dot(&dir1, &normal2);
         let t2 = dot(&(line1.beg - line2.beg), &normal1) / dot(&dir2, &normal1);
