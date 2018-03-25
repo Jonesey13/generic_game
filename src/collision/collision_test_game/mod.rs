@@ -10,6 +10,7 @@ use games;
 use geometry::{ConPoly, Line, Circle, Point};
 use std::slice::IterMut;
 use collision::collidable_wrapper::{CollidableWrapper, CollidableWrapperTrait};
+use collision::CollisionDataType;
 
 pub mod builder;
 
@@ -42,6 +43,8 @@ pub enum CollisionTestObject {
     Point,
     Poly
 }
+
+impl CollisionDataType for CollisionTestObject {}
 
 impl Game for CollisionTestGame {
     fn update_input(&mut self) {

@@ -17,6 +17,7 @@ pub mod collision_results;
 pub mod collision_object_details;
 pub mod collision_details;
 pub mod collider;
+pub mod collision_data_type;
 
 pub use self::collision_object::{CollisionObject, ToCollisionObjects};
 pub use self::collision_test_game::CollisionTestGame;
@@ -26,6 +27,7 @@ pub use self::collision_results::CollisionResults;
 pub use self::collision_object_details::{CollisionObjectDetails, ConPolyInfo, LineInfo, LineSide};
 pub use self::collision_details::CollisionDetails;
 pub use self::collider::Collider;
+pub use self::collision_data_type::CollisionDataType;
 
 pub trait Collidable {
     type Data: Clone;

@@ -98,7 +98,7 @@ impl Arrow {
             dir,
             0.04,
             0.01,
-            Vector2::new(0.3, 0.02),
+            Vector2::new(0.02, 0.02),
             color,
             depth,
             fixed

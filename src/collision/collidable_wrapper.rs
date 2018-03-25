@@ -1,10 +1,11 @@
-use collision::{Collidable, CollisionObject, CollisionObjectState, CollisionResults, CollisionObjectResults, CollisionObjectDetails, CollisionDetails, ToCollisionObjects};
+use collision::{Collidable, CollisionObject, CollisionObjectState, CollisionResults, CollisionObjectResults, 
+                CollisionDataType, CollisionObjectDetails, CollisionDetails, ToCollisionObjects};
 use geometry::{TwoDTransformable};
 use rendering::Renderable;
 use na::{Vector2, Vector4, Rotation2};
 
 #[derive(Clone)]
-pub struct CollidableWrapper<C: ToCollisionObjects + Clone, D: Clone> {
+pub struct CollidableWrapper<C: ToCollisionObjects + Clone, D: Clone + CollisionDataType> {
     collidable: C,
     coll_results: Option<CollisionResults<D>>,
     collidable_index: usize,
@@ -16,7 +17,7 @@ pub struct CollidableWrapper<C: ToCollisionObjects + Clone, D: Clone> {
     last_collision_details: Option<CollisionDetails>
 }
 
-impl<C: ToCollisionObjects + Clone, D: Clone> CollidableWrapper<C, D> {
+impl<C: ToCollisionObjects + Clone, D: Clone + CollisionDataType> CollidableWrapper<C, D> {
     pub fn new(collidable: C, collidable_index: usize, data: D) -> Self {
         CollidableWrapper {
             collidable,
@@ -49,7 +50,7 @@ pub trait CollidableWrapperTrait: TwoDTransformable {
     fn render_coll_results(&self, depth: f64) -> Vec<Box<Renderable>>;
 }
 
-impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> CollidableWrapperTrait for CollidableWrapper<C, D>  {
+impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone + CollisionDataType> CollidableWrapperTrait for CollidableWrapper<C, D>  {
     fn render(&self, depth: f64) -> Vec<Box<Renderable>> {
         self.collidable.to_collision_objects().iter().flat_map(|obj| {obj.render(self.get_color(), depth, false)}).collect()
     }
@@ -106,7 +107,7 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> CollidableWrap
     }
 }
 
-impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> Collidable for CollidableWrapper<C, D> {
+impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone + CollisionDataType> Collidable for CollidableWrapper<C, D> {
     type Data = D;
 
     fn get_collision_objects(&self) -> Vec<CollisionObjectState> {
@@ -133,7 +134,7 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> Collidable for
     fn get_own_collision_data(&self) -> Self::Data { self.data.clone() }
 }
 
-impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone> TwoDTransformable for CollidableWrapper<C, D> {
+impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone + CollisionDataType> TwoDTransformable for CollidableWrapper<C, D> {
     fn shift_by(&mut self, shift: Vector2<f64>) {
         self.collidable.shift_by(shift);
     }

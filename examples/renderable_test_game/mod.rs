@@ -32,6 +32,7 @@ impl Game for RenderableTestGame {
         self.view_details.camera_pos.x = self.view_details.camera_pos.x + (self.user_input.right_left as f64) * t_step;
         self.view_details.camera_pos.y = self.view_details.camera_pos.y + (self.user_input.up_down as f64) * t_step;
         self.view_details.viewport_height = self.view_details.viewport_height + (self.user_input.in_out as f64) * t_step;
+        self.view_details.viewport_length = self.view_details.viewport_length + (self.user_input.in_out as f64) * t_step;
         let current_rotation = self.view_details.get_rotation_angle();
         let new_rotation = current_rotation + (self.user_input.anticlockwise_clockwise as f64) * t_step;
         self.view_details.set_rotation_angle(new_rotation);
@@ -41,7 +42,7 @@ impl Game for RenderableTestGame {
         ViewDetails::TwoDim(self.view_details.clone())
     }
     
-    fn get_renderables(&self, _: WindowSpec) -> Vec<Box<Renderable>> {
+    fn get_renderables(&mut self, _: WindowSpec) -> Vec<Box<Renderable>> {
         // let rect = Rectangle {
         //     length: 1.0,
         //     height: 1.0,

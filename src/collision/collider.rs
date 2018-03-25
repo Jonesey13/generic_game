@@ -1,19 +1,31 @@
-use super::{CollisionObjectResults, Collidable, CollisionDetails, CollisionObjectState, collision_logic, CollisionResults};
+use collision::{CollisionObjectResults, Collidable, CollisionDetails, CollisionObjectState, 
+                CollisionDataType, collision_logic, CollisionResults};
 
 pub struct Collider;
 
 impl Collider {
-    pub fn process_all<T: Clone> (mut collidables: Vec<&mut Collidable<Data=T>>) {
+    pub fn process_all<T: Clone + CollisionDataType> (mut collidables: Vec<&mut Collidable<Data=T>>) {
         loop {
             if let Some ((first_collidable, rest)) = collidables.split_last_mut() {
                 for second_collidable in rest.into_iter() {
-                    if let Some((mut details1, mut details2)) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable) {
-
+                    if T::has_exclusion_rules() {
                         let data1 = first_collidable.get_own_collision_data();
                         let data2 = second_collidable.get_own_collision_data();
 
-                        first_collidable.add_collision_results(CollisionResults::new(details1, data2));
-                        second_collidable.add_collision_results(CollisionResults::new(details2, data1));
+                        if T::can_collide(&data1, &data2) {
+                            if let Some((mut details1, mut details2)) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable) {
+                                first_collidable.add_collision_results(CollisionResults::new(details1, data2));
+                                second_collidable.add_collision_results(CollisionResults::new(details2, data1));
+                            }
+                        }
+                    } else {
+                        if let Some((mut details1, mut details2)) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable) {
+                            let data1 = first_collidable.get_own_collision_data();
+                            let data2 = second_collidable.get_own_collision_data();
+
+                            first_collidable.add_collision_results(CollisionResults::new(details1, data2));
+                            second_collidable.add_collision_results(CollisionResults::new(details2, data1));
+                        }
                     }
                 }
             }
