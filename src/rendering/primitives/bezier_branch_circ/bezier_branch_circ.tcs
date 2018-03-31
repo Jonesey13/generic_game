@@ -26,8 +26,8 @@ out float branch_logical_height_right_cs[];
 out vec3 logical_pos_cs[];
 out vec4 color_cs[];
 
-uniform int tess_level_outer = 100;
-uniform int tess_level_inner = 100;
+uniform int tess_level_outer = 30;
+uniform int tess_level_inner = 30;
 
 void main() {
   c0_cs[gl_InvocationID] = c0_vs[0];
