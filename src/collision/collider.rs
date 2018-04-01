@@ -1,5 +1,6 @@
 use collision::{CollisionObjectResults, Collidable, CollisionDetails, CollisionObjectState, 
                 CollisionDataType, collision_logic, CollisionResults};
+use debug::*;
 
 pub struct Collider;
 

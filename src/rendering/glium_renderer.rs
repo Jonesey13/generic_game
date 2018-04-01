@@ -5,13 +5,13 @@ use rendering::primitives::circle_part::{CirclePart, CircleVertex};
 use rendering::primitives::polygon::{Polygon, PolygonVertex};
 use rendering::primitives::text::{RenderText, TextBuffer, PlainText};
 use rendering::primitives::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
-use rendering::primitives::{Primitive, TextureRect}; 
+use rendering::primitives::{StandardPrimitive, TextureRect}; 
 use rendering::primitives::bezier_branch_rect::{BezierBranchRect, BezierBranchRectVertex};
 use rendering::primitives::bezier_branch_circ::{BezierBranchCirc, BezierBranchCircVertex};
-use rendering::renderables::Renderable;
+use rendering::renderables::StandardRenderable;
 use rendering::DisplaySettings;
 use super::glium_buffer::{GliumBuffer, BasicBuffer};
-use super::render_by_shaders::GliumPrimitive;
+use super::render_by_shaders::GliumStandardPrimitive;
 use super::{BezierRect};
 use glium;
 use glium::Frame;
@@ -175,20 +175,22 @@ impl<'a> GliumRenderer<'a> {
 }
 
 impl<'a> Renderer for GliumRenderer<'a> {
-    fn load_renderables(&mut self, renderables: Vec<Box<Renderable>>) {
+    type Primitive = StandardPrimitive;
+
+    fn load_renderables(&mut self, renderables: Vec<Box<StandardRenderable>>) {
         debug_clock_start("Render::glium_load");
         for mut renderable in renderables {
             for primitive in renderable.get_primitives() {
                 match primitive {
-                        Primitive::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
-                        Primitive::TextureRect(rect) => self.texture_rect_buffer.load_renderable(rect),
-                        Primitive::Circ(circle) => self.circ_buffer.load_renderable(circle),
-                        Primitive::Text(text) => self.text_processor.load_renderable(text),
-                        Primitive::BezierRect(bezier_rect) => self.bezier_rect_buffer.load_renderable(bezier_rect),
-                        Primitive::BezierBranchRect(bezier_branch_rect) => self.bezier_branch_rect_buffer.load_renderable(bezier_branch_rect),                        
-                        Primitive::BezierBranchCirc(bezier_branch_circ) => self.bezier_branch_circ_buffer.load_renderable(bezier_branch_circ),                          
-                        Primitive::PolarPix(polar) => self.polar_buffer.load_renderable(polar),
-                        Primitive::Poly(polygon) => self.polygon_buffer.load_renderable(polygon)
+                        StandardPrimitive::Rect(rectangle) => self.rect_buffer.load_renderable(rectangle),
+                        StandardPrimitive::TextureRect(rect) => self.texture_rect_buffer.load_renderable(rect),
+                        StandardPrimitive::Circ(circle) => self.circ_buffer.load_renderable(circle),
+                        StandardPrimitive::Text(text) => self.text_processor.load_renderable(text),
+                        StandardPrimitive::BezierRect(bezier_rect) => self.bezier_rect_buffer.load_renderable(bezier_rect),
+                        StandardPrimitive::BezierBranchRect(bezier_branch_rect) => self.bezier_branch_rect_buffer.load_renderable(bezier_branch_rect),                        
+                        StandardPrimitive::BezierBranchCirc(bezier_branch_circ) => self.bezier_branch_circ_buffer.load_renderable(bezier_branch_circ),                          
+                        StandardPrimitive::PolarPix(polar) => self.polar_buffer.load_renderable(polar),
+                        StandardPrimitive::Poly(polygon) => self.polygon_buffer.load_renderable(polygon)
                 }
             }
         }

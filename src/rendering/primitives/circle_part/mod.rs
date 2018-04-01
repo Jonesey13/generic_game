@@ -1,7 +1,7 @@
 use na::{Vector2, Vector3, Vector4, convert};
 use num::Zero;
-use rendering::primitives::Primitive;
-use rendering::render_by_shaders::GliumPrimitive;
+use rendering::primitives::StandardPrimitive;
+use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
 use glium;
 
@@ -14,7 +14,7 @@ pub struct CirclePart {
     pub fixed: bool
 }
 
-impl GliumPrimitive for CirclePart {
+impl GliumStandardPrimitive for CirclePart {
     type Vertex = CircleVertex;
 
     fn get_shaders() -> Shaders {

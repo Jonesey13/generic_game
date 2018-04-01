@@ -1,5 +1,5 @@
 use na::{Vector2, Vector3, Vector4};
-use rendering::{Renderable, Primitive, Rectangle, AnnularSegment};
+use rendering::{Renderable, StandardPrimitive, Rectangle, AnnularSegment};
 
 #[derive(Clone, Debug)]
 pub struct BoxBorder {
@@ -50,7 +50,7 @@ impl BoxBorder {
         }
     }
 
-    fn get_straight_primitives(&self) -> Vec<Primitive> {
+    fn get_straight_primitives(&self) -> Vec<StandardPrimitive> {
         let left_pos = self.pos - self.rect_width / 2.0 * Vector3::x();
         let right_pos = self.pos + self.rect_width / 2.0 * Vector3::x();
         let lower_pos = self.pos - self.rect_height / 2.0 * Vector3::y();
@@ -63,13 +63,13 @@ impl BoxBorder {
         let lower_wall = Rectangle::new_regular(full_width, self.thickness, lower_pos, self.color, self.fixed);
         let upper_wall = Rectangle::new_regular(full_width, self.thickness, upper_pos, self.color, self.fixed);        
         
-        vec![Primitive::Rect(left_wall), 
-        Primitive::Rect(right_wall), 
-        Primitive::Rect(lower_wall), 
-        Primitive::Rect(upper_wall)]
+        vec![StandardPrimitive::Rect(left_wall), 
+        StandardPrimitive::Rect(right_wall), 
+        StandardPrimitive::Rect(lower_wall), 
+        StandardPrimitive::Rect(upper_wall)]
     }
 
-    fn get_rounded_primitives(&self, border_radius: f64) -> Vec<Primitive> {
+    fn get_rounded_primitives(&self, border_radius: f64) -> Vec<StandardPrimitive> {
         let x_shift = self.rect_width / 2.0 * Vector3::x();
         let y_shift = self.rect_height / 2.0 * Vector3::y();
         let x_radius_shift = border_radius * Vector3::x();
@@ -97,19 +97,21 @@ impl BoxBorder {
         let lower_right_circ = AnnularSegment::new(corner_radial_dim, Vector2::new(0.25, 0.5), lower_right_pos, self.color, self.fixed);
         let lower_left_circ = AnnularSegment::new(corner_radial_dim, Vector2::new(0.5, 0.75), lower_left_pos, self.color, self.fixed);
         
-        vec![Primitive::Rect(left_wall), 
-        Primitive::Rect(right_wall), 
-        Primitive::Rect(lower_wall), 
-        Primitive::Rect(upper_wall),
-        Primitive::Circ(upper_left_circ.into()),
-        Primitive::Circ(upper_right_circ.into()),
-        Primitive::Circ(lower_right_circ.into()),
-        Primitive::Circ(lower_left_circ.into())]
+        vec![StandardPrimitive::Rect(left_wall), 
+        StandardPrimitive::Rect(right_wall), 
+        StandardPrimitive::Rect(lower_wall), 
+        StandardPrimitive::Rect(upper_wall),
+        StandardPrimitive::Circ(upper_left_circ.into()),
+        StandardPrimitive::Circ(upper_right_circ.into()),
+        StandardPrimitive::Circ(lower_right_circ.into()),
+        StandardPrimitive::Circ(lower_left_circ.into())]
     }
 }
 
 impl Renderable for BoxBorder {
-    fn get_primitives(&mut self) -> Vec<Primitive> {
+    type Primitive = StandardPrimitive;
+    
+    fn get_primitives(&mut self) -> Vec<StandardPrimitive> {
         match self.border_type {
             BorderType::Straight => self.get_straight_primitives(),
             BorderType::Round(radius) => self.get_rounded_primitives(radius)

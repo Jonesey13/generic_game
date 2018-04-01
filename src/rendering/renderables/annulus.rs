@@ -1,4 +1,4 @@
-use rendering::{Renderable, Primitive, CirclePart};
+use rendering::{Renderable, StandardPrimitive, CirclePart};
 use na::{Vector2, Vector3, Vector4};
 
 #[derive(Clone, Debug)]
@@ -32,7 +32,8 @@ impl Annulus {
 }
 
 impl Renderable for Annulus {
-    fn get_primitives(&mut self) -> Vec<Primitive> { vec![Primitive::Circ(self.clone().into())] }
+    type Primitive = StandardPrimitive;    
+    fn get_primitives(&mut self) -> Vec<StandardPrimitive> { vec![StandardPrimitive::Circ(self.clone().into())] }
 }
 
 impl From<Annulus> for CirclePart {

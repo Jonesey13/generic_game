@@ -1,7 +1,7 @@
 use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, Matrix2, convert};
 use num::Zero;
-use rendering::primitives::Primitive;
-use rendering::render_by_shaders::GliumPrimitive;
+use rendering::primitives::StandardPrimitive;
+use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
 
 #[derive(Copy, Clone)]
@@ -56,7 +56,7 @@ impl TextureRect {
     }
 }
 
-impl GliumPrimitive for TextureRect {
+impl GliumStandardPrimitive for TextureRect {
     type Vertex = TextureRectVertex;
 
     fn get_shaders() -> Shaders {

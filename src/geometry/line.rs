@@ -98,7 +98,7 @@ impl TwoDTransformable for Line {
 }
 
 impl ToRenderables for Line {
-    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::Renderable>> {
+    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::StandardRenderable>> {
         let line_length = (self.end - self.beg).norm();
         vec![
             Box::new(rendering::Line::new_square(self.beg, self.end, line_length / 100.0, color, depth, fixed))
@@ -108,7 +108,7 @@ impl ToRenderables for Line {
 
 impl Line {
     pub fn render_collision_details(&self, line_info: collision::LineInfo, color: Vector4<f64>, depth: f64, fixed: bool) 
-    -> Vec<Box<rendering::Renderable>> {
+    -> Vec<Box<rendering::StandardRenderable>> {
         let coll_pos_rendering: Box<ToRenderables> = match line_info {
             collision::LineInfo::LineBeg(_) => Box::new(Point::new(self.beg)),
             collision::LineInfo::LineEnd(_) => Box::new(Point::new(self.end)),
@@ -126,7 +126,7 @@ impl Line {
             collision::LineInfo::WholeLine(collision::LineSide::Left) => (self.get_point(0.5), self.get_normal()),            
         };
 
-        let direction_renderable: Box<rendering::Renderable> = Box::new(
+        let direction_renderable: Box<rendering::StandardRenderable> = Box::new(
             rendering::Arrow::new_for_coll_test(
                     coll_pos,
                     coll_dir,

@@ -4,13 +4,13 @@ extern crate nalgebra as na;
 extern crate time;
 extern crate num;
 
-use na::{Vector2, Rotation2};
+use na::Vector2;
 use gg::debug::*;
 use gg::debug;
 use gg::{rendering, input, window, Handler, games};
-use gg::rendering::DisplaySettings;
-use gg::collision::{CollisionTestGame, CollisionTestBuilder};
-use gg::handler_basic_with_console::HandlerBasicWithConsole;
+use gg::rendering::{DisplaySettings, StandardPrimitive};
+use gg::collision::CollisionTestBuilder;
+use gg::handler_basic::HandlerBasic;
 use gg::geometry::{ConPoly, Circle, Line, Point};
 use std::env;
 use std::io::*;
@@ -29,10 +29,10 @@ fn main() {
             ..Default::default()
     };
 
-    let renderer = rendering::glium_renderer::GliumRenderer::new(display_settings);
+    let renderer: Box<rendering::Renderer<Primitive=StandardPrimitive>> = Box::new(rendering::glium_renderer::GliumRenderer::new(display_settings));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
-    let game: Box<games::Game> = Box::new(
+    let game: Box<games::Game<Primitive=StandardPrimitive>> = Box::new(
          CollisionTestBuilder::init()
             .add_line(Line::new(Vector2::new(-0.5, -0.2), Vector2::new(-0.5, -0.5)))
             .add_line(Line::new(Vector2::new(-0.8, -0.8), Vector2::new(-0.6, -0.6)))
@@ -56,7 +56,7 @@ fn main() {
             ]))
             .build_game());
 
-    let mut handler: Box<Handler> = Box::new(HandlerBasicWithConsole::new(renderer, input_handler, window_handler, game));
+    let mut handler: Box<Handler> = Box::new(HandlerBasic::new(renderer, input_handler, window_handler, game));
 
     handler.init();
     while !handler.should_exit() {

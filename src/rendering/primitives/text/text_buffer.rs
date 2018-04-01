@@ -11,7 +11,7 @@ use super::{RenderText};
 use rendering;
 use rendering::shaders;
 use rendering::glium_buffer::GliumBuffer;
-use rendering::render_by_shaders::GliumPrimitive;
+use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::DisplaySettings;
 use games::view_details;
 use std::sync::Mutex;

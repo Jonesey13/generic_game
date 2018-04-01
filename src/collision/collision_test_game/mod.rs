@@ -1,8 +1,8 @@
 use collision::{Collider, Collidable};
 use na::{Vector2, Vector4};
 use games::Game;
-use rendering::renderables::Renderable;
-use rendering::WindowSpec;
+use rendering::renderables::{StandardRenderable};
+use rendering::{StandardPrimitive, WindowSpec};
 use input::mouse::MouseInput;
 use input::keyboard::KeyboardInput;
 use input::bool_switch::BoolSwitch;
@@ -47,6 +47,8 @@ pub enum CollisionTestObject {
 impl CollisionDataType for CollisionTestObject {}
 
 impl Game for CollisionTestGame {
+    type Primitive = StandardPrimitive;
+
     fn update_input(&mut self) {
         self.update_switches();
         self.update_object_controls();
@@ -72,8 +74,8 @@ impl Game for CollisionTestGame {
         self.update_colors();
     }
 
-    fn get_renderables(&mut self, _: WindowSpec) -> Vec<Box<Renderable>> {
-        let mut output: Vec<Box<Renderable>> = vec![];
+    fn get_renderables(&mut self, _: WindowSpec) -> Vec<Box<StandardRenderable>> {
+        let mut output: Vec<Box<StandardRenderable>> = vec![];
         for obj in self.get_collision_wrappers() {
             output.append(&mut obj.render(0.0));
             output.append(&mut obj.render_coll_results(-0.1));

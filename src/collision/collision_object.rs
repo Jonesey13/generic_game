@@ -1,6 +1,6 @@
 use super::CollisionObjectState;
 use super::CollisionObjectDetails;
-use rendering::Renderable;
+use rendering::StandardRenderable;
 use na::{Vector2, Vector4};
 use geometry::{Circle, ConPoly, Line, Point, ToRenderables};
 
@@ -29,7 +29,7 @@ impl CollisionObject {
         }
     }
 
-    pub fn render_collision_details(&self, object_details: CollisionObjectDetails, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<Renderable>> {
+    pub fn render_collision_details(&self, object_details: CollisionObjectDetails, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>> {
         match (self, object_details) {
             (&CollisionObject::None, CollisionObjectDetails::None) => vec![],
             (&CollisionObject::Circ(ref circle), CollisionObjectDetails::Circ(dir)) => circle.render_collision_details(dir, color, depth, fixed),
@@ -40,7 +40,7 @@ impl CollisionObject {
         }
     }
 
-    pub fn render(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<Renderable>> {
+    pub fn render(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>> {
         match self {
             &CollisionObject::None => vec![],
             &CollisionObject::Circ(ref circle) => circle.to_renderables(color, depth, fixed),

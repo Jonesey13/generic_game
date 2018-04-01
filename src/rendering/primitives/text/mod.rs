@@ -13,8 +13,8 @@ use glium;
 use glium::Surface;
 use std::borrow::Cow;
 use games::view_details;
-use rendering::primitives::Primitive;
-use rendering::render_by_shaders::GliumPrimitive;
+use rendering::primitives::StandardPrimitive;
+use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
 
 pub trait RenderText {
@@ -30,7 +30,7 @@ pub trait RenderText {
     fn get_content(&self) -> &String;
 }
 
-impl<T: RenderText> GliumPrimitive for T {
+impl<T: RenderText> GliumStandardPrimitive for T {
     type Vertex = T::TextVert;
 
     fn get_shaders() -> Shaders {

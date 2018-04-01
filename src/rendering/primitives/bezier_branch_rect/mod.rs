@@ -1,7 +1,7 @@
 use na;
 use na::{Vector2, Vector3, Matrix2, Vector4, Rotation2};
 use num::Zero;
-use rendering::render_by_shaders::GliumPrimitive;
+use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
 use glium;
 use na::normalize;
@@ -44,7 +44,7 @@ impl BezierBranchRect {
     }
 }
 
-impl GliumPrimitive for BezierBranchRect {
+impl GliumStandardPrimitive for BezierBranchRect {
     type Vertex = BezierBranchRectVertex;
 
     fn get_shaders() -> Shaders {

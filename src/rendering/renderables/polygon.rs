@@ -1,5 +1,7 @@
-use rendering::{Renderable, Primitive, Polygon};
+use rendering::{Renderable, StandardPrimitive, Polygon};
 
 impl Renderable for Polygon {
-    fn get_primitives(&mut self) -> Vec<Primitive> { vec![Primitive::Poly(self.clone())] }
+    type Primitive = StandardPrimitive;
+    
+    fn get_primitives(&mut self) -> Vec<StandardPrimitive> { vec![StandardPrimitive::Poly(self.clone())] }
 }

@@ -1,5 +1,7 @@
-use rendering::{Renderable, Primitive, Rectangle};
+use rendering::{Renderable, StandardPrimitive, Rectangle};
 
 impl Renderable for Rectangle {
-    fn get_primitives(&mut self) -> Vec<Primitive> { vec![Primitive::Rect(self.clone())] }
+    type Primitive = StandardPrimitive;
+    
+    fn get_primitives(&mut self) -> Vec<StandardPrimitive> { vec![StandardPrimitive::Rect(self.clone())] }
 }

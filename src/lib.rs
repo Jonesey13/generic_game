@@ -20,8 +20,7 @@ extern crate image;
 
 pub mod rendering;
 pub mod input;
-pub mod handlerbasic;
-pub mod handler_basic_with_console;
+pub mod handler_basic;
 pub mod games;
 pub mod collision;
 pub mod geometry;
@@ -53,7 +52,7 @@ use std::io::*;
 //         //     .add_rect(Vector2::new(-0.5, 0.0), 0.2, 0.2, Rotation2::new(Vector1::new(0.0))).with_velocity(Vector2::new(0.25, 0.0))
 //         //     .build_game());
 //     //let game: Box<games::Game> = Box::new(games::input_test_game::InputTestGame::new());
-//     //let game: Box<games::Game> = Box::new(games::primitive_test_game::PrimitiveTestGame::default());
+//     //let game: Box<games::Game> = Box::new(games::primitive_test_game::StandardPrimitiveTestGame::default());
 //     let game: Box<games::Game> = Box::new(games::tree_game::TreeGame::new(Default::default()));
     
 //     // let game = Box::new(games::polar_game::PolarGameBuilder::default().build_game());

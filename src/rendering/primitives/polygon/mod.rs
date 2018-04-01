@@ -1,6 +1,6 @@
 use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, Matrix2, convert};
 use num::Zero;
-use rendering::render_by_shaders::GliumPrimitive;
+use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
 
 /// IMPORTANT: Must form a star domain at its center
@@ -50,7 +50,7 @@ impl Polygon {
     }
 }
 
-impl GliumPrimitive for Polygon {
+impl GliumStandardPrimitive for Polygon {
     type Vertex = PolygonVertex;
 
     fn get_shaders() -> Shaders {

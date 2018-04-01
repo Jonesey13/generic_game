@@ -19,7 +19,7 @@ pub use self::texture_rect::TextureRect;
 use super::renderables::Renderable;
 
 #[derive(Clone)]
-pub enum Primitive {
+pub enum StandardPrimitive {
     Rect(Rectangle),
     TextureRect(TextureRect),
     Circ(CirclePart),

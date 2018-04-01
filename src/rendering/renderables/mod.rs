@@ -12,7 +12,7 @@ pub mod annulus;
 pub mod annular_segment;
 pub mod box_border;
 pub mod texture_rect;
-use super::primitives::Primitive;
+use super::primitives::StandardPrimitive;
 
 pub use self::line::{Line, LineShape};
 pub use self::arrow::Arrow;
@@ -22,5 +22,8 @@ pub use self::annular_segment::AnnularSegment;
 pub use self::box_border::BoxBorder;
 
 pub trait Renderable {
-    fn get_primitives(&mut self) -> Vec<Primitive>;
+    type Primitive;
+    fn get_primitives(&mut self) -> Vec<Self::Primitive>;
 }
+
+pub type StandardRenderable = Renderable<Primitive=StandardPrimitive>;

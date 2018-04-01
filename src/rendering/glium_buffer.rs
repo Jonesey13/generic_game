@@ -2,8 +2,8 @@ use super::shaders::make_program_from_shaders;
 use rendering::primitives::rectangle::{Rectangle, RectangleVertex};
 use rendering::primitives::circle_part::{CirclePart, CircleVertex};
 use rendering::primitives::text::{RenderText, PlainText};
-use rendering::primitives::Primitive;
-use super::render_by_shaders::GliumPrimitive;
+use rendering::primitives::StandardPrimitive;
+use super::render_by_shaders::GliumStandardPrimitive;
 use glium;
 use glium::Frame;
 use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
@@ -14,7 +14,7 @@ use rusttype;
 use games::view_details::ViewDetails;
 use utils::transforms_2d;
 
-pub trait GliumBuffer<T: GliumPrimitive> {
+pub trait GliumBuffer<T: GliumStandardPrimitive> {
     fn load_renderable(&mut self, renderable: T) {
         self.get_vertices().append(&mut renderable.get_vertex());
     }
@@ -34,13 +34,13 @@ pub trait GliumBuffer<T: GliumPrimitive> {
 }
 
 #[derive(Debug)]
-pub struct BasicBuffer<T: GliumPrimitive> {
+pub struct BasicBuffer<T: GliumStandardPrimitive> {
     vertices: Vec<T::Vertex>,
     program: Program,
     primitive_type: glium::index::PrimitiveType,
 }
 
-impl<T: GliumPrimitive> GliumBuffer<T> for BasicBuffer<T> {
+impl<T: GliumStandardPrimitive> GliumBuffer<T> for BasicBuffer<T> {
     fn get_vertices(&mut self) -> &mut Vec<T::Vertex> {
         &mut self.vertices
     }
@@ -68,7 +68,7 @@ impl<T: GliumPrimitive> GliumBuffer<T> for BasicBuffer<T> {
     }
 }
 
-impl<T: GliumPrimitive> BasicBuffer<T> {
+impl<T: GliumStandardPrimitive> BasicBuffer<T> {
     pub fn new(display: &Display) -> Self {
         BasicBuffer {
             vertices: Vec::new(),

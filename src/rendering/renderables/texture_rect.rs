@@ -1,5 +1,7 @@
-use rendering::{Renderable, Primitive, TextureRect};
+use rendering::{Renderable, StandardPrimitive, TextureRect};
 
 impl Renderable for TextureRect {
-    fn get_primitives(&mut self) -> Vec<Primitive> { vec![Primitive::TextureRect(self.clone())] }
+    type Primitive = StandardPrimitive;
+    
+    fn get_primitives(&mut self) -> Vec<StandardPrimitive> { vec![StandardPrimitive::TextureRect(self.clone())] }
 }

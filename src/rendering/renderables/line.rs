@@ -1,4 +1,4 @@
-use rendering::{Rectangle, Circle, Primitive, Renderable};
+use rendering::{Rectangle, Circle, StandardPrimitive, Renderable};
 use na::{Vector2, Vector3, Vector4, Rotation2, norm};
 
 #[derive(Clone, Debug)]
@@ -79,7 +79,9 @@ pub enum LineShape {
 }
 
 impl Renderable for Line {
-    fn get_primitives(&mut self) -> Vec<Primitive> { 
+    type Primitive = StandardPrimitive;
+    
+    fn get_primitives(&mut self) -> Vec<StandardPrimitive> { 
         let shifted_end = self.end - self.start;
         let line_angle = shifted_end.y.atan2(shifted_end.x);
         let midpoint = (self.start + self.end) / 2.0;
@@ -94,7 +96,7 @@ impl Renderable for Line {
         };
 
         match self.shape {
-            LineShape::Square => return vec![Primitive::Rect(line_middle)],
+            LineShape::Square => return vec![StandardPrimitive::Rect(line_middle)],
             LineShape::Rounded => {
                 let beg_circ = Circle {
                     radius: self.thickness / 2.0,
@@ -109,7 +111,7 @@ impl Renderable for Line {
                     color: self.color,
                     fixed: self.fixed
                 };
-                return vec![Primitive::Circ(beg_circ.into()), Primitive::Circ(end_circ.into()), Primitive::Rect(line_middle)]
+                return vec![StandardPrimitive::Circ(beg_circ.into()), StandardPrimitive::Circ(end_circ.into()), StandardPrimitive::Rect(line_middle)]
             }
         }
     }

@@ -1,4 +1,4 @@
-use rendering::{Rectangle, Circle, Primitive, Renderable, Polygon, Line, LineShape};
+use rendering::{Rectangle, Circle, StandardPrimitive, Renderable, Polygon, Line, LineShape};
 use na::{Vector2, Vector3, Vector4, Rotation2, norm};
 use geometry::{ConPoly, TwoDTransformable};
 use geometry;
@@ -119,14 +119,14 @@ impl Arrow {
         shifted_end.y.atan2(shifted_end.x)
     }
 
-    fn generate_arrow_head(&self) -> Vec<Primitive> {
+    fn generate_arrow_head(&self) -> Vec<StandardPrimitive> {
         match self.shape {
             ArrowHeadShape::Flat => self.generate_arrow_head_flat(),
             ArrowHeadShape::RoundedLine => self.generate_arrow_head_rounded()
         }
     }
 
-    fn generate_arrow_head_flat(&self) -> Vec<Primitive> {
+    fn generate_arrow_head_flat(&self) -> Vec<StandardPrimitive> {
         let arrowhead_points = vec![
             Vector2::new(0.0, -self.arrow_dim.y), 
             Vector2::new(self.arrow_dim.x, 0.0),
@@ -146,7 +146,7 @@ impl Arrow {
         arrowhead.get_primitives()
     }
 
-    pub fn generate_arrow_head_rounded(&self) -> Vec<Primitive> {
+    pub fn generate_arrow_head_rounded(&self) -> Vec<StandardPrimitive> {
         let arrowhead_points = vec![
             Vector2::new(0.0, -self.arrow_dim.y), 
             Vector2::new(self.arrow_dim.x, 0.0),
@@ -188,7 +188,9 @@ impl Arrow {
 }
 
 impl Renderable for Arrow {
-    fn get_primitives(&mut self) -> Vec<Primitive> { 
+    type Primitive = StandardPrimitive;
+    
+    fn get_primitives(&mut self) -> Vec<StandardPrimitive> { 
         let full_length = self.get_length();
         let center_line = geometry::Line::new(self.start, self.end);
 

@@ -1,7 +1,7 @@
 use na;
 use na::{Vector2, Vector3, Matrix2, Vector4, Rotation2};
 use num::Zero;
-use rendering::render_by_shaders::GliumPrimitive;
+use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
 use glium;
 use na::normalize;
@@ -62,7 +62,7 @@ impl BezierRect {
         }
     }
 
-    /// Intended for Other Bezier Primitive Types
+    /// Intended for Other Bezier StandardPrimitive Types
     pub fn new (
         control_points: BezierQuadControl,
         height: f64,
@@ -77,7 +77,7 @@ impl BezierRect {
     }
 }
 
-impl GliumPrimitive for BezierRect {
+impl GliumStandardPrimitive for BezierRect {
     type Vertex = BezierRectVertex;
 
     fn get_shaders() -> Shaders {

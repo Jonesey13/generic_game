@@ -1,8 +1,8 @@
 use na::{Vector2, Vector4};
 use na;
 use num::Zero;
-use rendering::primitives::Primitive;
-use rendering::render_by_shaders::GliumPrimitive;
+use rendering::primitives::StandardPrimitive;
+use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
 use glium;
 mod polar_buffer;
@@ -15,7 +15,7 @@ pub struct PolarPixel {
     pub color: [f64; 4]
 }
 
-impl GliumPrimitive for PolarPixel {
+impl GliumStandardPrimitive for PolarPixel {
     type Vertex = PolarPixelVertex;
 
     fn get_shaders() -> Shaders {

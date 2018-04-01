@@ -1,5 +1,7 @@
-use rendering::{Renderable, Primitive, BezierRect};
+use rendering::{Renderable, StandardPrimitive, BezierRect};
 
 impl Renderable for BezierRect {
-    fn get_primitives(&mut self) -> Vec<Primitive> { vec![Primitive::BezierRect(self.clone())] }
+    type Primitive = StandardPrimitive;
+    
+    fn get_primitives(&mut self) -> Vec<StandardPrimitive> { vec![StandardPrimitive::BezierRect(self.clone())] }
 }

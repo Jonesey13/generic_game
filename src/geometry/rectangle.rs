@@ -91,7 +91,7 @@ impl TwoDTransformable for Rectangle {
 }
 
 impl ToRenderables for Rectangle {
-    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::Renderable>> {
+    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::StandardRenderable>> {
         vec![
             Box::new(
                 rendering::Rectangle {

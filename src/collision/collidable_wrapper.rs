@@ -1,7 +1,7 @@
 use collision::{Collidable, CollisionObject, CollisionObjectState, CollisionResults, CollisionObjectResults, 
                 CollisionDataType, CollisionObjectDetails, CollisionDetails, ToCollisionObjects};
 use geometry::{TwoDTransformable};
-use rendering::Renderable;
+use rendering::{StandardRenderable, Renderable, StandardPrimitive};
 use na::{Vector2, Vector4, Rotation2};
 
 #[derive(Clone)]
@@ -38,7 +38,7 @@ impl<C: ToCollisionObjects + Clone, D: Clone + CollisionDataType> CollidableWrap
 }
 
 pub trait CollidableWrapperTrait: TwoDTransformable {
-    fn render(&self, depth: f64) -> Vec<Box<Renderable>>;
+    fn render(&self, depth: f64) -> Vec<Box<StandardRenderable>>;
     fn set_prev(&mut self);
     fn set_player_control(&mut self, flag: bool);
     fn is_player_controlled(&self) -> bool;
@@ -47,15 +47,15 @@ pub trait CollidableWrapperTrait: TwoDTransformable {
     fn set_color(&mut self, color: Vector4<f64>);
     fn has_collided_in_past(&self) -> bool;
     fn reset_collision_flag(&mut self);
-    fn render_coll_results(&self, depth: f64) -> Vec<Box<Renderable>>;
+    fn render_coll_results(&self, depth: f64) -> Vec<Box<StandardRenderable>>;
 }
 
 impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone + CollisionDataType> CollidableWrapperTrait for CollidableWrapper<C, D>  {
-    fn render(&self, depth: f64) -> Vec<Box<Renderable>> {
+    fn render(&self, depth: f64) -> Vec<Box<StandardRenderable>> {
         self.collidable.to_collision_objects().iter().flat_map(|obj| {obj.render(self.get_color(), depth, false)}).collect()
     }
 
-    fn render_coll_results(&self, depth: f64) -> Vec<Box<Renderable>> {
+    fn render_coll_results(&self, depth: f64) -> Vec<Box<StandardRenderable>> {
         if self.has_collided_in_past {
             let collision_object_details = self.last_collision_details.clone().unwrap().object_details;
             let collision_location = self.last_collision_details.clone().unwrap().location;

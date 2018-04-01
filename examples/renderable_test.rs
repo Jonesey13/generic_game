@@ -8,7 +8,7 @@ extern crate glium;
 
 use gg::debug::*;
 use gg::{debug, rendering, input, window, games, Handler};
-use gg::handler_basic_with_console::HandlerBasicWithConsole;
+use gg::handler_basic_with_console::HandlerBasic;
 use gg::rendering::DisplaySettings;
 use std::env;
 use std::io::*;
@@ -36,7 +36,7 @@ fn main() {
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
     let game: Box<games::Game> = Box::new(renderable_test_game::RenderableTestGame::default());
-    let mut handler: Box<Handler> = Box::new(HandlerBasicWithConsole::new(renderer, input_handler, window_handler, game));
+    let mut handler: Box<Handler> = Box::new(HandlerBasic::new(renderer, input_handler, window_handler, game));
 
     handler.init();
     while !handler.should_exit() {

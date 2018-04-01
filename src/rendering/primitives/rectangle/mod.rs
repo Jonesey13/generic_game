@@ -1,7 +1,7 @@
 use na::{Vector1, Vector3, Vector4, Rotation2, Matrix2, convert};
 use num::Zero;
-use rendering::primitives::Primitive;
-use rendering::render_by_shaders::GliumPrimitive;
+use rendering::primitives::StandardPrimitive;
+use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
 
 #[derive(Copy, Clone, Debug)]
@@ -51,7 +51,7 @@ impl Rectangle {
     }
 }
 
-impl GliumPrimitive for Rectangle {
+impl GliumStandardPrimitive for Rectangle {
     type Vertex = RectangleVertex;
 
     fn get_shaders() -> Shaders {
