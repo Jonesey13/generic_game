@@ -1,5 +1,4 @@
 use na::Vector2;
-use rendering::BezierQuadControl;
 use geometry::Line;
 
 #[derive(Clone)]
@@ -43,16 +42,6 @@ impl BezierQuad {
             c0: d0,
             c1: d1,
             c2: d2
-        }
-    }
-}
-
-impl From<BezierQuad> for BezierQuadControl {
-    fn from(bez_quad: BezierQuad) -> BezierQuadControl {
-        BezierQuadControl {
-            one: bez_quad.c0,
-            two: bez_quad.c1,
-            three: bez_quad.c2
         }
     }
 }

@@ -1,6 +1,5 @@
 use rendering::{Renderable, StandardPrimitive, PolarPixel};
 
-impl Renderable for PolarPixel {
-    type Primitive = StandardPrimitive;
+impl Renderable<StandardPrimitive> for PolarPixel {
     fn get_primitives(&mut self) -> Vec<StandardPrimitive> { vec![StandardPrimitive::PolarPix(self.clone())] }
 }

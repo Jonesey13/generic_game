@@ -31,8 +31,7 @@ impl Annulus {
     }
 }
 
-impl Renderable for Annulus {
-    type Primitive = StandardPrimitive;    
+impl Renderable<StandardPrimitive> for Annulus {
     fn get_primitives(&mut self) -> Vec<StandardPrimitive> { vec![StandardPrimitive::Circ(self.clone().into())] }
 }
 

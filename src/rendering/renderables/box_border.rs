@@ -108,9 +108,7 @@ impl BoxBorder {
     }
 }
 
-impl Renderable for BoxBorder {
-    type Primitive = StandardPrimitive;
-    
+impl Renderable<StandardPrimitive> for BoxBorder {
     fn get_primitives(&mut self) -> Vec<StandardPrimitive> {
         match self.border_type {
             BorderType::Straight => self.get_straight_primitives(),

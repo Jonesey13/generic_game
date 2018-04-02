@@ -181,15 +181,13 @@ impl Arrow {
             self.depth, 
             self.fixed);
 
-        let mut output = left_line_renderable.get_primitives();
+        let mut output: Vec<StandardPrimitive> = left_line_renderable.get_primitives();
         output.append(&mut right_line_renderable.get_primitives());
         output
     }
 }
 
-impl Renderable for Arrow {
-    type Primitive = StandardPrimitive;
-    
+impl Renderable<StandardPrimitive> for Arrow {
     fn get_primitives(&mut self) -> Vec<StandardPrimitive> { 
         let full_length = self.get_length();
         let center_line = geometry::Line::new(self.start, self.end);
@@ -214,7 +212,7 @@ impl Renderable for Arrow {
             self.fixed
         );
 
-        let mut output = root_line.get_primitives();
+        let mut output: Vec<StandardPrimitive> = root_line.get_primitives();
         output.append(&mut self.generate_arrow_head());
         output
     }

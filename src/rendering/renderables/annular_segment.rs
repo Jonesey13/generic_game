@@ -22,8 +22,7 @@ impl AnnularSegment {
     }
 }
 
-impl Renderable for AnnularSegment {
-    type Primitive = StandardPrimitive;
+impl Renderable<StandardPrimitive> for AnnularSegment {
     fn get_primitives(&mut self) -> Vec<StandardPrimitive> { vec![StandardPrimitive::Circ(self.clone().into())] }
 }
 

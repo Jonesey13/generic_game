@@ -1,6 +1,3 @@
-pub mod bezier_rect;
-pub mod bezier_branch_rect;
-pub mod bezier_branch_circ;
 pub mod circle;
 pub mod polar_pixel;
 pub mod polygon;
@@ -21,9 +18,8 @@ pub use self::annulus::Annulus;
 pub use self::annular_segment::AnnularSegment;
 pub use self::box_border::BoxBorder;
 
-pub trait Renderable {
-    type Primitive;
-    fn get_primitives(&mut self) -> Vec<Self::Primitive>;
+pub trait Renderable<Prim> {
+    fn get_primitives(&mut self) -> Vec<Prim>;
 }
 
-pub type StandardRenderable = Renderable<Primitive=StandardPrimitive>;
+pub type StandardRenderable = Renderable<StandardPrimitive>;

@@ -78,9 +78,7 @@ pub enum LineShape {
     Rounded
 }
 
-impl Renderable for Line {
-    type Primitive = StandardPrimitive;
-    
+impl Renderable<StandardPrimitive> for Line {
     fn get_primitives(&mut self) -> Vec<StandardPrimitive> { 
         let shifted_end = self.end - self.start;
         let line_angle = shifted_end.y.atan2(shifted_end.x);

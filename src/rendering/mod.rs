@@ -8,8 +8,7 @@ pub mod display_settings;
 use glium::Display;
 
 pub use rendering::primitives::{
-    StandardPrimitive, Rectangle, TextureRect, Polygon, CirclePart, BezierRect, PolarPixel, PlainText, BezierQuadControl, TextAlign,
-    BezierBranchRect, BezierBranchCirc};
+    StandardPrimitive, Rectangle, TextureRect, Polygon, CirclePart, PolarPixel, PlainText, TextAlign};
 pub use rendering::renderables::{Renderable, StandardRenderable, Line, LineShape, Arrow, Circle, BoxBorder, Annulus, AnnularSegment};
 pub use self::display_settings::DisplaySettings;
 pub use self::glium_renderer::{GliumRenderer};
@@ -20,7 +19,7 @@ use glium::glutin::EventsLoop;
 pub trait Renderer {
     type Primitive;
     fn init(&mut self) {}
-    fn load_renderables(&mut self, _: Vec<Box<renderables::Renderable<Primitive=Self::Primitive>>>) {}
+    fn load_renderables(&mut self, _: Vec<Box<renderables::Renderable<Self::Primitive>>>) {}
     fn render(&mut self) {}
     fn set_worldview(&mut self, _: view_details::ViewDetails) {}
     fn get_events_loop(&mut self) -> Option<&mut EventsLoop> { None }
