@@ -1,5 +1,4 @@
 pub mod circle;
-pub mod polar_pixel;
 pub mod polygon;
 pub mod rectangle;
 pub mod text;

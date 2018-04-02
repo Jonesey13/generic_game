@@ -4,7 +4,6 @@ use rendering::primitives::rectangle::{Rectangle, RectangleVertex};
 use rendering::primitives::circle_part::{CirclePart, CircleVertex};
 use rendering::primitives::polygon::{Polygon, PolygonVertex};
 use rendering::primitives::text::{RenderText, TextBuffer, PlainText};
-use rendering::primitives::polar_pixel::{PolarBuffer, PolarPixel, PolarPixelVertex};
 use rendering::primitives::{StandardPrimitive, TextureRect}; 
 use rendering::renderables::StandardRenderable;
 use rendering::DisplaySettings;
@@ -33,7 +32,6 @@ pub struct GliumRenderer<'a> {
     texture_rect_buffer: BasicBuffer<TextureRect>,
     circ_buffer: BasicBuffer<CirclePart>,
     polygon_buffer: BasicBuffer<Polygon>,
-    polar_buffer: PolarBuffer,
     text_processor: TextBuffer<'a, PlainText>,
     view_details: view_details::ViewDetails,
     display_settings: DisplaySettings,
@@ -60,7 +58,6 @@ impl<'a> GliumRenderer<'a> {
             texture_rect_buffer: BasicBuffer::<TextureRect>::new(&display),
             circ_buffer: BasicBuffer::<CirclePart>::new(&display),
             polygon_buffer: BasicBuffer::<Polygon>::new(&display),
-            polar_buffer: PolarBuffer::new(&display),
             text_processor: TextBuffer::new(&display, settings),
             view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default()),
             display_settings: settings,
@@ -82,7 +79,6 @@ impl<'a> GliumRenderer<'a> {
         self.texture_rect_buffer = BasicBuffer::<TextureRect>::new(display);
         self.circ_buffer = BasicBuffer::<CirclePart>::new(display);
         self.polygon_buffer = BasicBuffer::<Polygon>::new(display);
-        self.polar_buffer = PolarBuffer::new(display);
         self.text_processor = TextBuffer::new(display, self.display_settings);
     }
 
@@ -116,7 +112,6 @@ impl<'a> GliumRenderer<'a> {
         self.rect_buffer.flush_buffer();
         self.texture_rect_buffer.flush_buffer();
         self.circ_buffer.flush_buffer();
-        self.polar_buffer.flush_buffer();
         self.polygon_buffer.flush_buffer();
         self.text_processor.flush_buffer();
     }
@@ -171,7 +166,6 @@ impl<'a> Renderer for GliumRenderer<'a> {
                         StandardPrimitive::TextureRect(rect) => self.texture_rect_buffer.load_renderable(rect),
                         StandardPrimitive::Circ(circle) => self.circ_buffer.load_renderable(circle),
                         StandardPrimitive::Text(text) => self.text_processor.load_renderable(text),
-                        StandardPrimitive::PolarPix(polar) => self.polar_buffer.load_renderable(polar),
                         StandardPrimitive::Poly(polygon) => self.polygon_buffer.load_renderable(polygon)
                 }
             }
@@ -201,7 +195,6 @@ impl<'a> Renderer for GliumRenderer<'a> {
             self.texture_rect_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
             self.circ_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
             self.polygon_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);        
-            self.polar_buffer.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
             self.text_processor.draw_at_target(&mut target, &self.display, self.view_details, &self.draw_params, &uniforms);
             
             target.finish().unwrap();

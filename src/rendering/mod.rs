@@ -7,8 +7,7 @@ pub mod glium_buffer;
 pub mod display_settings;
 use glium::Display;
 
-pub use rendering::primitives::{
-    StandardPrimitive, Rectangle, TextureRect, Polygon, CirclePart, PolarPixel, PlainText, TextAlign};
+pub use rendering::primitives::{StandardPrimitive, Rectangle, TextureRect, Polygon, CirclePart, PlainText, TextAlign};
 pub use rendering::renderables::{Renderable, StandardRenderable, Line, LineShape, Arrow, Circle, BoxBorder, Annulus, AnnularSegment};
 pub use self::display_settings::DisplaySettings;
 pub use self::glium_renderer::{GliumRenderer};
