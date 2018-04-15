@@ -3,11 +3,9 @@ use gg::games::GameInput;
 use gg::games::view_details::{ViewDetails2D, ViewDetails};
 use na::{Vector2, Vector3, Vector4, Rotation2};
 use num::{Zero};
-use gg::rendering::{BezierRect, BezierQuadControl, BezierBranchRect, BezierBranchCirc};
 use gg::rendering::renderables::BoxBorder;
 use gg::input::keyboard::KeyboardInput;
-use gg::rendering::{PlainText, TextAlign, Circle, Annulus, Rectangle, Renderable, Polygon, Arrow, TextureRect};
-use gg::debug::console::Console;
+use gg::rendering::{PlainText, TextAlign, Circle, Annulus, Rectangle, StandardRenderable, StandardPrimitive, Polygon, Arrow, TextureRect};
 use gg::geometry;
 use gg::rendering::Line;
 use gg::rendering::WindowSpec;
@@ -21,6 +19,8 @@ pub struct RenderableTestGame {
 }
 
 impl Game for RenderableTestGame {
+    type Primitive = StandardPrimitive;
+
     fn update_input(&mut self) {
         self.user_input.right_left = self.external_input.kbd.get_d() as isize - (self.external_input.kbd.get_a() as isize);
         self.user_input.up_down = self.external_input.kbd.get_w() as isize - (self.external_input.kbd.get_s() as isize);
@@ -42,7 +42,7 @@ impl Game for RenderableTestGame {
         ViewDetails::TwoDim(self.view_details.clone())
     }
     
-    fn get_renderables(&mut self, _: WindowSpec) -> Vec<Box<Renderable>> {
+    fn get_renderables(&mut self, _: WindowSpec) -> Vec<Box<StandardRenderable>> {
         // let rect = Rectangle {
         //     length: 1.0,
         //     height: 1.0,
@@ -73,29 +73,6 @@ impl Game for RenderableTestGame {
             fixed: false,
             align: TextAlign::Center
         };
-
-        let quad_control = BezierQuadControl {
-            one: Vector2::new(0.0, 0.0),
-            two: Vector2::new(0.5, 0.2),
-            three: Vector2::new(1.0, 0.2),
-        };
-        let bez_rect = BezierRect::new_with_color(quad_control, 0.25, Vector3::zero(), Vector4::new(0.1, 0.1, 0.1, 1.0));
-        let bez_branch_rect = BezierBranchRect::new(bez_rect, 
-            0.1,
-            0.2,
-            1.0,
-            0.5,
-            1.0,
-            Vector3::new(0.5, 0.0, -0.1),
-            Vector4::new(1.0, 1.0, 1.0, 1.0));
-
-        let bez_branch_circ = BezierBranchCirc::new(bez_rect, 
-            0.1,
-            1.0,
-            0.5,
-            1.0,
-            Vector3::new(0.5, 0.25, -0.1),
-            Vector4::new(1.0, 1.0, 1.0, 1.0));
         
         let poly_corners = vec![
             Vector2::new(0.5, 0.5),
@@ -148,16 +125,6 @@ impl Game for RenderableTestGame {
         let box_border = BoxBorder::new_rounded(0.01, 0.1, Vector3::new(0.0, 0.0, -0.2), 0.5, 0.5, Vector4::new(1.0, 1.0, 0.0, 1.0), false);        
 
         vec![
-        //     Box::new(circ),
-        //     Box::new(ann),
-        //     Box::new(text),
-        //     Box::new(box_border),
-        //     Box::new(box_border_fixed) 
-            Box::new(bez_rect), 
-            Box::new(bez_branch_rect), 
-            Box::new(bez_branch_circ),             
-        //     Box::new(poly), 
-        //     Box::new(line),
             Box::new(tex_rect1),
             Box::new(tex_rect2)
         ]

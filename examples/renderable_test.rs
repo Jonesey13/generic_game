@@ -8,8 +8,8 @@ extern crate glium;
 
 use gg::debug::*;
 use gg::{debug, rendering, input, window, games, Handler};
-use gg::handler_basic_with_console::HandlerBasic;
-use gg::rendering::DisplaySettings;
+use gg::handler_basic::HandlerBasic;
+use gg::rendering::{DisplaySettings, StandardPrimitive};
 use std::env;
 use std::io::*;
 mod renderable_test_game;
@@ -32,10 +32,10 @@ fn main() {
                         image::PNG).unwrap();
     let texture_array = vec![image1];
 
-    let renderer = rendering::GliumRenderer::new_with_textures(display_settings, texture_array);
+    let renderer = Box::new(rendering::GliumRenderer::new_with_textures(display_settings, texture_array));
     let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
-    let game: Box<games::Game> = Box::new(renderable_test_game::RenderableTestGame::default());
+    let game: Box<games::Game<Primitive=StandardPrimitive>> = Box::new(renderable_test_game::RenderableTestGame::default());
     let mut handler: Box<Handler> = Box::new(HandlerBasic::new(renderer, input_handler, window_handler, game));
 
     handler.init();

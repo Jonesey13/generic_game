@@ -6,6 +6,7 @@ use geometry::vect::get_normal_2d;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
 
+/// Refers to an implementation of a polygon
 pub trait Poly {
     fn get_corners(&self) -> Vec<Vector2<f64>>;
     fn set_corners(&mut self, corners: Vec<Vector2<f64>>); 

@@ -169,6 +169,9 @@ pub fn line_line_intersect_2d(line1: &Line, line2: &Line) -> DualSoln {
 #[cfg(test)]
 mod tests
 {
+    use ::geometry::{line_line_intersect_2d, Line};
+    use na::Vector2;
+
     #[test]
     fn line_line_intersect() {
         let line1 = Line::new(Vector2::new(-0.5, 0.0), Vector2::new(0.5, 0.0));
