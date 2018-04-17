@@ -1,4 +1,5 @@
-use ::geometry::Polynomial;
+use ::geometry::{Polynomial, Polynomial2d};
+use na::Vector2;
 
 pub fn build_interpolating_poly(knots: Vec<f64>, values: Vec<f64>) -> Polynomial {
     if knots.len() != values.len() {
@@ -15,6 +16,16 @@ pub fn build_interpolating_poly(knots: Vec<f64>, values: Vec<f64>) -> Polynomial
     }
 
     output
+}
+
+pub fn build_interpolating_poly2d(knots: Vec<f64>, values: Vec<Vector2<f64>>) -> Polynomial2d {
+    let values1 = values.iter().map(|val| {val.x}).collect();
+    let values2 = values.iter().map(|val| {val.y}).collect();
+    
+    let poly1 = build_interpolating_poly(knots.clone(), values1);
+    let poly2 = build_interpolating_poly(knots, values2);
+
+    Polynomial2d::new_from_1d_polys(poly1, poly2)
 }
 
 fn get_knot_scalar_product_for_knot(index: usize, knots: Vec<f64>) -> f64 {

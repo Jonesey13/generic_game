@@ -12,6 +12,10 @@ impl Polynomial {
         }
     }
 
+    pub fn get_coeffs(&self) -> &Vec<f64> {
+        &self.coefficients
+    }
+
     pub fn new_x_minus(val: f64) -> Self {
         Self {
             coefficients: vec![-val, 1.0]

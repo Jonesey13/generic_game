@@ -15,6 +15,7 @@ pub mod to_renderables;
 pub mod interval_collection;
 pub mod legendre;
 pub mod polynomial;
+pub mod polynomial2d;
 
 use na::{Vector2, norm, dot};
 use num::Zero;
@@ -35,7 +36,8 @@ pub use self::cartesian_rectangle::CartesianRectangle;
 pub use self::rectangle::Rectangle;
 pub use self::vect::{get_normal_2d, get_rot90_2d};
 pub use self::polynomial::Polynomial;
-pub use self::legendre::build_interpolating_poly;
+pub use self::polynomial2d::Polynomial2d;
+pub use self::legendre::{build_interpolating_poly, build_interpolating_poly2d};
 
 const EPSILON: f64 = 0.0000001;
 
