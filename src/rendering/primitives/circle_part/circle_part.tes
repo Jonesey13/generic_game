@@ -39,7 +39,7 @@ vec2 map_pos(vec2 uv, vec2 radial_dim, vec2 angular_dim) {
 vec3 circle_pos(vec2 uv) {
   float theta = uv.x * 2.0 * pi;
   float r = uv.y;
-  return (vec3(sin(theta), cos(theta), 0.0) * r + pos_cs[0]);
+  return (vec3(cos(theta), sin(theta), 0.0) * r + pos_cs[0]);
 }
 
 vec4 transform(vec4 pos, bool fixed_pos)
