@@ -167,7 +167,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
         debug_clock_stop("Render::glium_load::text::glyph_pos_data");                
 
         debug_clock_start("Render::glium_load::text::get_vertices");
-        let mut vertices = text.get_vertices(glyph_pos_data);
+        let mut vertices = text.get_vertices(glyph_pos_data, self.font.v_metrics(glyph_scale).ascent);
         self.vertices.append(&mut vertices);
         debug_clock_stop("Render::glium_load::text::get_vertices");
 

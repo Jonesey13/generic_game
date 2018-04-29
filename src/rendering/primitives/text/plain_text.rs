@@ -28,7 +28,8 @@ impl RenderText for PlainText {
     
     fn get_vertices(
         &self,
-        glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)>
+        glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)>,
+        text_ascent: f32
     ) -> Vec<Self::TextVert>
     {
         let color = [self.color.x as f32,
@@ -55,9 +56,9 @@ impl RenderText for PlainText {
                                    (screen_rect.min.y + screen_rect.max.y) as f32 / 2.0];
             let corrected_screen_rect_pos = match self.align {
                 TextAlign::Center => [screen_rect_pos[0] - average_glyph_pos[0],
-                                      screen_rect_pos[1] - average_glyph_pos[1]],
+                                      screen_rect_pos[1] - text_ascent],
                 TextAlign::Left => [screen_rect_pos[0] - far_left_pos,
-                                      screen_rect_pos[1] - average_glyph_pos[1]],
+                                      screen_rect_pos[1] - text_ascent],
             };
             
             TextVertex {
@@ -67,7 +68,7 @@ impl RenderText for PlainText {
                 position: global_pos,
                 tex_coords_min: [uv_rect.min.x, uv_rect.min.y],
                 tex_coords_max: [uv_rect.max.x, uv_rect.max.y],
-                scale: [self.scale.x as f32, self.scale.y as f32 ],
+                scale: [self.scale.x as f32, self.scale.y as f32],
                 transform: *na::convert::<_, Matrix2<f32>>(self.transform).as_ref(),
                 color: color,
                 fixed_pos: self.fixed as u32
