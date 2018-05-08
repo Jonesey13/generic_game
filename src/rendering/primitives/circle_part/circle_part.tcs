@@ -14,19 +14,20 @@ out vec3 pos_cs[];
 out vec4 color_cs[];
 out uint fixed_pos_cs[];
 
-uniform int tess_level_outer = 100;
-uniform int tess_level_inner = 100;
+uniform int tess_level_outer_max = 1000;
+uniform int tess_level_inner_max = 1000;
 
 void main() {
+  float max_scale = radial_dim_vs[0].y;
   radial_dim_cs[gl_InvocationID] = radial_dim_vs[0];
   angular_dim_cs[gl_InvocationID] = angular_dim_vs[0];
   pos_cs[gl_InvocationID] = pos_vs[0];
   color_cs[gl_InvocationID] = color_vs[0];
   fixed_pos_cs[gl_InvocationID] = fixed_pos_vs[0];
-  gl_TessLevelOuter[0] = tess_level_outer;
-  gl_TessLevelOuter[1] = tess_level_outer;
-  gl_TessLevelOuter[2] = tess_level_outer;
-  gl_TessLevelOuter[3] = tess_level_outer;
-  gl_TessLevelInner[0] = tess_level_inner;
-  gl_TessLevelInner[1] = tess_level_inner;
+  gl_TessLevelOuter[0] = tess_level_outer_max * max_scale;
+  gl_TessLevelOuter[1] = tess_level_outer_max * max_scale;
+  gl_TessLevelOuter[2] = tess_level_outer_max * max_scale;
+  gl_TessLevelOuter[3] = tess_level_outer_max * max_scale;
+  gl_TessLevelInner[0] = tess_level_inner_max * max_scale;
+  gl_TessLevelInner[1] = tess_level_inner_max * max_scale;
 }

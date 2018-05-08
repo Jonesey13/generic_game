@@ -54,9 +54,11 @@ impl RenderText for PlainText {
             let screen_rect_pos = [(screen_rect.min.x + screen_rect.max.x) as f32 / 2.0,
                                    (screen_rect.min.y + screen_rect.max.y) as f32 / 2.0];
             let corrected_screen_rect_pos = match self.align {
-                TextAlign::Center => [screen_rect_pos[0] - average_glyph_pos[0],
+                TextAlign::Centered => [screen_rect_pos[0] - average_glyph_pos[0],
+                                      screen_rect_pos[1] - average_glyph_pos[1]],
+                TextAlign::LeftBaseLine => [screen_rect_pos[0] - far_left_pos,
                                       screen_rect_pos[1]],
-                TextAlign::Left => [screen_rect_pos[0] - far_left_pos,
+                TextAlign::BaseLine => [screen_rect_pos[0] - average_glyph_pos[0],
                                       screen_rect_pos[1]],
             };
             
@@ -113,8 +115,9 @@ impl PlainText {
 
 #[derive(Copy, Clone)]
 pub enum TextAlign {
-    Center,
-    Left
+    Centered,
+    BaseLine,
+    LeftBaseLine
 }
 
 #[derive(Copy, Clone)]
