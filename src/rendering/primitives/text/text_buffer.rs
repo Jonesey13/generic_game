@@ -167,7 +167,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
         debug_clock_stop("Render::glium_load::text::glyph_pos_data");                
 
         debug_clock_start("Render::glium_load::text::get_vertices");
-        let mut vertices = text.get_vertices(glyph_pos_data, self.font.v_metrics(glyph_scale).ascent);
+        let mut vertices = text.get_vertices(glyph_pos_data);
         self.vertices.append(&mut vertices);
         debug_clock_stop("Render::glium_load::text::get_vertices");
 
@@ -188,9 +188,9 @@ fn layout_paragraph<'a>(font: &'a Font,
                         text: &str) -> Vec<PositionedGlyph<'a>> {
     use unicode_normalization::UnicodeNormalization;
     let mut result = Vec::new();
-    let v_metrics = font.v_metrics(scale);
+    // let v_metrics = font.v_metrics(scale);
     // let advance_height = v_metrics.ascent - v_metrics.descent;
-    let mut caret = point(0.0, v_metrics.ascent);
+    let mut caret = point(0.0, 0.0);
     let mut last_glyph_id = None;
     for c in text.nfc() {
         if c.is_control() {
