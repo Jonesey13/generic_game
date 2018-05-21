@@ -35,6 +35,7 @@ pub trait Collidable {
     fn get_earliest_collision_results(&self) -> Option<CollisionResults<Self::Data>>;
     fn add_collision_results(&mut self, CollisionResults<Self::Data>);
     fn get_own_collision_data(&self) -> Self::Data;
+    fn resolve_collision_results(&mut self) {}
 
     fn get_earliest_collision_time(&mut self) -> Option<f64> {
         self.get_earliest_collision_results()
