@@ -1,4 +1,4 @@
-use na::{Vector2, Rotation2};
+use na::{Rotation2};
 use num::Zero;
 use super::{CollisionTestGame, CollisionTestObject};
 use collision::collidable_wrapper::{CollidableWrapper, CollidableWrapperTrait};
@@ -83,7 +83,7 @@ impl CollisionTestBuilder {
             collider: Collider,
             external_input: Default::default(),
             game_input: Default::default(),
-            mouse_mov: Vector2::zero(),
+            mouse_mov: Point::zero(),
             mouse_speed: 0.01,
             player_index: 0
         }

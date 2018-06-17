@@ -1,6 +1,5 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
-#![feature(conservative_impl_trait)]
 
 extern crate multiinput;
 extern crate nalgebra as na;
@@ -29,7 +28,7 @@ pub mod debug;
 pub mod window;
 pub mod animation;
 
-use na::{Vector2, Vector1, Rotation2};
+use na::{Vector1, Rotation2};
 use debug::*;
 use std::env;
 use std::io::*;
@@ -48,8 +47,8 @@ use std::io::*;
 //     //let game: Box<games::Game> = Box::new(games::pong::builder::PongBuilder::init().build_game());
 //     //let game: Box<games::Game> = Box::new(
 //         // games::physics_test_game::builder::PhysicsTestBuilder::init()
-//         //     .add_rect(Vector2::new(0.5, 0.0), 0.2, 0.2, Rotation2::new(Vector1::new(0.0))).with_velocity(Vector2::new(-0.25, 0.0))
-//         //     .add_rect(Vector2::new(-0.5, 0.0), 0.2, 0.2, Rotation2::new(Vector1::new(0.0))).with_velocity(Vector2::new(0.25, 0.0))
+//         //     .add_rect(Point::new(0.5, 0.0), 0.2, 0.2, Rotation2::new(Vector1::new(0.0))).with_velocity(Point::new(-0.25, 0.0))
+//         //     .add_rect(Point::new(-0.5, 0.0), 0.2, 0.2, Rotation2::new(Vector1::new(0.0))).with_velocity(Point::new(0.25, 0.0))
 //         //     .build_game());
 //     //let game: Box<games::Game> = Box::new(games::input_test_game::InputTestGame::new());
 //     //let game: Box<games::Game> = Box::new(games::primitive_test_game::StandardPrimitiveTestGame::default());

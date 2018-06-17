@@ -94,11 +94,11 @@ impl Collider {
                 => {let res = collision_logic::poly_poly_coll(n1, p1, n2, p2); 
                 res.and_then(|(res0, res1)| {Some((res0, res1.to_line_results()))})},
 
-            (&CollisionObjectState::Point(ref n1, ref p1), &CollisionObjectState::ConPoly(ref n2, ref p2)) 
-                => {let res = collision_logic::poly_point_coll(n2, p2, &n1, &p1); 
+            (&CollisionObjectState::Point(n1, p1), &CollisionObjectState::ConPoly(ref n2, ref p2)) 
+                => {let res = collision_logic::poly_point_coll(n2, p2, n1, p1); 
                 res.and_then(|(res0, res1)|{Some((res1, res0))})},
-            (&CollisionObjectState::ConPoly(ref n1, ref p1), &CollisionObjectState::Point(ref n2, ref p2)) 
-                => collision_logic::poly_point_coll(n1, p1, &n2, &p2),
+            (&CollisionObjectState::ConPoly(ref n1, ref p1), &CollisionObjectState::Point(n2, p2)) 
+                => collision_logic::poly_point_coll(n1, p1, n2, p2),
 
             (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Line(ref n2, ref p2)) 
                 => {let res = collision_logic::circ_poly_coll(&n1, &p1, n2, p2); 
@@ -107,16 +107,16 @@ impl Collider {
                 => {let res = collision_logic::circ_poly_coll(&n2, &p2, n1, p1); 
                 res.and_then(|(res0, res1)| {Some((res1.to_line_results(), res0))})},
             
-            (&CollisionObjectState::Line(ref n1, ref p1), &CollisionObjectState::Point(ref n2, ref p2)) 
+            (&CollisionObjectState::Line(ref n1, ref p1), &CollisionObjectState::Point(n2, p2)) 
                 => {let res = collision_logic::poly_point_coll(n1, p1, n2, p2); 
                 res.and_then(|(res0, res1)| {Some((res0.to_line_results(), res1))})},
-            (&CollisionObjectState::Point(ref n1, ref p1), &CollisionObjectState::Line(ref n2, ref p2)) 
+            (&CollisionObjectState::Point(n1, p1), &CollisionObjectState::Line(ref n2, ref p2)) 
                 => {let res = collision_logic::poly_point_coll(n2, p2, n1, p1); 
                 res.and_then(|(res0, res1)| {Some((res1, res0.to_line_results()))})},
             
-            (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Point(ref n2, ref p2)) 
+            (&CollisionObjectState::Circ(ref n1, ref p1), &CollisionObjectState::Point(n2, p2)) 
                 => collision_logic::circ_point_coll(&n1, &p1, n2, p2),
-            (&CollisionObjectState::Point(ref n1, ref p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
+            (&CollisionObjectState::Point(n1, p1), &CollisionObjectState::Circ(ref n2, ref p2)) 
                 => {let res = collision_logic::circ_point_coll(&n2, &p2, n1, p1); 
                 res.and_then(|(res0, res1)| {Some((res1, res0))})},
             

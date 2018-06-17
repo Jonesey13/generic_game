@@ -7,16 +7,17 @@ use glium;
 use glium::Surface;
 use std::borrow::Cow;
 use games::view_details;
-use na::{Vector2, Vector3, Vector4, Matrix2};
+use na::{Vector3, Vector4, Matrix2};
 use na;
 use super::RenderText;
 use rendering::{shaders, Renderable};
+use ::geometry::Point;
 
 #[derive(Clone)]
 pub struct PlainText {
     pub content: String,
     pub position: Vector3<f64>,
-    pub scale: Vector2<f64>, // Applied First
+    pub scale: Point, // Applied First
     pub transform: Matrix2<f64>, //Applied Second
     pub color: Vector4<f64>,
     pub fixed: bool,
@@ -90,7 +91,7 @@ impl RenderText for PlainText {
 
 impl PlainText {
     pub fn new_simple_white(content: String, height: f64, position: Vector3<f64>, align: TextAlign) -> PlainText {
-        let scale = Vector2::new(height, height);
+        let scale = Point::new(height, height);
         let color = Vector4::new(1.0, 1.0, 1.0, 1.0);
 
         PlainText {

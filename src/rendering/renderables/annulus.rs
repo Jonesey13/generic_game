@@ -1,16 +1,17 @@
 use rendering::{Renderable, StandardPrimitive, CirclePart};
-use na::{Vector2, Vector3, Vector4};
+use na::{Vector3, Vector4};
+use ::geometry::*;
 
 #[derive(Clone, Debug)]
 pub struct Annulus {
-    pub radial_dim: Vector2<f64>,
+    pub radial_dim: Point,
     pub pos: Vector3<f64>,
     pub color: Vector4<f64>,
     pub fixed: bool
 }
 
 impl Annulus {
-    pub fn new(radial_dim: Vector2<f64>, pos: Vector3<f64>, color: Vector4<f64>, fixed: bool) -> Self {
+    pub fn new(radial_dim: Point, pos: Vector3<f64>, color: Vector4<f64>, fixed: bool) -> Self {
         Self {
             radial_dim,
             pos,
@@ -20,7 +21,7 @@ impl Annulus {
     }
 
     pub fn new_from_radius_and_thickness(radius: f64, thickness: f64,  pos: Vector3<f64>, color: Vector4<f64>, fixed: bool) -> Self {
-        let radial_dim = Vector2::new(radius - thickness / 2.0, radius + thickness / 2.0);
+        let radial_dim = Point::new(radius - thickness / 2.0, radius + thickness / 2.0);
 
         Self {
             radial_dim,
@@ -38,8 +39,8 @@ impl Renderable<StandardPrimitive> for Annulus {
 impl From<Annulus> for CirclePart {
     fn from(ann: Annulus) -> CirclePart {
         CirclePart {
-            radial_dim: Vector2::new(ann.radial_dim.x, ann.radial_dim.y),
-            angular_dim: Vector2::new(0.0, 1.0),
+            radial_dim: Point::new(ann.radial_dim.x, ann.radial_dim.y),
+            angular_dim: Point::new(0.0, 1.0),
             pos: ann.pos,
             color: ann.color,
             fixed: ann.fixed

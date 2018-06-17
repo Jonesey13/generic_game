@@ -1,29 +1,27 @@
-use na::{Vector1, Vector2, Rotation2, norm, dot};
+use na::{Vector1, Rotation2, norm, dot};
 use num::Zero;
-use geometry::average_vec2;
-use geometry::line::Line;
-use geometry::vect::get_normal_2d;
+use geometry::*;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
 
 /// Refers to an implementation of a polygon
 pub trait Poly {
-    fn get_corners(&self) -> Vec<Vector2<f64>>;
-    fn set_corners(&mut self, corners: Vec<Vector2<f64>>); 
+    fn get_corners(&self) -> Vec<Point>;
+    fn set_corners(&mut self, corners: Vec<Point>); 
 
-    fn shift_by(&mut self, shift: Vector2<f64>) {
+    fn shift_by(&mut self, shift: Point) {
         let corners = self.get_corners();
-        let shifted_corners = corners.iter().map(|c| {c + shift}).collect();
+        let shifted_corners = corners.into_iter().map(|c| {c + shift}).collect();
         self.set_corners(shifted_corners);
     }
 
     // Normals face outwards
-    fn normals(&self) -> Vec<Vector2<f64>> {
+    fn normals(&self) -> Vec<Point> {
         let corners_it_shift = self.get_corners().into_iter().cycle().skip(1);
         self.get_corners().into_iter().zip(corners_it_shift).map(|(beg, end)| {-get_normal_2d(end - beg)}).collect()
     }
 
-    fn get_normal(&self, index: usize) -> Vector2<f64> {
+    fn get_normal(&self, index: usize) -> Point {
         self.normals()[index]
     }
 
@@ -35,7 +33,7 @@ pub trait Poly {
         self.sides_iter().nth(index).and_then(|(beg, end)| {Some(Line::new(beg, end))})
     }
 
-    fn sides_iter<'a>(&'a self) -> Box<Iterator<Item=(Vector2<f64>, Vector2<f64>)> + 'a> {
+    fn sides_iter<'a>(&'a self) -> Box<Iterator<Item=(Point, Point)> + 'a> {
         let corners_it_shift = self.get_corners().into_iter().cycle().skip(1);
         Box::new(self.get_corners().into_iter().zip(corners_it_shift).map(|(beg, end)| {(beg, end)}))
     }
@@ -63,18 +61,18 @@ pub trait Poly {
         .collect()
     }
 
-    fn get_shift(&self, other: &Poly) -> Vector2<f64> {
+    fn get_shift(&self, other: &Poly) -> Point {
         other.get_corners()[0] - self.get_corners()[0]
     }
 }
 
-pub fn get_at_time<T: Poly + Sized + Clone>(poly: &T, shift: Vector2<f64>, time: f64) -> T {
+pub fn get_at_time<T: Poly + Sized + Clone>(poly: &T, shift: Point, time: f64) -> T {
     let mut out = poly.clone();
-    out.shift_by(shift * time);
+    out.shift_by(time * shift);
     out
 }
 
-pub fn get_shifted<T: Poly + Sized + Clone>(poly: &T, shift: Vector2<f64>) -> T {
+pub fn get_shifted<T: Poly + Sized + Clone>(poly: &T, shift: Point) -> T {
     let mut out = poly.clone();
     out.shift_by(shift);
     out

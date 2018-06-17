@@ -1,10 +1,11 @@
 /// For use in shaders (projective space transforms)
-use na::{Matrix4, Matrix3, Vector2, Vector3, dot, normalize, Rotation2};
+use na::{Matrix4, Matrix3, Vector3, Rotation2};
 use num::One;
 use std::f64::consts::PI;
+use ::geometry::*;
 
 /// Translation by the three_vec
-pub fn translation_mat(two_vec: Vector2<f64>) -> Matrix3<f64>{
+pub fn translation_mat(two_vec: Point) -> Matrix3<f64>{
     return Matrix3::new(
         1.0, 0.0, two_vec.x,
         0.0, 1.0, two_vec.y,
@@ -22,7 +23,7 @@ pub fn rotation_mat(theta: f64) -> Matrix3<f64> {
     )
 }
 
-pub fn scaling_mat(scale: Vector2<f64>) -> Matrix3<f64> {
+pub fn scaling_mat(scale: Point) -> Matrix3<f64> {
     Matrix3::new(
         scale.x, 0.0, 0.0,
         0.0, scale.y, 0.0,
@@ -31,17 +32,17 @@ pub fn scaling_mat(scale: Vector2<f64>) -> Matrix3<f64> {
 }
 
 pub fn build_worldview_mat(
-    position: Vector2<f64>,
+    position: Point,
     view_height: f64,
     view_length: f64,
     aspect_ratio: f64,
-    up_vector: Vector2<f64>,
+    up_vector: Point,
     use_aspect: bool
 ) -> Matrix4<f64> {
-    let trans_mat = translation_mat(position * -1.0);
+    let trans_mat = translation_mat(-position);
     let scaling = match use_aspect {
-        true => Vector2::new(1.0 / (aspect_ratio * view_length), 1.0 / view_height),
-        false => Vector2::new(1.0 / view_length, 1.0 / view_height)
+        true => Point::new(1.0 / (aspect_ratio * view_length), 1.0 / view_height),
+        false => Point::new(1.0 / view_length, 1.0 / view_height)
     };
     let scale_mat = scaling_mat(scaling);
 

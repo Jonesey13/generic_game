@@ -17,7 +17,7 @@ pub mod legendre;
 pub mod polynomial;
 pub mod polynomial2d;
 
-use na::{Vector2, norm, dot};
+use na::{norm, dot};
 use num::Zero;
 
 pub use self::interval::{Interval, IntervalEnd, IntervalCollisionObject};
@@ -44,7 +44,7 @@ const EPSILON: f64 = 0.0000001;
 /// For the line beg <=> t=0 and end <=> t=1
 /// Results are expressed as points on the line parameterised in t
 pub fn line_circle_intersect (line: &line::Line, circ: &circle::Circle) -> DualSoln {
-    let shifted_line = line.shifted_by(circ.center * -1.0);
+    let shifted_line = line.shifted_by(-circ.center);
     line_center_circle_intersect(&shifted_line, circ.rad)
 }
 
@@ -53,7 +53,7 @@ pub fn line_circle_intersect (line: &line::Line, circ: &circle::Circle) -> DualS
 /// Results are expressed as points on the line parameterised in t
 pub fn line_center_circle_intersect (line: &line::Line, circ_rad: f64) -> DualSoln {
     let a = line.get_diff().norm_squared();
-    let b = 2.0 * dot(&line.beg, &line.get_diff());
+    let b = 2.0 * line.beg.dot(&line.get_diff());
     let c = line.beg.norm_squared() - circ_rad * circ_rad;
     solve_quadratic(a, b, c)
 }
@@ -70,8 +70,8 @@ pub fn solve_quadratic(a: f64, b: f64, c:f64) -> DualSoln {
     }
 }
 
-pub fn average_vec2(vecs: Vec<Vector2<f64>>) -> Vector2<f64> {
-    vecs.iter().fold(Vector2::zero(), |acc, &x| acc + x) / vecs.len() as f64
+pub fn average_vec2(vecs: Vec<Point>) -> Point {
+    (1.0 / vecs.len() as f64) * vecs.iter().fold(Point::zero(), |acc, &x| acc + x) 
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -123,7 +123,7 @@ pub trait HasAngle {
     fn get_angle(&self) -> f64;
 }
 
-impl HasAngle for Vector2<f64> {
+impl HasAngle for Point {
     fn get_angle(&self) -> f64 {
         self.y.atan2(self.x)
     }
@@ -133,9 +133,9 @@ pub trait FromAngle {
     fn from_angle(f64) -> Self;
 }
 
-impl FromAngle for Vector2<f64> {
+impl FromAngle for Point {
     fn from_angle(angle: f64) -> Self {
-        Vector2::new(angle.cos(), angle.sin())
+        Point::new(angle.cos(), angle.sin())
     }
 }
 

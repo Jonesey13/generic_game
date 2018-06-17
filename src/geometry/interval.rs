@@ -1,6 +1,6 @@
 use std::ops::Mul;
 use super::{Point, Line};
-use na::{Vector2, Rotation2};
+use na::{Rotation2};
 use std::ops::Rem;
 
 #[derive(Copy, Clone, Debug)]
@@ -183,14 +183,14 @@ pub enum IntervalCollisionObject2D {
 }
 
 impl IntervalCollisionObject {
-    pub fn to_twod_collision_object(&self, pos: Vector2<f64>, rot: Rotation2<f64>) -> IntervalCollisionObject2D{
+    pub fn to_twod_collision_object(&self, pos: Point, rot: Rotation2<f64>) -> IntervalCollisionObject2D{
         match *self {
             IntervalCollisionObject::Point(val) 
-            => IntervalCollisionObject2D::Point(Point::new(rot * Vector2::new(val, 0.0) + pos)),
+            => IntervalCollisionObject2D::Point(rot * Point::new(val, 0.0) + pos),
             
             IntervalCollisionObject::Line(val1, val2) 
             => IntervalCollisionObject2D::Line(
-                Line::new(rot * Vector2::new(val1, 0.0) + pos, rot * Vector2::new(val2, 0.0) + pos)
+                Line::new(rot * Point::new(val1, 0.0) + pos, rot * Point::new(val2, 0.0) + pos)
             )
         }
     }
@@ -198,12 +198,12 @@ impl IntervalCollisionObject {
 
 pub struct IntervalWith2DPosition {
     interval: Interval,
-    pos: Vector2<f64>,
+    pos: Point,
     rot: Rotation2<f64>
 }
 
 impl IntervalWith2DPosition {
-    pub fn new(interval: Interval, pos: Vector2<f64>, rot: Rotation2<f64>) -> Self {
+    pub fn new(interval: Interval, pos: Point, rot: Rotation2<f64>) -> Self {
         Self {
             interval,
             pos,

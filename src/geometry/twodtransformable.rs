@@ -1,6 +1,6 @@
-use na::Vector2;
+use ::geometry::Point;
 
 pub trait TwoDTransformable {
-    fn shift_by(&mut self, shift: Vector2<f64>);
+    fn shift_by(&mut self, shift: Point);
     fn rotate(&mut self, rot_angle: f64);
 }

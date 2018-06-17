@@ -1,5 +1,4 @@
-use ::geometry::{Polynomial, Polynomial2d};
-use na::Vector2;
+use ::geometry::{Polynomial, Polynomial2d, Point};
 
 pub fn build_interpolating_poly(knots: Vec<f64>, values: Vec<f64>) -> Polynomial {
     if knots.len() != values.len() {
@@ -11,14 +10,13 @@ pub fn build_interpolating_poly(knots: Vec<f64>, values: Vec<f64>) -> Polynomial
     for (index, value) in values.into_iter().enumerate() {
         let factor = value * get_knot_scalar_product_for_knot(index, knots.clone());
         let poly = get_knot_poly_product_for_knot(index, knots.clone());
-        println!("factor: {:?}, poly: {:?}", factor, poly);
         output = output + factor * poly;
     }
 
     output
 }
 
-pub fn build_interpolating_poly2d(knots: Vec<f64>, values: Vec<Vector2<f64>>) -> Polynomial2d {
+pub fn build_interpolating_poly2d(knots: Vec<f64>, values: Vec<Point>) -> Polynomial2d {
     let values1 = values.iter().map(|val| {val.x}).collect();
     let values2 = values.iter().map(|val| {val.y}).collect();
     
@@ -61,7 +59,6 @@ mod tests {
         let values = vec![0.0, 1.0];
 
         let interpolating_poly = build_interpolating_poly(knots.clone(), values.clone());
-        println!("{:?}", interpolating_poly);
 
         assert!((interpolating_poly.get_point(knots[0]) - values[0]).abs() < error_margin);
         assert!((interpolating_poly.get_point(knots[1]) - values[1]).abs() < error_margin);
@@ -75,11 +72,8 @@ mod tests {
         let values = vec![0.0, 1.0, 0.0];
 
         let interpolating_poly = build_interpolating_poly(knots.clone(), values.clone());
-        println!("{:?}", interpolating_poly);
 
         assert!((interpolating_poly.get_point(knots[0]) - values[0]).abs() < error_margin);
-
-        println!("{:?}", interpolating_poly.get_point(knots[1]));
         assert!((interpolating_poly.get_point(knots[1]) - values[1]).abs() < error_margin);
         assert!((interpolating_poly.get_point(knots[2]) - values[2]).abs() < error_margin);
     }
@@ -92,7 +86,6 @@ mod tests {
         let values = vec![-PI.cos(), (-2.0 * PI / 3.0).cos(), (PI / 3.0).cos(), 0.0f64.cos()];
 
         let interpolating_poly = build_interpolating_poly(knots.clone(), values.clone());
-        println!("Poly Details: {:?}", interpolating_poly);
 
         assert!((interpolating_poly.get_point(knots[0]) - values[0]).abs() < error_margin);
         assert!((interpolating_poly.get_point(knots[1]) - values[1]).abs() < error_margin);

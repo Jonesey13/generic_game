@@ -1,7 +1,7 @@
 use super::CollisionObjectState;
 use super::CollisionObjectDetails;
 use rendering::StandardRenderable;
-use na::{Vector2, Vector4};
+use na::{Vector4};
 use geometry::{Circle, ConPoly, Line, Point, ToRenderables};
 
 pub trait ToCollisionObjects {
@@ -14,7 +14,7 @@ pub enum CollisionObject {
     Circ(Circle),
     ConPoly(ConPoly),
     Line(Line),
-    Point(Vector2<f64>)
+    Point(Point)
 }
 
 impl CollisionObject {
@@ -35,7 +35,7 @@ impl CollisionObject {
             (&CollisionObject::Circ(ref circle), CollisionObjectDetails::Circ(dir)) => circle.render_collision_details(dir, color, depth, fixed),
             (&CollisionObject::ConPoly(ref con_poly), CollisionObjectDetails::ConPoly(ref poly_info)) => con_poly.render_collision_details(poly_info.clone(), color, depth, fixed),
             (&CollisionObject::Line(line), CollisionObjectDetails::Line(line_info)) => line.render_collision_details(line_info, color, depth, fixed),
-            (&CollisionObject::Point(point), CollisionObjectDetails::Point(dir)) => Point::new(point).render_collision_details(dir, color, depth, fixed),
+            (&CollisionObject::Point(point), CollisionObjectDetails::Point(dir)) => point.render_collision_details(dir, color, depth, fixed),
             _ => vec![]
         }
     }
@@ -46,7 +46,7 @@ impl CollisionObject {
             &CollisionObject::Circ(ref circle) => circle.to_renderables(color, depth, fixed),
             &CollisionObject::ConPoly(ref con_poly) => con_poly.to_renderables(color, depth, fixed),
             &CollisionObject::Line(line) => line.to_renderables(color, depth, fixed),
-            &CollisionObject::Point(point) => Point::new(point).to_renderables(color, depth, fixed),
+            &CollisionObject::Point(point) => point.to_renderables(color, depth, fixed),
         }
     }
 }

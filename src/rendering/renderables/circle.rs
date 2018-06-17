@@ -1,5 +1,6 @@
 use rendering::{Renderable, StandardPrimitive, CirclePart};
-use na::{Vector2, Vector3, Vector4};
+use na::{Vector3, Vector4};
+use ::geometry::*;
 
 #[derive(Clone, Debug)]
 pub struct Circle {
@@ -27,8 +28,8 @@ impl Renderable<StandardPrimitive> for Circle {
 impl From<Circle> for CirclePart {
     fn from(circ: Circle) -> CirclePart {
         CirclePart {
-            radial_dim: Vector2::new(0.0, circ.radius),
-            angular_dim: Vector2::new(0.0, 1.0),
+            radial_dim: Point::new(0.0, circ.radius),
+            angular_dim: Point::new(0.0, 1.0),
             pos: circ.pos,
             color: circ.color,
             fixed: circ.fixed

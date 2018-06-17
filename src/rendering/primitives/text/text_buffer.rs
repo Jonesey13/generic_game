@@ -1,4 +1,4 @@
-use na::{Vector2, Vector4, Matrix2};
+use na::{Vector4, Matrix2};
 use unicode_normalization;
 use rusttype::{FontCollection, Font, Scale, point, vector, PositionedGlyph};
 use rusttype::gpu_cache::{Cache};

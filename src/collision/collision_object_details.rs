@@ -1,32 +1,28 @@
-use geometry;
-use geometry::{circle, con_poly, line, HasAngle, DualSoln, Poly, poly};
-use geometry::circle::Circle;
-use geometry::con_poly::ConPoly;
-use geometry::line::Line;
-use na::{normalize, Vector2, dot, abs};
+use geometry::*;
+use na::{normalize, dot, abs};
 
 pub enum CollisionObjectState {
     None,
     Circ(Circle, Circle),
     ConPoly(ConPoly, ConPoly),
     Line(Line, Line),
-    Point(Vector2<f64>, Vector2<f64>)
+    Point(Point, Point)
 }
 
 #[derive(Clone, Debug)]
 pub enum CollisionObjectDetails {
     None,
-    Point(Vector2<f64>),
+    Point(Point),
     Line(LineInfo), 
-    Circ(Vector2<f64>), // Collision direction, outward from object
+    Circ(Point), // Collision direction, outward from object
     ConPoly(ConPolyInfo),
 }
 
 #[derive(Clone, Debug)]
 pub enum LineInfo {
     Point(f64, LineSide), // Position on line => (0,1)
-    LineEnd(Vector2<f64>),
-    LineBeg(Vector2<f64>),
+    LineEnd(Point),
+    LineBeg(Point),
     WholeLine(LineSide) // Collision along segment of the line
 }
 
@@ -40,7 +36,7 @@ pub enum LineSide {
 #[derive(Clone, Debug)]
 pub enum ConPolyInfo {
     LineInfo(usize, f64), // Line number and position on line => (0,1)
-    CornerInfo(usize, Vector2<f64>), // Corner number and striking direction (outward)
+    CornerInfo(usize, Point), // Corner number and striking direction (outward)
     SideInfo(usize), // Collision along a side
 }
 

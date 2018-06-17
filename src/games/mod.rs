@@ -4,7 +4,7 @@ use rendering::Renderable;
 use input::keyboard::KeyboardInput;
 use input::mouse::MouseInput;
 use input::joystick::JoystickInput;
-use na::{Matrix4, Vector2};
+use na::{Matrix4, Point};
 use num::{One, Zero};
 use rendering::{DisplaySettings, WindowSpec};
 

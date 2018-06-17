@@ -1,10 +1,10 @@
-use na::{Vector2, norm};
+use ::geometry::*;
 
 /// Anticlockwise rotation
-pub fn get_normal_2d(vect: Vector2<f64>) -> Vector2<f64>  {
-    Vector2::new(-vect.y, vect.x).normalize()
+pub fn get_normal_2d(vect: Point) -> Point  {
+    Point::new(-vect.y, vect.x).normalized()
 }
 
-pub fn get_rot90_2d(vect: Vector2<f64>) -> Vector2<f64>  {
-    Vector2::new(-vect.y, vect.x)
+pub fn get_rot90_2d(vect: Point) -> Point  {
+    Point::new(-vect.y, vect.x)
 }

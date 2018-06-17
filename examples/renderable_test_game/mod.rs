@@ -1,14 +1,14 @@
 use gg::games::Game;
 use gg::games::GameInput;
 use gg::games::view_details::{ViewDetails2D, ViewDetails};
-use na::{Vector2, Vector3, Vector4, Rotation2};
+use na::{Vector3, Vector4, Rotation2};
 use num::{Zero};
 use gg::rendering::renderables::BoxBorder;
 use gg::input::keyboard::KeyboardInput;
-use gg::rendering::{PlainText, TextAlign, Circle, Annulus, Rectangle, StandardRenderable, StandardPrimitive, Polygon, Arrow, TextureRect};
-use gg::geometry;
+use gg::rendering::{PlainText, TextAlign, Circle, Annulus, StandardRenderable, StandardPrimitive, Polygon, Arrow, TextureRect};
 use gg::rendering::Line;
 use gg::rendering::WindowSpec;
+use gg::geometry::Point;
 
 #[allow(dead_code)]
 #[derive(Default, Clone)]
@@ -58,7 +58,7 @@ impl Game for RenderableTestGame {
         };
 
         let ann = Annulus {
-            radial_dim: Vector2::new(0.4, 0.5),
+            radial_dim: Point::new(0.4, 0.5),
             pos: Vector3::new(0.2, -0.3, -0.1),
             color: Vector4::new(0.0, 0.0, 1.0, 1.0),
             fixed: false
@@ -67,26 +67,26 @@ impl Game for RenderableTestGame {
         let text = PlainText {
             content: "llllllll there! |".to_string(),
             position: Vector3::new(0.0, 0.0, 0.0),
-            scale: Vector2::new(0.2, 0.2),
+            scale: Point::new(0.2, 0.2),
             transform: *Rotation2::new(0.0).matrix(),
             color: Vector4::new(1.0, 1.0, 1.0, 1.0),
             fixed: false,
-            align: TextAlign::Center
+            align: TextAlign::Centered
         };
         
         let poly_corners = vec![
-            Vector2::new(0.5, 0.5),
-            Vector2::new(0.0, 0.5),
-            Vector2::new(0.0, 0.0),
-            Vector2::new(-0.2, 0.0),
-            Vector2::new(-0.2, -0.2),
-            Vector2::new(0.2, -0.2)
+            Point::new(0.5, 0.5),
+            Point::new(0.0, 0.5),
+            Point::new(0.0, 0.0),
+            Point::new(-0.2, 0.0),
+            Point::new(-0.2, -0.2),
+            Point::new(0.2, -0.2)
         ];
-        let poly = Polygon::new_regular(poly_corners, Vector2::zero(), Vector3::zero(), Vector4::new(1.0, 0.0, 0.0, 1.0), false);
+        let poly = Polygon::new_regular(poly_corners, Point::zero(), Vector3::zero(), Vector4::new(1.0, 0.0, 0.0, 1.0), false);
 
         let line = Line::new_rounded(
-            Vector2::new(-0.5, -0.5),
-            Vector2::new(0.5, -0.25),
+            Point::new(-0.5, -0.5),
+            Point::new(0.5, -0.25),
             0.05,
             Vector4::new(0.0, 0.5, 0.0, 1.0),
             0.0,
@@ -94,10 +94,10 @@ impl Game for RenderableTestGame {
         );
 
         let arrow = Arrow::new_rounded(
-            Vector2::new(0.5, 0.0),
-            Vector2::new(-0.5, 0.0),
+            Point::new(0.5, 0.0),
+            Point::new(-0.5, 0.0),
             0.05,
-            Vector2::new(0.2, 0.2),
+            Point::new(0.2, 0.2),
             Vector4::new(0.5, 0.5, 1.0, 1.0),
             0.0,
             false
@@ -108,7 +108,7 @@ impl Game for RenderableTestGame {
             0.5, 
             Vector3::new(0.5, 0.5, 0.0), 
             Vector3::new(0.0, 0.0, 0.0),
-            Vector2::new(1.0, 1.0),
+            Point::new(1.0, 1.0),
             true
         );
 
@@ -117,7 +117,7 @@ impl Game for RenderableTestGame {
             0.5, 
             Vector3::new(-0.5, -0.5, 0.0), 
             Vector3::new(0.0, 0.0, 1.0),
-            Vector2::new(0.5, 0.5),
+            Point::new(0.5, 0.5),
             true
         );
 

@@ -4,7 +4,6 @@ extern crate nalgebra as na;
 extern crate time;
 extern crate num;
 
-use na::Vector2;
 use gg::debug::*;
 use gg::debug;
 use gg::{rendering, input, window, Handler, games};
@@ -34,25 +33,25 @@ fn main() {
     let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
     let game: Box<games::Game<Primitive=StandardPrimitive>> = Box::new(
          CollisionTestBuilder::init()
-            .add_line(Line::new(Vector2::new(-0.5, -0.2), Vector2::new(-0.5, -0.5)))
-            .add_line(Line::new(Vector2::new(-0.8, -0.8), Vector2::new(-0.6, -0.6)))
-            .add_circle(Circle::new(0.1, Vector2::new(-0.5, 0.5)))
-            .add_circle(Circle::new(0.1, Vector2::new(-0.9, 0.8)))
-            .add_point(Point::new(Vector2::new(0.9, -0.9)))
-            .add_point(Point::new(Vector2::new(0.7, -0.7)))
+            .add_line(Line::new(Point::new(-0.5, -0.2), Point::new(-0.5, -0.5)))
+            .add_line(Line::new(Point::new(-0.8, -0.8), Point::new(-0.6, -0.6)))
+            .add_circle(Circle::new(0.1, Point::new(-0.5, 0.5)))
+            .add_circle(Circle::new(0.1, Point::new(-0.9, 0.8)))
+            .add_point(Point::new(0.9, -0.9))
+            .add_point(Point::new(0.7, -0.7))
             .add_poly(ConPoly::new(vec![
-                Vector2::new(0.3, 0.2),
-                Vector2::new(0.3, 0.3),
-                Vector2::new(0.2, 0.3),
-                Vector2::new(0.2, 0.2),                
+                Point::new(0.3, 0.2),
+                Point::new(0.3, 0.3),
+                Point::new(0.2, 0.3),
+                Point::new(0.2, 0.2),                
             ]))
             .add_poly(ConPoly::new(vec![
-                Vector2::new(0.8, 0.6),
-                Vector2::new(0.8, 0.8),
-                Vector2::new(0.7, 0.8),
-                Vector2::new(0.7, 0.7),
-                Vector2::new(0.6, 0.7),
-                Vector2::new(0.6, 0.6)                                                              
+                Point::new(0.8, 0.6),
+                Point::new(0.8, 0.8),
+                Point::new(0.7, 0.8),
+                Point::new(0.7, 0.7),
+                Point::new(0.6, 0.7),
+                Point::new(0.6, 0.6)                                                              
             ]))
             .build_game());
 

@@ -1,6 +1,5 @@
-use na::{Vector2, Vector3, Vector4, Rotation2};
-use super::Line;
-use geometry::{ToRenderables, TwoDTransformable};
+use na::{Vector3, Vector4, Rotation2};
+use geometry::*;
 use rendering;
 use std::f64::consts::PI;
 
@@ -9,14 +8,14 @@ pub struct Rectangle {
     pub length: f64,  /// x-axis
     pub height: f64,  /// y-axis
     pub rot: Rotation2<f64>,
-    pub pos: Vector2<f64>,
+    pub pos: Point,
 }
 
 impl Rectangle {
     pub fn new_regular(
             length: f64, 
             height: f64, 
-            pos: Vector2<f64>, 
+            pos: Point, 
         ) -> Rectangle {
         Rectangle {
             length,
@@ -29,7 +28,7 @@ impl Rectangle {
     pub fn new_with_rotation(
             length: f64, 
             height: f64, 
-            pos: Vector2<f64>,
+            pos: Point,
             rotation: Rotation2<f64>,
         ) -> Rectangle {
         Rectangle {
@@ -43,7 +42,7 @@ impl Rectangle {
     pub fn new_with_whole_rotation_angle(
             length: f64, 
             height: f64, 
-            pos: Vector2<f64>,
+            pos: Point,
             angle: f64,
         ) -> Rectangle {
         Rectangle {
@@ -57,7 +56,7 @@ impl Rectangle {
     pub fn new_regular_fixed(
             length: f64, 
             height: f64, 
-            pos: Vector2<f64>, 
+            pos: Point, 
         ) -> Rectangle {
         Rectangle {
             length,
@@ -80,7 +79,7 @@ impl Rectangle {
 }
 
 impl TwoDTransformable for Rectangle {
-    fn shift_by(&mut self, shift: Vector2<f64>) {
+    fn shift_by(&mut self, shift: Point) {
         self.pos += shift;
     }
 

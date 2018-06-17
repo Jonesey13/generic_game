@@ -1,14 +1,15 @@
-use na::{Vector2, Vector3, Vector4, convert};
+use na::{Vector3, Vector4, convert};
 use num::Zero;
 use rendering::primitives::StandardPrimitive;
 use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
+use ::geometry::*;
 use glium;
 
 #[derive(Copy, Clone)]
 pub struct CirclePart {
-    pub radial_dim: Vector2<f64>,
-    pub angular_dim: Vector2<f64>,
+    pub radial_dim: Point,
+    pub angular_dim: Point,
     pub pos: Vector3<f64>,
     pub color: Vector4<f64>,
     pub fixed: bool
@@ -46,8 +47,8 @@ implement_vertex!(CircleVertex, radial_dim, angular_dim, pos, color, fixed_pos);
 impl From<CirclePart> for CircleVertex {
     fn from(circ: CirclePart) -> Self {
         CircleVertex {
-            radial_dim: *convert::<_, Vector2<f32>>(circ.radial_dim).as_ref(),
-            angular_dim: *convert::<_, Vector2<f32>>(circ.angular_dim).as_ref(),
+            radial_dim: circ.radial_dim.into(),
+            angular_dim: circ.angular_dim.into(),
             pos: *convert::<_, Vector3<f32>>(circ.pos).as_ref(),
             color: *convert::<_, Vector4<f32>>(circ.color).as_ref(),
             fixed_pos: circ.fixed as u32

@@ -1,5 +1,6 @@
-use na::{Vector2, Vector3, Vector4};
+use na::{Vector3, Vector4};
 use rendering::{Renderable, StandardPrimitive, Rectangle, AnnularSegment};
+use ::geometry::Point;
 
 #[derive(Clone, Debug)]
 pub struct BoxBorder {
@@ -91,11 +92,11 @@ impl BoxBorder {
         let lower_wall = Rectangle::new_regular(side_width, self.thickness, lower_pos, self.color, self.fixed);
         let upper_wall = Rectangle::new_regular(side_width, self.thickness, upper_pos, self.color, self.fixed); 
 
-        let corner_radial_dim = Vector2::new(border_radius - self.thickness / 2.0, border_radius + self.thickness / 2.0);
-        let upper_left_circ = AnnularSegment::new(corner_radial_dim, Vector2::new(0.75, 1.0), upper_left_pos, self.color, self.fixed);
-        let upper_right_circ = AnnularSegment::new(corner_radial_dim, Vector2::new(0.0, 0.25), upper_right_pos, self.color, self.fixed);
-        let lower_right_circ = AnnularSegment::new(corner_radial_dim, Vector2::new(0.25, 0.5), lower_right_pos, self.color, self.fixed);
-        let lower_left_circ = AnnularSegment::new(corner_radial_dim, Vector2::new(0.5, 0.75), lower_left_pos, self.color, self.fixed);
+        let corner_radial_dim = Point::new(border_radius - self.thickness / 2.0, border_radius + self.thickness / 2.0);
+        let upper_left_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.75, 1.0), upper_left_pos, self.color, self.fixed);
+        let upper_right_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.0, 0.25), upper_right_pos, self.color, self.fixed);
+        let lower_right_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.25, 0.5), lower_right_pos, self.color, self.fixed);
+        let lower_left_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.5, 0.75), lower_left_pos, self.color, self.fixed);
         
         vec![StandardPrimitive::Rect(left_wall), 
         StandardPrimitive::Rect(right_wall), 

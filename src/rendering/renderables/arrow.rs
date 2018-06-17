@@ -1,14 +1,14 @@
 use rendering::{Rectangle, Circle, StandardPrimitive, Renderable, Polygon, Line, LineShape};
-use na::{Vector2, Vector3, Vector4, Rotation2, norm};
-use geometry::{ConPoly, TwoDTransformable};
+use na::{Vector3, Vector4, Rotation2, norm};
+use geometry::{Point, TwoDTransformable};
 use geometry;
 
 #[derive(Clone, Debug)]
 pub struct Arrow {
-    pub start: Vector2<f64>,
-    pub end: Vector2<f64>,
+    pub start: Point,
+    pub end: Point,
     thickness: f64,
-    arrow_dim: Vector2<f64>,
+    arrow_dim: Point,
     color: Vector4<f64>,
     depth: f64,
     fixed: bool,
@@ -23,10 +23,10 @@ pub enum ArrowHeadShape {
 
 impl Arrow {
     pub fn new(
-        start: Vector2<f64>,
-        end: Vector2<f64>,
+        start: Point,
+        end: Point,
         thickness: f64,
-        arrow_dim: Vector2<f64>,
+        arrow_dim: Point,
         color: Vector4<f64>,
         depth: f64,
         fixed: bool
@@ -44,10 +44,10 @@ impl Arrow {
     }
 
     pub fn new_rounded(
-        start: Vector2<f64>,
-        end: Vector2<f64>,
+        start: Point,
+        end: Point,
         thickness: f64,
-        arrow_dim: Vector2<f64>,
+        arrow_dim: Point,
         color: Vector4<f64>,
         depth: f64,
         fixed: bool
@@ -65,11 +65,11 @@ impl Arrow {
     }
 
     pub fn new_by_direction(
-        start: Vector2<f64>,
-        dir: Vector2<f64>,
+        start: Point,
+        dir: Point,
         length: f64,
         thickness: f64,
-        arrow_dim: Vector2<f64>,
+        arrow_dim: Point,
         color: Vector4<f64>,
         depth: f64,
         fixed: bool
@@ -87,8 +87,8 @@ impl Arrow {
     }
 
     pub fn new_for_coll_test(
-        start: Vector2<f64>,
-        dir: Vector2<f64>,
+        start: Point,
+        dir: Point,
         color: Vector4<f64>,
         depth: f64,
         fixed: bool
@@ -98,7 +98,7 @@ impl Arrow {
             dir,
             0.04,
             0.01,
-            Vector2::new(0.02, 0.02),
+            Point::new(0.02, 0.02),
             color,
             depth,
             fixed
@@ -128,15 +128,15 @@ impl Arrow {
 
     fn generate_arrow_head_flat(&self) -> Vec<StandardPrimitive> {
         let arrowhead_points = vec![
-            Vector2::new(0.0, -self.arrow_dim.y), 
-            Vector2::new(self.arrow_dim.x, 0.0),
-            Vector2::new(0.0, self.arrow_dim.y)
+            Point::new(0.0, -self.arrow_dim.y), 
+            Point::new(self.arrow_dim.x, 0.0),
+            Point::new(0.0, self.arrow_dim.y)
         ];
         let arrow_pos = self.get_center_line().get_point(1.0 - self.arrow_dim.x / self.get_length());
 
         let mut arrowhead = Polygon {
             corners: arrowhead_points,
-            center: Vector2::new(0.0, 0.0),
+            center: Point::new(0.0, 0.0),
             rot: Rotation2::new(self.get_line_angle()),
             pos: Vector3::new(arrow_pos.x, arrow_pos.y, self.depth),
             color: self.color,
@@ -148,9 +148,9 @@ impl Arrow {
 
     pub fn generate_arrow_head_rounded(&self) -> Vec<StandardPrimitive> {
         let arrowhead_points = vec![
-            Vector2::new(0.0, -self.arrow_dim.y), 
-            Vector2::new(self.arrow_dim.x, 0.0),
-            Vector2::new(0.0, self.arrow_dim.y)
+            Point::new(0.0, -self.arrow_dim.y), 
+            Point::new(self.arrow_dim.x, 0.0),
+            Point::new(0.0, self.arrow_dim.y)
         ];
         let arrow_pos = self.get_center_line().get_point(1.0 - self.arrow_dim.x / self.get_length());
         let rotation = Rotation2::new(self.get_line_angle());

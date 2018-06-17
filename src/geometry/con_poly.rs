@@ -1,11 +1,11 @@
-use na::{Vector1, Vector2, Vector3, Vector4, Rotation2, norm, dot};
+use na::{Vector1, Vector3, Vector4, Rotation2, norm, dot};
 use num::Zero;
 use geometry::average_vec2;
 use geometry::vect::get_normal_2d;
 use geometry::Poly;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
-use geometry::{TwoDTransformable, ToRenderables, Point, Line, Rectangle};
+use geometry::*;
 use rendering;
 use rendering::{StandardRenderable, Polygon};
 use collision::{CollisionObject, CollisionObjectState, ToCollisionObjects};
@@ -14,24 +14,24 @@ use collision;
 /// A (formally convex) polygon for collision detection
 #[derive(Clone, Debug)]
 pub struct ConPoly {
-    pub corners: Vec<Vector2<f64>>, // defined anticlockwise
+    pub corners: Vec<Point>, // defined anticlockwise
 }
 
 impl Poly for ConPoly {
-    fn get_corners(&self) -> Vec<Vector2<f64>> {
+    fn get_corners(&self) -> Vec<Point> {
         self.corners.clone()
     }
 
-    fn set_corners(&mut self, corners: Vec<Vector2<f64>>) {
+    fn set_corners(&mut self, corners: Vec<Point>) {
         self.corners = corners;
     }
 }
 
 impl ConPoly {
     pub fn new_from_rect(rect: Rectangle) -> ConPoly {
-        let xshift = Vector2::<f64>::new(rect.length, 0.0);
-        let yshift = Vector2::<f64>::new(0.0, rect.height);
-        let bottom_left = Vector2::zero();
+        let xshift = Point::new(rect.length, 0.0);
+        let yshift = Point::new(0.0, rect.height);
+        let bottom_left = Point::zero();
         let bottom_right = bottom_left + xshift;
         let top_right = bottom_left + xshift + yshift;
         let top_left = bottom_left + yshift;
@@ -52,18 +52,18 @@ impl ConPoly {
         }
     }
 
-    pub fn new (corners: Vec<Vector2<f64>>) -> ConPoly {
+    pub fn new (corners: Vec<Point>) -> ConPoly {
         ConPoly {
             corners: corners
         }
     }
 
-    pub fn interior_point_check(&self, point: Vector2<f64>) -> Option<Vector2<f64>> {
+    pub fn interior_point_check(&self, point: Point) -> Option<Point> {
         let mut outside = false;
-        let mut correction = Vector2::zero();
+        let mut correction = Point::zero();
         
         for (&side, &normal) in self.sides().iter().zip(self.normals().iter()) {
-            let overlap = dot(&(point - side.beg), &normal);
+            let overlap = (point - side.beg).dot(&normal);
             if overlap > 0.0 {
                 correction -= overlap * normal;
                 outside = true;
@@ -75,13 +75,13 @@ impl ConPoly {
         }
     }
 
-    pub fn get_average(&self) -> Vector2<f64> {
-        self.corners.iter().fold(Vector2::zero(), |acc, v| {acc + v}) / self.corners.len() as f64
+    pub fn get_average(&self) -> Point {
+        (1.0 / self.corners.len() as f64) * self.corners.iter().fold(Point::zero(), |acc, v| {acc + v})
     }
 }
 
 impl TwoDTransformable for ConPoly {
-    fn shift_by(&mut self, shift: Vector2<f64>) {
+    fn shift_by(&mut self, shift: Point) {
         for corner in &mut self.corners {
             *corner = *corner + shift
         }
@@ -108,8 +108,8 @@ impl ConPoly {
     pub fn render_collision_details(&self, coll_location: collision::ConPolyInfo, color: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<StandardRenderable>> {
         let location_renderable: Box<ToRenderables> = match coll_location {
-            collision::ConPolyInfo::LineInfo(side, pos) => Box::new(Point::new(self.get_side(side).unwrap().get_point(pos))),
-            collision::ConPolyInfo::CornerInfo(num, _) => Box::new(Point::new(self.get_corners()[num])),
+            collision::ConPolyInfo::LineInfo(side, pos) => Box::new(self.get_side(side).unwrap().get_point(pos)),
+            collision::ConPolyInfo::CornerInfo(num, _) => Box::new(self.get_corners()[num]),
             collision::ConPolyInfo::SideInfo(side) => Box::new(self.get_side(side).unwrap()),
         };
 
@@ -146,21 +146,21 @@ impl ToCollisionObjects for ConPoly {
 #[test]
 fn point_inside_poly_test() {
     let corners = vec![
-        Vector2::new(-1.0, -1.0),
-        Vector2::new(1.0, -1.0),
-        Vector2::new(1.0, 1.0),
-        Vector2::new(-1.0, 1.0)
+        Point::new(-1.0, -1.0),
+        Point::new(1.0, -1.0),
+        Point::new(1.0, 1.0),
+        Point::new(-1.0, 1.0)
     ];
     
     let test_poly = ConPoly::new(corners);
 
-    let test_point = Vector2::new(1.2,0.2);
+    let test_point = Point::new(1.2,0.2);
 
     let overlap = test_poly.interior_point_check(test_point);
 
     assert!(overlap.is_some());
 
-    assert!(norm(&(overlap.unwrap() - Vector2::new(-0.2, 0.0))) < 0.00001);
+    assert!((overlap.unwrap() - Point::new(-0.2, 0.0)).norm() < 0.00001);
 }
 
 impl From<Rectangle> for ConPoly {

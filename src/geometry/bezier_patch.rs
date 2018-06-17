@@ -1,13 +1,12 @@
-use na::{Vector2, Matrix2, Vector4, Rotation2};
-use geometry::bezier_2d::BezierQuad;
-use geometry::cartesian_rectangle::CartesianRectangle;
+use na::{Matrix2, Vector4, Rotation2};
+use geometry::*;
 
 #[derive(Clone)]
 pub struct BezierPatch {
     pub control: BezierQuad,
-    pub vert_dir: Vector2<f64>,
+    pub vert_dir: Point,
     pub width: f64,
-    pub pos: Vector2<f64>,
+    pub pos: Point,
 }
 
 impl BezierPatch {

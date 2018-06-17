@@ -1,8 +1,7 @@
-use collision::{Collidable, CollisionObject, CollisionObjectState, CollisionResults, CollisionObjectResults, 
-                CollisionDataType, CollisionObjectDetails, CollisionDetails, ToCollisionObjects};
-use geometry::{TwoDTransformable};
+use collision::*;
+use geometry::{TwoDTransformable, Point};
 use rendering::{StandardRenderable, Renderable, StandardPrimitive};
-use na::{Vector2, Vector4, Rotation2};
+use na::{Vector4, Rotation2};
 
 #[derive(Clone)]
 pub struct CollidableWrapper<C: ToCollisionObjects + Clone, D: Clone + CollisionDataType> {
@@ -135,7 +134,7 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone + CollisionData
 }
 
 impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone + CollisionDataType> TwoDTransformable for CollidableWrapper<C, D> {
-    fn shift_by(&mut self, shift: Vector2<f64>) {
+    fn shift_by(&mut self, shift: Point) {
         self.collidable.shift_by(shift);
     }
 

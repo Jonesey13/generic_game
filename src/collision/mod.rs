@@ -1,12 +1,7 @@
 use std::cell::RefCell;
 use std::iter::{Repeat, repeat};
 use std::cmp::Ordering::{Equal, Less, Greater};
-use geometry;
-use geometry::{circle, con_poly, line, HasAngle, DualSoln, Poly, poly};
-use geometry::circle::Circle;
-use geometry::con_poly::ConPoly;
-use geometry::line::Line;
-use na::{normalize, Vector2, dot, abs};
+use geometry::*;
 use debug::*;
 pub mod collision_object;
 pub mod collidable_wrapper;
@@ -58,5 +53,5 @@ pub enum CollisionObjectState {
     Circ(Circle, Circle),
     ConPoly(ConPoly, ConPoly),
     Line(Line, Line),
-    Point(Vector2<f64>, Vector2<f64>)
+    Point(Point, Point)
 }

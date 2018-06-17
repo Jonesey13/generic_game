@@ -1,5 +1,5 @@
 use collision::{Collider, Collidable};
-use na::{Vector2, Vector4};
+use na::{Vector4};
 use games::Game;
 use rendering::renderables::{StandardRenderable};
 use rendering::{StandardPrimitive, WindowSpec};
@@ -25,7 +25,7 @@ pub struct CollisionTestGame {
     collider: Collider,
     external_input: CollisionTestExternalGameInput,
     game_input: GameInput,
-    mouse_mov: Vector2<f64>,
+    mouse_mov: Point,
     mouse_speed: f64,
     player_index: usize,
 }
@@ -64,7 +64,7 @@ impl Game for CollisionTestGame {
         for obj in self.get_collision_wrappers_mut() {
             obj.set_prev();
             if obj.is_player_controlled() {
-                obj.shift_by(t_step * 0.4 * Vector2::new(mov_horizontal as f64, mov_vertical as f64));
+                obj.shift_by(t_step * 0.4 * Point::new(mov_horizontal as f64, mov_vertical as f64));
                 obj.rotate(t_step * rot as f64);
             }
         }
@@ -97,7 +97,7 @@ impl CollisionTestGame {
     fn set_mouse(&mut self) {
         if let Some(mouse) = self.external_input.mouse.devices.iter().nth(0) {
             let ext_mouse_mov = mouse.movement;
-            self.mouse_mov = Vector2::new(ext_mouse_mov.0 as f64, -ext_mouse_mov.1 as f64) * self.mouse_speed;
+            self.mouse_mov = self.mouse_speed * Point::new(ext_mouse_mov.0 as f64, -ext_mouse_mov.1 as f64);
         }
     }
 

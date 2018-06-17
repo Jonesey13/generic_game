@@ -1,4 +1,4 @@
-use na::{Vector2, Vector3, Vector4};
+use na::{Vector3, Vector4};
 use std::fmt;
 use geometry::{Line, Point};
 use super::{vect, DualSoln, Poly, TwoDTransformable, ToRenderables};
@@ -8,18 +8,18 @@ use collision::{ToCollisionObjects, CollisionObject};
 #[derive(Clone)]
 pub struct Circle{
     pub rad: f64,
-    pub center: Vector2<f64>
+    pub center: Point
 }
 
 impl Circle {
-    pub fn new(rad: f64, center: Vector2<f64>) -> Circle {
+    pub fn new(rad: f64, center: Point) -> Circle {
         Circle{
             rad: rad,
             center: center
         }
     }
 
-    pub fn shifted_by(&self, shift: Vector2<f64>) -> Circle {
+    pub fn shifted_by(&self, shift: Point) -> Circle {
         let mut out = self.clone();
         out.shift_by(shift);
         out
@@ -31,7 +31,7 @@ impl Circle {
 }
 
 impl TwoDTransformable for Circle {
-    fn shift_by(&mut self, shift: Vector2<f64>) {
+    fn shift_by(&mut self, shift: Point) {
         self.center = self.center + shift;
     }
 
@@ -52,10 +52,10 @@ impl ToRenderables for Circle {
 }
 
 impl Circle {
-    pub fn render_collision_details(&self, coll_dir: Vector2<f64>, color: Vector4<f64>, depth: f64, fixed: bool) 
+    pub fn render_collision_details(&self, coll_dir: Point, color: Vector4<f64>, depth: f64, fixed: bool) 
     -> Vec<Box<rendering::StandardRenderable>> {
         let coll_location = self.center + self.rad * coll_dir;
-        let location_renderable: Box<ToRenderables> = Box::new(Point::new(coll_location));
+        let location_renderable: Box<ToRenderables> = Box::new(coll_location);
 
         let direction_renderable: Box<rendering::StandardRenderable> = Box::new(
             rendering::Arrow::new_for_coll_test(

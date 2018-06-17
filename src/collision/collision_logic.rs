@@ -1,25 +1,20 @@
 use std::cmp::Ordering::{Equal, Less, Greater};
-use geometry;
-use geometry::{circle, con_poly, line, HasAngle, DualSoln, Poly, poly};
-use geometry::circle::Circle;
-use geometry::con_poly::ConPoly;
-use geometry::line::Line;
-use na::{normalize, Vector2, dot, abs};
+use geometry::*;
 use super::{CollisionObjectResults, CollisionObjectDetails};
 use super::ConPolyInfo;
 
 static EPSILON: f64 = 0.0001;
 
-pub fn circ_point_coll(circ_next: &Circle, circ_prev: &Circle, point_next: &Vector2<f64>, point_prev: &Vector2<f64>)
+pub fn circ_point_coll(circ_next: &Circle, circ_prev: &Circle, point_next: Point, point_prev: Point)
                          -> Option<(CollisionObjectResults, CollisionObjectResults)> {
     // Make the circle stationary
     let circ_shift = circ_next.center - circ_prev.center;
-    let point_next_rel = point_next + circ_shift * -1.0;
+    let point_next_rel = point_next - 1.0 * circ_shift;
     let point_timeline_rel = Line::new(point_prev.clone(), point_next_rel);
-    let coll_soln = geometry::line_circle_intersect(&point_timeline_rel, circ_prev);
+    let coll_soln = line_circle_intersect(&point_timeline_rel, circ_prev);
     if let Some(time) = coll_soln.smallest_within_zero_one() {
         if coll_soln.both_positive() {
-            let collision_dir = normalize(&(point_timeline_rel.get_point(time) - circ_prev.center));
+            let collision_dir = (point_timeline_rel.get_point(time) - circ_prev.center).normalized();
             return Some((CollisionObjectResults::collided(CollisionObjectDetails::Circ(collision_dir), time),
                     CollisionObjectResults::collided(CollisionObjectDetails::Point(-collision_dir), time)));
         }
@@ -31,17 +26,17 @@ pub fn circ_circ_coll(circ1_next: &Circle, circ1_prev: &Circle, circ2_next: &Cir
                          -> Option<(CollisionObjectResults, CollisionObjectResults)> {
     // Make circ1 stationary
     let shift1 = circ1_next.center - circ1_prev.center;
-    let circ2_next_rel = circ2_next.shifted_by(shift1 * -1.0);
+    let circ2_next_rel = circ2_next.shifted_by(-shift1);
     let shift2_rel = circ2_next_rel.center - circ2_prev.center;
     let rad_tot = circ1_prev.rad + circ2_prev.rad;
     let circ2_line = Line::new(circ2_prev.center, circ2_next_rel.center);
-    let coll_soln = geometry::line_circle_intersect(&circ2_line, &Circle::new(rad_tot, circ1_prev.center));
+    let coll_soln = line_circle_intersect(&circ2_line, &Circle::new(rad_tot, circ1_prev.center));
     if let Some(time) = coll_soln.smallest_within_zero_one() {
         if coll_soln.both_positive() {
-            let circ2_collision_center = circ2_prev.center + shift2_rel * time;
-            let collision_dir = normalize(&(circ2_collision_center - circ1_prev.center));
+            let circ2_collision_center = circ2_prev.center + time * shift2_rel;
+            let collision_dir = (circ2_collision_center - circ1_prev.center).normalized();
             return Some((CollisionObjectResults::collided(CollisionObjectDetails::Circ(collision_dir), time),
-                    CollisionObjectResults::collided(CollisionObjectDetails::Circ(collision_dir * -1.0), time)));
+                    CollisionObjectResults::collided(CollisionObjectDetails::Circ(-collision_dir), time)));
         }
     }
     None
@@ -72,15 +67,15 @@ fn circ_poly_coll_corners<P: Poly + Sized + Clone>(circ_next: &Circle, circ_prev
                           -> Option<(CollisionObjectDetails, CollisionObjectDetails, f64)> {
     // Change frame of reference so that the Circle appears to be fixed
     let circ_shift = circ_next.center - circ_prev.center;
-    let poly_next_rel = poly::get_shifted(poly_next, circ_shift * - 1.0);
+    let poly_next_rel = poly::get_shifted(poly_next, -circ_shift);
 
-    let mut collisions: Vec<(usize, f64, Vector2<f64>)> = Vec::new(); //corner index, time, circle collision dir
+    let mut collisions: Vec<(usize, f64, Point)> = Vec::new(); //corner index, time, circle collision dir
 
     for (index, corner_line) in (0..poly_prev.total_sides()).zip(poly_prev.get_corner_lines(&poly_next_rel)) {
-        let corner_coll_soln = geometry::line_circle_intersect(&corner_line, &circ_prev);
+        let corner_coll_soln = line_circle_intersect(&corner_line, &circ_prev);
 
         if let (true, Some(time)) = (corner_coll_soln.both_positive(), corner_coll_soln.smallest_within_zero_one()) {
-            let coll_dir = normalize(&(corner_line.get_point(time) - circ_prev.center));
+            let coll_dir = (corner_line.get_point(time) - circ_prev.center).normalized();
             collisions.push((index, time, coll_dir));
         }
     }
@@ -91,7 +86,7 @@ fn circ_poly_coll_corners<P: Poly + Sized + Clone>(circ_next: &Circle, circ_prev
         None => None,
         Some((index, time, coll_dir)) => {
             let circ_details = CollisionObjectDetails::Circ(coll_dir);
-            let poly_details = CollisionObjectDetails::ConPoly(ConPolyInfo::CornerInfo(index, coll_dir * -1.0));
+            let poly_details = CollisionObjectDetails::ConPoly(ConPolyInfo::CornerInfo(index, -coll_dir));
             Some((circ_details, poly_details, time))
         }
     }
@@ -101,20 +96,20 @@ fn circ_poly_coll_sides<P: Poly> (circ_next: &Circle, circ_prev: &Circle, poly_n
                         -> Option<(CollisionObjectDetails, CollisionObjectDetails, f64)> {
     // Side checks next - requires polygon to be stationary
     let poly_shift = poly_next.get_corners()[0] - poly_prev.get_corners()[0];
-    let circ_next_rel = circ_next.shifted_by(poly_shift * - 1.0);
+    let circ_next_rel = circ_next.shifted_by(-poly_shift);
 
     let mut collisions: Vec<(usize, f64, f64)> = Vec::new();
 
     for ((index, side), normal) in (0..poly_prev.total_sides()).zip(poly_prev.sides()).zip(poly_prev.normals()) {
-        let circ_line = circ_prev.get_movement_line(&circ_next_rel).shifted_by(- normal * circ_prev.rad);
-        let intersect = geometry::line_line_intersect_2d(&circ_line, &side);
+        let circ_line = circ_prev.get_movement_line(&circ_next_rel).shifted_by(- circ_prev.rad * normal);
+        let intersect = line_line_intersect_2d(&circ_line, &side);
 
         if let (DualSoln::Two(time, side_pos),
                 true,
                 true)
             =  (intersect,
                 intersect.both_within_zero_one(),
-                dot(&circ_line.get_direction(), &normal) < 0.0) {
+                circ_line.get_direction().dot(&normal) < 0.0) {
             collisions.push((index, time, side_pos));
         }
     }
@@ -124,7 +119,7 @@ fn circ_poly_coll_sides<P: Poly> (circ_next: &Circle, circ_prev: &Circle, poly_n
     match collisions.iter().cloned().nth(0) {
         None => None,
         Some((index, time, side_pos)) => {
-            let circ_details = CollisionObjectDetails::Circ(poly_prev.get_normal(index) * -1.0);
+            let circ_details = CollisionObjectDetails::Circ(-poly_prev.get_normal(index));
             let poly_details = CollisionObjectDetails::ConPoly(ConPolyInfo::LineInfo(index, side_pos));
             Some((circ_details, poly_details, time))
         }
@@ -181,13 +176,13 @@ fn poly_poly_coll_corners<P1: Poly + Clone, P2: Poly + Clone>(poly1_next: &P1, p
                           -> Option<(CollisionObjectDetails, CollisionObjectDetails, f64)> {
     // We require poly2 to be stationary
     let poly2_shift = poly2_prev.get_shift(poly2_next);
-    let poly1_next_rel = poly::get_shifted(poly1_next, poly2_shift * -1.0);
+    let poly1_next_rel = poly::get_shifted(poly1_next, -poly2_shift);
     let poly1_lines = poly1_prev.get_corner_lines(&poly1_next_rel);
 
     let earliest_poly1_corner_coll = points_side_coll(&poly1_lines, poly2_prev);
 
     if let Some((corner_index, side_index, time, side_pos)) = earliest_poly1_corner_coll {
-        let poly1_details = CollisionObjectDetails::ConPoly(ConPolyInfo::CornerInfo(corner_index, poly2_prev.get_normal(side_index) * -1.0));
+        let poly1_details = CollisionObjectDetails::ConPoly(ConPolyInfo::CornerInfo(corner_index, -poly2_prev.get_normal(side_index)));
         let poly2_details = CollisionObjectDetails::ConPoly(ConPolyInfo::LineInfo(side_index, side_pos));
         return Some((poly1_details, poly2_details, time));
     }
@@ -215,11 +210,11 @@ fn poly_poly_coll_sides(poly1: &Poly, poly2: &Poly, corner_num: usize, side_num:
     None
 }
 
-pub fn poly_point_coll(poly_next: &Poly, poly_prev: &Poly, point_next: &Vector2<f64>, point_prev: &Vector2<f64>)
+pub fn poly_point_coll(poly_next: &Poly, poly_prev: &Poly, point_next: Point, point_prev: Point)
                          -> Option<(CollisionObjectResults, CollisionObjectResults)> {
     let poly_shift = poly_prev.get_shift(poly_next);
 
-    let shifted_point_line = Line::new(*point_prev, point_next  - poly_shift);
+    let shifted_point_line = Line::new(point_prev, point_next - poly_shift);
 
     if let Some((corner_index, time, side_pos)) = point_side_coll(&shifted_point_line, poly_prev) {
         let poly_details = CollisionObjectDetails::ConPoly(ConPolyInfo::LineInfo(corner_index, side_pos));
@@ -260,14 +255,14 @@ fn point_side_coll(line: &Line, poly: &Poly) -> Option<(usize, f64, f64)> {
     let mut collisions: Vec<(usize, f64, f64)> = Vec::new();
 
     for ((index, side), normal) in (0..poly.total_sides()).zip(poly.sides()).zip(poly.normals()) {
-        let intersect = geometry::line_line_intersect_2d(&line, &side);
+        let intersect = line_line_intersect_2d(&line, &side);
 
         if let (DualSoln::Two(time, side_pos),
                 true,
                 true)
             =  (intersect,
                 intersect.both_within_zero_one(),
-                dot(&line.get_direction(), &normal) < 0.0) {
+                line.get_direction().dot(&normal) < 0.0) {
             collisions.push((index, time, side_pos));
         }
     }
@@ -281,15 +276,15 @@ fn point_side_coll(line: &Line, poly: &Poly) -> Option<(usize, f64, f64)> {
 fn line_line_parallel(line1: &Line, line2: &Line) -> bool {
     let line1_normal = line1.get_normal();
     let line2_dir = line2.get_direction();
-    abs(&dot(&line1_normal, &line2_dir)) < EPSILON
+    line1_normal.dot(&line2_dir).abs() < EPSILON
 }
 
 fn line_line_overlap(line1: &Line, line2: &Line) -> bool {
     let line1_dir = line1.get_diff();
     let line2_normal = line2.get_unnormalized_normal();
-    if abs(&dot(&line1_dir, &line2_normal)) < EPSILON {
-        return dot(&(line2.end - line1.beg), &line1_dir) > 0.0
-            && dot(&(line2.beg - line1.end), &line1_dir) < 0.0;
+    if line1_dir.dot(&line2_normal).abs() < EPSILON {
+        return (line2.end - line1.beg).dot(&line1_dir) > 0.0
+            && (line2.beg - line1.end).dot(&line1_dir) < 0.0;
     }
     false
 }
