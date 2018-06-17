@@ -3,7 +3,7 @@ use std::fmt;
 use super::{TwoDTransformable, ToRenderables};
 use rendering;
 use collision::{ToCollisionObjects, CollisionObject};
-use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, Neg};
+use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, Neg, Div};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Point {
@@ -46,6 +46,10 @@ impl Point {
     pub fn y() -> Point {
         Self::new(0.0, 1.0)
     }
+
+    pub fn interpolate(&self, other: &Point, point: f64) -> Self {
+        (1.0 - point) * self + point * other
+    }
 }
 
 impl Mul<Point> for Rotation2<f64> {
@@ -66,6 +70,17 @@ impl Mul<Point> for f64 {
         Point {
             x: self * point.x,
             y: self * point.y
+        }
+    }
+}
+
+impl Div<f64> for Point {
+    type Output = Point;
+
+    fn div(self, scale: f64) -> Point {
+        Point {
+            x: self.x / scale,
+            y: self.y / scale
         }
     }
 }

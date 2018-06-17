@@ -5,15 +5,9 @@ use std::f64::consts;
 use std::iter::{Repeat, repeat};
 
 /// Refers to an implementation of a polygon
-pub trait Poly {
+pub trait Poly : TwoDTransformable {
     fn get_corners(&self) -> Vec<Point>;
     fn set_corners(&mut self, corners: Vec<Point>); 
-
-    fn shift_by(&mut self, shift: Point) {
-        let corners = self.get_corners();
-        let shifted_corners = corners.into_iter().map(|c| {c + shift}).collect();
-        self.set_corners(shifted_corners);
-    }
 
     // Normals face outwards
     fn normals(&self) -> Vec<Point> {
