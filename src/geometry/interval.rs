@@ -1,7 +1,7 @@
 use std::ops::Mul;
 use super::{Point, Line};
-use na::{Rotation2};
 use std::ops::Rem;
+use ::geometry::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Interval {
@@ -183,7 +183,7 @@ pub enum IntervalCollisionObject2D {
 }
 
 impl IntervalCollisionObject {
-    pub fn to_twod_collision_object(&self, pos: Point, rot: Rotation2<f64>) -> IntervalCollisionObject2D{
+    pub fn to_twod_collision_object(&self, pos: Point, rot: Rotation) -> IntervalCollisionObject2D{
         match *self {
             IntervalCollisionObject::Point(val) 
             => IntervalCollisionObject2D::Point(rot * Point::new(val, 0.0) + pos),
@@ -199,11 +199,11 @@ impl IntervalCollisionObject {
 pub struct IntervalWith2DPosition {
     interval: Interval,
     pos: Point,
-    rot: Rotation2<f64>
+    rot: Rotation
 }
 
 impl IntervalWith2DPosition {
-    pub fn new(interval: Interval, pos: Point, rot: Rotation2<f64>) -> Self {
+    pub fn new(interval: Interval, pos: Point, rot: Rotation) -> Self {
         Self {
             interval,
             pos,

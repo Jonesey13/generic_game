@@ -1,4 +1,3 @@
-use na::{Rotation2};
 use std::f64::consts::PI;
 use geometry::*;
 
@@ -17,7 +16,7 @@ impl ViewDetails2D {
     }
 
     pub fn set_rotation_angle(&mut self, angle: f64) {
-        let rot_mat = Rotation2::new(angle);
+        let rot_mat = Rotation::new(angle);
         self.up_vector = rot_mat * Point::y();
     }
 }

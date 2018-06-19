@@ -1,6 +1,6 @@
 use rendering::{Rectangle, Circle, StandardPrimitive, Renderable, Polygon, Line, LineShape};
-use na::{Vector3, Vector4, Rotation2, norm};
-use geometry::{Point, TwoDTransformable};
+use na::{Vector3, Vector4};
+use geometry::*;
 use geometry;
 
 #[derive(Clone, Debug)]
@@ -137,7 +137,7 @@ impl Arrow {
         let mut arrowhead = Polygon {
             corners: arrowhead_points,
             center: Point::new(0.0, 0.0),
-            rot: Rotation2::new(self.get_line_angle()),
+            rot: Rotation::new(self.get_line_angle()),
             pos: Vector3::new(arrow_pos.x, arrow_pos.y, self.depth),
             color: self.color,
             fixed: self.fixed
@@ -153,7 +153,7 @@ impl Arrow {
             Point::new(0.0, self.arrow_dim.y)
         ];
         let arrow_pos = self.get_center_line().get_point(1.0 - self.arrow_dim.x / self.get_length());
-        let rotation = Rotation2::new(self.get_line_angle());
+        let rotation = Rotation::new(self.get_line_angle());
 
         let mut left_arrowhead_line = geometry::Line::new(
             rotation * arrowhead_points[0], 

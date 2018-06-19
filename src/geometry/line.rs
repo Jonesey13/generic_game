@@ -1,4 +1,4 @@
-use na::{Vector4, Rotation2};
+use na::{Vector4};
 use ::geometry::*;
 use rendering;
 use collision::{ToCollisionObjects, CollisionObject};
@@ -90,7 +90,7 @@ impl TwoDTransformable for Line {
     }
 
     fn rotate(&mut self, rot_angle: f64) {
-        let rot_mat = Rotation2::new(rot_angle);
+        let rot_mat = Rotation::new(rot_angle);
         let center = self.get_point(0.5);
         self.beg = rot_mat * (self.beg - center) + center;
         self.end = rot_mat * (self.end - center) + center;

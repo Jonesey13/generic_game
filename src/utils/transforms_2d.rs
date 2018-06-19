@@ -1,5 +1,5 @@
 /// For use in shaders (projective space transforms)
-use na::{Matrix4, Matrix3, Vector3, Rotation2};
+use na::{Matrix4, Matrix3, Vector3, Rotation};
 use num::One;
 use std::f64::consts::PI;
 use ::geometry::*;
@@ -47,7 +47,7 @@ pub fn build_worldview_mat(
     let scale_mat = scaling_mat(scaling);
 
     let rotation_angle = (up_vector.y).atan2(up_vector.x) - PI / 2.0;
-    let rot_mat = rotation_mat(rotation_angle * - 1.0);
+    let rot_mat = rotation_mat(rotation_angle);
 
     let three_mat = scale_mat * rot_mat * trans_mat;
 

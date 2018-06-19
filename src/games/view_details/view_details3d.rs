@@ -1,4 +1,4 @@
-use na::{Vector3, Rotation2};
+use na::{Vector3, Rotation};
 
 #[derive(Copy, Clone, Debug)]
 pub struct ViewDetails3D {

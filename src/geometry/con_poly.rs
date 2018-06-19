@@ -1,4 +1,4 @@
-use na::{Vector1, Vector3, Vector4, Rotation2, norm, dot};
+use na::{Vector1, Vector3, Vector4, norm, dot};
 use num::Zero;
 use geometry::average_vec2;
 use geometry::vect::get_normal_2d;
@@ -88,7 +88,7 @@ impl TwoDTransformable for ConPoly {
     }
 
     fn rotate(&mut self, rot_angle: f64) {
-        let rot_mat = Rotation2::new(rot_angle);
+        let rot_mat = Rotation::new(rot_angle);
         let center = self.get_average();
         for corner in &mut self.corners {
             *corner = rot_mat * (*corner - center) + center;

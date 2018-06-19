@@ -1,4 +1,4 @@
-use na::{Vector1, Vector3, Vector4, Rotation2, Matrix2, convert};
+use na::{Vector1, Vector3, Vector4, convert};
 use num::Zero;
 use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
@@ -9,7 +9,7 @@ use ::geometry::*;
 pub struct Polygon {
     pub corners: Vec<Point>, /// defined anti-clockwise
     pub center: Point,
-    pub rot: Rotation2<f64>,  /// anti-clockwise angle w.r.t. positive z-axis
+    pub rot: Rotation,  /// anti-clockwise angle w.r.t. positive z-axis
     pub pos: Vector3<f64>,
     pub color: Vector4<f64>,
     pub fixed: bool
@@ -26,7 +26,7 @@ impl Polygon {
         Polygon {
             corners,
             center,
-            rot: Rotation2::new(0.0),
+            rot: Rotation::new(0.0),
             pos,
             color,
             fixed,
@@ -41,7 +41,7 @@ impl Polygon {
                 corner1: corner1.into(),
                 corner2: corner2.into(),
                 center: self.center.into(),
-                rot: *convert::<_, Matrix2<f32>>(*self.rot.matrix()).as_ref(),
+                rot: self.rot.get_matrix_f32(),
                 pos: *convert::<_, Vector3<f32>>(self.pos).as_ref(),
                 color: *convert::<_, Vector4<f32>>(self.color).as_ref(),
                 fixed_pos: self.fixed as u32

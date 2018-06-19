@@ -1,6 +1,5 @@
 use super::{Interval, IntervalEnd, IntervalCollisionObject};
 use collision::Collidable;
-use na::{Rotation2};
 use ::geometry::*;
 
 #[derive(Debug, Clone)]
@@ -80,11 +79,11 @@ impl IntervalCollection {
 pub struct IntervalCollectionWith2DPosition {
     collection: IntervalCollection,
     pos: Point,
-    rot: Rotation2<f64>
+    rot: Rotation
 }
 
 impl IntervalCollectionWith2DPosition {
-    pub fn new(collection: IntervalCollection, pos: Point, rot: Rotation2<f64>) -> Self {
+    pub fn new(collection: IntervalCollection, pos: Point, rot: Rotation) -> Self {
         Self {
             collection,
             pos,

@@ -13,10 +13,17 @@ impl Rotation {
         }
     }
 
-    fn generate_mat(&self) -> [[f64; 2]; 2] {
+    pub fn get_matrix(&self) -> [[f64; 2]; 2] {
         return [
-            [self.angle.cos(), -self.angle.sin()],
-            [self.angle.sin(), self.angle.cos()]
+            [self.angle.cos(), self.angle.sin()],
+            [-self.angle.sin(), self.angle.cos()]
+        ]
+    }
+
+    pub fn get_matrix_f32(&self) -> [[f32; 2]; 2] {
+        return [
+            [self.angle.cos() as f32, self.angle.sin() as f32],
+            [-self.angle.sin() as f32, self.angle.cos() as f32]
         ]
     }
 }

@@ -1,6 +1,6 @@
 use rendering::{Rectangle, Circle, StandardPrimitive, Renderable};
-use na::{Vector3, Vector4, Rotation2, norm};
-use ::geometry::Point;
+use na::{Vector3, Vector4};
+use ::geometry::*;
 
 #[derive(Clone, Debug)]
 pub struct Line {
@@ -89,7 +89,7 @@ impl Renderable<StandardPrimitive> for Line {
             length: shifted_end.norm(),
             height: self.thickness,
             pos: Vector3::new(midpoint.x, midpoint.y, self.depth),
-            rot: Rotation2::new(line_angle),
+            rot: Rotation::new(line_angle),
             color: self.color,
             fixed: self.fixed
         };

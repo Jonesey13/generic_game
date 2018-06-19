@@ -1,7 +1,7 @@
 use collision::*;
 use geometry::{TwoDTransformable, Point};
 use rendering::{StandardRenderable, Renderable, StandardPrimitive};
-use na::{Vector4, Rotation2};
+use na::{Vector4, Rotation};
 
 #[derive(Clone)]
 pub struct CollidableWrapper<C: ToCollisionObjects + Clone, D: Clone + CollisionDataType> {

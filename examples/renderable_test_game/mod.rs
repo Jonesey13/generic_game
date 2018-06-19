@@ -1,14 +1,14 @@
 use gg::games::Game;
 use gg::games::GameInput;
 use gg::games::view_details::{ViewDetails2D, ViewDetails};
-use na::{Vector3, Vector4, Rotation2};
+use na::{Vector3, Vector4};
 use num::{Zero};
 use gg::rendering::renderables::BoxBorder;
 use gg::input::keyboard::KeyboardInput;
 use gg::rendering::{PlainText, TextAlign, Circle, Annulus, StandardRenderable, StandardPrimitive, Polygon, Arrow, TextureRect};
 use gg::rendering::Line;
 use gg::rendering::WindowSpec;
-use gg::geometry::Point;
+use gg::geometry::*;
 
 #[allow(dead_code)]
 #[derive(Default, Clone)]
@@ -46,7 +46,7 @@ impl Game for RenderableTestGame {
         // let rect = Rectangle {
         //     length: 1.0,
         //     height: 1.0,
-        //     rot: Rotation2::new(0.0),
+        //     rot: Rotation::new(0.0),
         //     pos: Vector3::new(0.0, 0.0, 0.1),
         //     color: Vector4::new(0.0, 1.0, 0.0, 1.0)
         // };
@@ -68,7 +68,7 @@ impl Game for RenderableTestGame {
             content: "llllllll there! |".to_string(),
             position: Vector3::new(0.0, 0.0, 0.0),
             scale: Point::new(0.2, 0.2),
-            transform: *Rotation2::new(0.0).matrix(),
+            transform: Rotation::new(0.0).get_matrix(),
             color: Vector4::new(1.0, 1.0, 1.0, 1.0),
             fixed: false,
             align: TextAlign::Centered
@@ -109,7 +109,7 @@ impl Game for RenderableTestGame {
             Vector3::new(0.5, 0.5, 0.0), 
             Vector3::new(0.0, 0.0, 0.0),
             Point::new(1.0, 1.0),
-            true
+            false
         );
 
         let tex_rect2 = TextureRect::new_regular(
@@ -118,7 +118,7 @@ impl Game for RenderableTestGame {
             Vector3::new(-0.5, -0.5, 0.0), 
             Vector3::new(0.0, 0.0, 1.0),
             Point::new(0.5, 0.5),
-            true
+            false
         );
 
         let box_border_fixed = BoxBorder::new_rounded(0.01, 0.1, Vector3::new(0.0, 0.0, -0.2), 0.5, 0.5, Vector4::new(1.0, 1.0, 0.0, 1.0), true);

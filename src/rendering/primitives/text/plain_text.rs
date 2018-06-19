@@ -7,7 +7,7 @@ use glium;
 use glium::Surface;
 use std::borrow::Cow;
 use games::view_details;
-use na::{Vector3, Vector4, Matrix2};
+use na::{Vector3, Vector4};
 use na;
 use super::RenderText;
 use rendering::{shaders, Renderable};
@@ -18,7 +18,7 @@ pub struct PlainText {
     pub content: String,
     pub position: Vector3<f64>,
     pub scale: Point, // Applied First
-    pub transform: Matrix2<f64>, //Applied Second
+    pub transform: [[f64; 2]; 2], //Applied Second
     pub color: Vector4<f64>,
     pub fixed: bool,
     pub align: TextAlign
@@ -71,7 +71,8 @@ impl RenderText for PlainText {
                 tex_coords_min: [uv_rect.min.x, uv_rect.min.y],
                 tex_coords_max: [uv_rect.max.x, uv_rect.max.y],
                 scale: [self.scale.x as f32, self.scale.y as f32],
-                transform: *na::convert::<_, Matrix2<f32>>(self.transform).as_ref(),
+                transform: [[self.transform[0][0] as f32, self.transform[0][1] as f32],
+                            [self.transform[1][0] as f32, self.transform[1][1] as f32]],
                 color: color,
                 fixed_pos: self.fixed as u32
                 }
@@ -98,7 +99,7 @@ impl PlainText {
             content,
             scale,
             position,
-            transform: Matrix2::identity(),
+            transform: [[1.0, 0.0], [0.0, 1.0]],
             color,
             fixed: true,
             align

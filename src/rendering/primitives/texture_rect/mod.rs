@@ -1,15 +1,15 @@
-use na::{Vector1, Vector3, Vector4, Rotation2, Matrix2, convert};
+use na::{Vector1, Vector3, Vector4, convert};
 use num::Zero;
 use rendering::primitives::StandardPrimitive;
 use rendering::render_by_shaders::GliumStandardPrimitive;
 use rendering::shaders::Shaders;
-use ::geometry::Point;
+use ::geometry::*;
 
 #[derive(Copy, Clone)]
 pub struct TextureRect {
     pub length: f64,  /// x-axis
     pub height: f64,  /// y-axis
-    pub rot: Rotation2<f64>,
+    pub rot: Rotation,
     pub pos: Vector3<f64>,
     pub texture_corner: Vector3<f64>,
     pub texture_dim: Point,
@@ -28,7 +28,7 @@ impl TextureRect {
         TextureRect {
             length,
             height,
-            rot: Rotation2::new(0.0),
+            rot: Rotation::new(0.0),
             pos,
             texture_corner,
             texture_dim,
@@ -40,7 +40,7 @@ impl TextureRect {
             length: f64, 
             height: f64, 
             pos: Vector3<f64>,
-            rotation: Rotation2<f64>,
+            rotation: Rotation,
             texture_corner: Vector3<f64>,
             texture_dim: Point,
             fixed: bool
@@ -88,7 +88,7 @@ impl From<TextureRect> for TextureRectVertex {
         TextureRectVertex {
             length: rect.length as f32,
             height: rect.height as f32,
-            rot: *convert::<_, Matrix2<f32>>(*rect.rot.matrix()).as_ref(),
+            rot: rect.rot.get_matrix_f32(),
             pos: *convert::<_, Vector3<f32>>(rect.pos).as_ref(),
             texture_corner: *convert::<_, Vector3<f32>>(rect.texture_corner).as_ref(),
             texture_dim: rect.texture_dim.into(),

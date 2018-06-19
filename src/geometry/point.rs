@@ -1,9 +1,10 @@
-use na::{Vector2, Vector3, Vector4, Rotation2};
+use na::{Vector2, Vector3, Vector4};
 use std::fmt;
 use super::{TwoDTransformable, ToRenderables};
 use rendering;
 use collision::{ToCollisionObjects, CollisionObject};
 use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, Neg, Div};
+use ::geometry::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Point {
@@ -49,17 +50,6 @@ impl Point {
 
     pub fn interpolate(&self, other: &Point, point: f64) -> Self {
         (1.0 - point) * self + point * other
-    }
-}
-
-impl Mul<Point> for Rotation2<f64> {
-    type Output = Point;
-
-    fn mul(self, point: Point) -> Point {
-        let vector = Vector2::new(point.x, point.y);
-
-        let rotated_vector = self * vector;
-        Point::new(rotated_vector.x, rotated_vector.y)
     }
 }
 

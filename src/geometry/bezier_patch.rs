@@ -1,4 +1,4 @@
-use na::{Matrix2, Vector4, Rotation2};
+use na::{Vector4};
 use geometry::*;
 
 #[derive(Clone)]

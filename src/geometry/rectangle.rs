@@ -1,4 +1,4 @@
-use na::{Vector3, Vector4, Rotation2};
+use na::{Vector3, Vector4};
 use geometry::*;
 use rendering;
 use std::f64::consts::PI;
@@ -7,7 +7,7 @@ use std::f64::consts::PI;
 pub struct Rectangle {
     pub length: f64,  /// x-axis
     pub height: f64,  /// y-axis
-    pub rot: Rotation2<f64>,
+    pub rot: Rotation,
     pub pos: Point,
 }
 
@@ -20,7 +20,7 @@ impl Rectangle {
         Rectangle {
             length,
             height,
-            rot: Rotation2::new(0.0),
+            rot: Rotation::new(0.0),
             pos,
         }
     }
@@ -29,7 +29,7 @@ impl Rectangle {
             length: f64, 
             height: f64, 
             pos: Point,
-            rotation: Rotation2<f64>,
+            rotation: Rotation,
         ) -> Rectangle {
         Rectangle {
             length,
@@ -48,7 +48,7 @@ impl Rectangle {
         Rectangle {
             length,
             height,
-            rot: Rotation2::new(2.0 * PI * angle),
+            rot: Rotation::new(2.0 * PI * angle),
             pos,
         }
     }
@@ -61,7 +61,7 @@ impl Rectangle {
         Rectangle {
             length,
             height,
-            rot: Rotation2::new(0.0),
+            rot: Rotation::new(0.0),
             pos,
         }
     }
@@ -72,7 +72,7 @@ impl Rectangle {
         Rectangle {
             length: line_length,
             height: thickness,
-            rot: Rotation2::new(line.get_angle()),
+            rot: Rotation::new(line.get_angle()),
             pos: line.get_midpoint(),            
         }
     }
@@ -84,7 +84,7 @@ impl TwoDTransformable for Rectangle {
     }
 
     fn rotate(&mut self, rot_angle: f64) {
-        let rot_mat = Rotation2::new(rot_angle);
+        let rot_mat = Rotation::new(rot_angle);
         self.rot = rot_mat * self.rot;
     }
 }
