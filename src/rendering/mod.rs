@@ -5,12 +5,19 @@ pub mod glium_renderer;
 pub mod render_by_shaders;
 pub mod glium_buffer;
 pub mod display_settings;
+pub mod color;
+
 use glium::Display;
 
-pub use rendering::primitives::{StandardPrimitive, Rectangle, TextureRect, Polygon, CirclePart, PlainText, TextAlign};
-pub use rendering::renderables::{Renderable, StandardRenderable, Line, LineShape, Arrow, Circle, BoxBorder, Annulus, AnnularSegment};
+pub use rendering::primitives::*;
+pub use self::renderables::*;
 pub use self::display_settings::DisplaySettings;
 pub use self::glium_renderer::{GliumRenderer};
+pub use self::color::Color;
+pub use self::shaders::*;
+pub use self::render_by_shaders::*;
+pub use self::glium_buffer::*;
+pub use self::renderables::text::*;
 
 use games::view_details;
 use glium::glutin::EventsLoop;

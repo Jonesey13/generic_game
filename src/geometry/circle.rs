@@ -1,8 +1,8 @@
-use na::{Vector3, Vector4};
+use na::{Vector3};
 use std::fmt;
 use geometry::{Line, Point};
 use super::{vect, DualSoln, Poly, TwoDTransformable, ToRenderables};
-use rendering;
+use rendering::*;
 use collision::{ToCollisionObjects, CollisionObject};
 
 #[derive(Clone)]
@@ -39,9 +39,9 @@ impl TwoDTransformable for Circle {
 }
 
 impl ToRenderables for Circle {
-    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::StandardRenderable>> {
+    fn to_renderables(&self, color: Color, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>> {
         vec![
-            Box::new(rendering::Circle {
+            Box::new(CircleRenderable {
                 radius: self.rad,
                 pos: Vector3::new(self.center.x, self.center.y, depth),
                 color,
@@ -52,13 +52,13 @@ impl ToRenderables for Circle {
 }
 
 impl Circle {
-    pub fn render_collision_details(&self, coll_dir: Point, color: Vector4<f64>, depth: f64, fixed: bool) 
-    -> Vec<Box<rendering::StandardRenderable>> {
+    pub fn render_collision_details(&self, coll_dir: Point, color: Color, depth: f64, fixed: bool) 
+    -> Vec<Box<StandardRenderable>> {
         let coll_location = self.center + self.rad * coll_dir;
         let location_renderable: Box<ToRenderables> = Box::new(coll_location);
 
-        let direction_renderable: Box<rendering::StandardRenderable> = Box::new(
-            rendering::Arrow::new_for_coll_test(
+        let direction_renderable: Box<StandardRenderable> = Box::new(
+            Arrow::new_for_coll_test(
                     coll_location,
                     coll_dir,
                     color,

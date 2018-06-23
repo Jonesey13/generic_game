@@ -7,10 +7,10 @@ use glium;
 use glium::Surface;
 use std::borrow::Cow;
 use games::view_details;
-use na::{Vector3, Vector4};
+use na::{Vector3};
 use na;
 use super::RenderText;
-use rendering::{shaders, Renderable};
+use rendering::*;
 use ::geometry::Point;
 
 #[derive(Clone)]
@@ -19,7 +19,7 @@ pub struct PlainText {
     pub position: Vector3<f64>,
     pub scale: Point, // Applied First
     pub transform: [[f64; 2]; 2], //Applied Second
-    pub color: Vector4<f64>,
+    pub color: Color,
     pub fixed: bool,
     pub align: TextAlign
 }
@@ -32,10 +32,10 @@ impl RenderText for PlainText {
         glyph_pos_data: Vec<(Rect<f32>, Rect<i32>)>
     ) -> Vec<Self::TextVert>
     {
-        let color = [self.color.x as f32,
-                     self.color.y as f32,
-                     self.color.z as f32,
-                     self.color.w as f32];
+        let color = [self.color.r as f32,
+                     self.color.g as f32,
+                     self.color.b as f32,
+                     self.color.a as f32];
         let glyph_positions: Vec<[f32; 2]> = glyph_pos_data
             .iter()
             .map(|&(_, screen_rect)| {
@@ -93,7 +93,7 @@ impl RenderText for PlainText {
 impl PlainText {
     pub fn new_simple_white(content: String, height: f64, position: Vector3<f64>, align: TextAlign) -> PlainText {
         let scale = Point::new(height, height);
-        let color = Vector4::new(1.0, 1.0, 1.0, 1.0);
+        let color = Color::new(1.0, 1.0, 1.0, 1.0);
 
         PlainText {
             content,

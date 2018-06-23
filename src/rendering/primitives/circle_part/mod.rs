@@ -1,8 +1,6 @@
-use na::{Vector3, Vector4, convert};
+use na::{Vector3, convert};
 use num::Zero;
-use rendering::primitives::StandardPrimitive;
-use rendering::render_by_shaders::GliumStandardPrimitive;
-use rendering::shaders::Shaders;
+use ::rendering::*;
 use ::geometry::*;
 use glium;
 
@@ -11,7 +9,7 @@ pub struct CirclePart {
     pub radial_dim: Point,
     pub angular_dim: Point,
     pub pos: Vector3<f64>,
-    pub color: Vector4<f64>,
+    pub color: Color,
     pub fixed: bool
 }
 
@@ -50,7 +48,7 @@ impl From<CirclePart> for CircleVertex {
             radial_dim: circ.radial_dim.into(),
             angular_dim: circ.angular_dim.into(),
             pos: *convert::<_, Vector3<f32>>(circ.pos).as_ref(),
-            color: *convert::<_, Vector4<f32>>(circ.color).as_ref(),
+            color: circ.color.get_array_f32(),
             fixed_pos: circ.fixed as u32
         }
     }

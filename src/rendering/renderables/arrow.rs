@@ -1,5 +1,5 @@
-use rendering::{Rectangle, Circle, StandardPrimitive, Renderable, Polygon, Line, LineShape};
-use na::{Vector3, Vector4};
+use ::rendering::*;
+use na::{Vector3};
 use geometry::*;
 use geometry;
 
@@ -9,7 +9,7 @@ pub struct Arrow {
     pub end: Point,
     thickness: f64,
     arrow_dim: Point,
-    color: Vector4<f64>,
+    color: Color,
     depth: f64,
     fixed: bool,
     shape: ArrowHeadShape
@@ -27,7 +27,7 @@ impl Arrow {
         end: Point,
         thickness: f64,
         arrow_dim: Point,
-        color: Vector4<f64>,
+        color: Color,
         depth: f64,
         fixed: bool
     ) -> Self {
@@ -48,7 +48,7 @@ impl Arrow {
         end: Point,
         thickness: f64,
         arrow_dim: Point,
-        color: Vector4<f64>,
+        color: Color,
         depth: f64,
         fixed: bool
     ) -> Self {
@@ -70,7 +70,7 @@ impl Arrow {
         length: f64,
         thickness: f64,
         arrow_dim: Point,
-        color: Vector4<f64>,
+        color: Color,
         depth: f64,
         fixed: bool
     ) -> Self {
@@ -89,7 +89,7 @@ impl Arrow {
     pub fn new_for_coll_test(
         start: Point,
         dir: Point,
-        color: Vector4<f64>,
+        color: Color,
         depth: f64,
         fixed: bool
     ) -> Self {
@@ -160,7 +160,7 @@ impl Arrow {
             rotation * arrowhead_points[1]);
         left_arrowhead_line.shift_by(arrow_pos);
 
-        let mut left_line_renderable = Line::new_rounded(
+        let mut left_line_renderable = LineRenderable::new_rounded(
             left_arrowhead_line.beg, 
             left_arrowhead_line.end, 
             self.thickness, 
@@ -168,12 +168,12 @@ impl Arrow {
             self.depth, 
             self.fixed);
 
-        let mut right_arrowhead_line = geometry::Line::new(
+        let mut right_arrowhead_line = Line::new(
             rotation * arrowhead_points[1], 
             rotation * arrowhead_points[2]);
         right_arrowhead_line.shift_by(arrow_pos);
 
-        let mut right_line_renderable = Line::new_rounded(
+        let mut right_line_renderable = LineRenderable::new_rounded(
             right_arrowhead_line.beg, 
             right_arrowhead_line.end, 
             self.thickness, 
@@ -202,7 +202,7 @@ impl Renderable<StandardPrimitive> for Arrow {
             ArrowHeadShape::RoundedLine => LineShape::Rounded
         };
 
-        let mut root_line = Line::new(
+        let mut root_line = LineRenderable::new(
             self.start,
             center_line.get_point(root_line_length / full_length),
             self.thickness,

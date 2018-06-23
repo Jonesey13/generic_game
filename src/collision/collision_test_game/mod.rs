@@ -1,8 +1,6 @@
 use collision::{Collider, Collidable};
-use na::{Vector4};
 use games::Game;
-use rendering::renderables::{StandardRenderable};
-use rendering::{StandardPrimitive, WindowSpec};
+use rendering::*;
 use input::mouse::MouseInput;
 use input::keyboard::KeyboardInput;
 use input::bool_switch::BoolSwitch;
@@ -170,9 +168,9 @@ impl CollisionTestGame {
         for obj in self.get_collision_wrappers_mut() {
             let player_controlled_flag = obj.get_collidable_index() == player_index;
             match (player_controlled_flag, obj.has_collided_in_past()) {
-                (true, _) => obj.set_color(Vector4::new(1.0, 0.2, 0.2, 1.0)),
-                (false, false) => obj.set_color(Vector4::new(1.0, 1.0, 1.0, 1.0)),
-                (false, true) => obj.set_color(Vector4::new(0.2, 0.2, 1.0, 1.0))
+                (true, _) => obj.set_color(Color::new(1.0, 0.2, 0.2, 1.0)),
+                (false, false) => obj.set_color(Color::new(1.0, 1.0, 1.0, 1.0)),
+                (false, true) => obj.set_color(Color::new(0.2, 0.2, 1.0, 1.0))
             }
         }
     }

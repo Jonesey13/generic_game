@@ -1,6 +1,5 @@
-use rendering::StandardRenderable;
-use na::Vector4;
+use ::rendering::*;
 
 pub trait ToRenderables {
-    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>>;
+    fn to_renderables(&self, color: Color, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>>;
 }

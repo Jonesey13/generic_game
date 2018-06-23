@@ -1,7 +1,7 @@
-use na::{Vector2, Vector3, Vector4};
+use na::{Vector3};
 use std::fmt;
 use super::{TwoDTransformable, ToRenderables};
-use rendering;
+use rendering::*;
 use collision::{ToCollisionObjects, CollisionObject};
 use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, Neg, Div};
 use ::geometry::*;
@@ -186,9 +186,9 @@ impl TwoDTransformable for Point {
 }
 
 impl ToRenderables for Point {
-    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::StandardRenderable>> {
+    fn to_renderables(&self, color: Color, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>> {
         vec![
-            Box::new(rendering::Circle {
+            Box::new(CircleRenderable {
                 radius: 0.01,
                 pos: Vector3::new(self.x, self.y, depth),
                 color,
@@ -207,12 +207,12 @@ impl ToCollisionObjects for Point {
 }
 
 impl Point {
-    pub fn render_collision_details(&self, coll_dir: Point, color: Vector4<f64>, depth: f64, fixed: bool) 
-    -> Vec<Box<rendering::StandardRenderable>> {
+    pub fn render_collision_details(&self, coll_dir: Point, color: Color, depth: f64, fixed: bool) 
+    -> Vec<Box<StandardRenderable>> {
         let mut renderables = self.to_renderables(color, depth, fixed);
 
         renderables.push(
-            Box::new(rendering::Arrow::new_for_coll_test(
+            Box::new(Arrow::new_for_coll_test(
                 *self,
                 coll_dir,
                 color,

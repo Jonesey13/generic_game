@@ -1,6 +1,6 @@
-use na::{Vector3, Vector4};
+use na::{Vector3};
 use geometry::*;
-use rendering;
+use rendering::*;
 use std::f64::consts::PI;
 
 #[derive(Copy, Clone, Debug)]
@@ -90,10 +90,10 @@ impl TwoDTransformable for Rectangle {
 }
 
 impl ToRenderables for Rectangle {
-    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<rendering::StandardRenderable>> {
+    fn to_renderables(&self, color: Color, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>> {
         vec![
             Box::new(
-                rendering::Rectangle {
+                RectanglePrimitive {
                     length: self.length,
                     height: self.height,
                     rot: self.rot,

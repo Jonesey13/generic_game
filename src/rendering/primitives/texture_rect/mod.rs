@@ -1,8 +1,6 @@
-use na::{Vector1, Vector3, Vector4, convert};
+use na::{Vector1, Vector3, convert};
 use num::Zero;
-use rendering::primitives::StandardPrimitive;
-use rendering::render_by_shaders::GliumStandardPrimitive;
-use rendering::shaders::Shaders;
+use ::rendering::*;
 use ::geometry::*;
 
 #[derive(Copy, Clone)]

@@ -1,5 +1,5 @@
-use rendering::{Renderable, StandardPrimitive, CirclePart};
-use na::{Vector3, Vector4};
+use ::rendering::*;
+use na::{Vector3};
 use ::geometry::*;
 
 #[derive(Clone, Debug)]
@@ -7,12 +7,12 @@ pub struct AnnularSegment {
     pub radial_dim: Point,
     pub angle_dim: Point,
     pub pos: Vector3<f64>,
-    pub color: Vector4<f64>,
+    pub color: Color,
     pub fixed: bool
 }
 
 impl AnnularSegment {
-    pub fn new(radial_dim: Point, angle_dim: Point, pos: Vector3<f64>, color: Vector4<f64>, fixed: bool) -> Self {
+    pub fn new(radial_dim: Point, angle_dim: Point, pos: Vector3<f64>, color: Color, fixed: bool) -> Self {
         Self {
             radial_dim,
             angle_dim,

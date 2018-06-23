@@ -1,7 +1,6 @@
-use na::{Vector1, Vector3, Vector4, convert};
+use na::{Vector1, Vector3, convert};
 use num::Zero;
-use rendering::render_by_shaders::GliumStandardPrimitive;
-use rendering::shaders::Shaders;
+use ::rendering::*;
 use ::geometry::*;
 
 /// IMPORTANT: Must form a star domain at its center
@@ -11,7 +10,7 @@ pub struct Polygon {
     pub center: Point,
     pub rot: Rotation,  /// anti-clockwise angle w.r.t. positive z-axis
     pub pos: Vector3<f64>,
-    pub color: Vector4<f64>,
+    pub color: Color,
     pub fixed: bool
 }
 
@@ -20,7 +19,7 @@ impl Polygon {
             corners: Vec<Point>,
             center: Point,
             pos: Vector3<f64>, 
-            color: Vector4<f64>,
+            color: Color,
             fixed: bool
         ) -> Polygon {
         Polygon {
@@ -43,7 +42,7 @@ impl Polygon {
                 center: self.center.into(),
                 rot: self.rot.get_matrix_f32(),
                 pos: *convert::<_, Vector3<f32>>(self.pos).as_ref(),
-                color: *convert::<_, Vector4<f32>>(self.color).as_ref(),
+                color: self.color.get_array_f32(),
                 fixed_pos: self.fixed as u32
             });
         }

@@ -1,14 +1,6 @@
 use super::Renderer;
 use super::shaders::make_program_from_shaders;
-use rendering::primitives::rectangle::{Rectangle, RectangleVertex};
-use rendering::primitives::circle_part::{CirclePart, CircleVertex};
-use rendering::primitives::polygon::{Polygon, PolygonVertex};
-use rendering::primitives::text::{RenderText, TextBuffer, PlainText};
-use rendering::primitives::{StandardPrimitive, TextureRect}; 
-use rendering::renderables::StandardRenderable;
-use rendering::DisplaySettings;
-use super::glium_buffer::{GliumBuffer, BasicBuffer};
-use super::render_by_shaders::GliumStandardPrimitive;
+use ::rendering::*;
 use glium;
 use glium::Frame;
 use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
@@ -28,7 +20,7 @@ pub struct GliumRenderer<'a> {
     display: Box<Display>,
     events_loop: Box<EventsLoop>,
     draw_params: DrawParameters<'a>,
-    rect_buffer: BasicBuffer<Rectangle>,
+    rect_buffer: BasicBuffer<RectanglePrimitive>,
     texture_rect_buffer: BasicBuffer<TextureRect>,
     circ_buffer: BasicBuffer<CirclePart>,
     polygon_buffer: BasicBuffer<Polygon>,
@@ -54,7 +46,7 @@ impl<'a> GliumRenderer<'a> {
             display: Box::new(display.clone()),
             events_loop: Box::new(events_loop),
             draw_params: draw_params,
-            rect_buffer: BasicBuffer::<Rectangle>::new(&display),
+            rect_buffer: BasicBuffer::<RectanglePrimitive>::new(&display),
             texture_rect_buffer: BasicBuffer::<TextureRect>::new(&display),
             circ_buffer: BasicBuffer::<CirclePart>::new(&display),
             polygon_buffer: BasicBuffer::<Polygon>::new(&display),
@@ -75,7 +67,7 @@ impl<'a> GliumRenderer<'a> {
 
     fn reset_buffers(&mut self) {
         let display = &self.display;
-        self.rect_buffer = BasicBuffer::<Rectangle>::new(display);
+        self.rect_buffer = BasicBuffer::<RectanglePrimitive>::new(display);
         self.texture_rect_buffer = BasicBuffer::<TextureRect>::new(display);
         self.circ_buffer = BasicBuffer::<CirclePart>::new(display);
         self.polygon_buffer = BasicBuffer::<Polygon>::new(display);

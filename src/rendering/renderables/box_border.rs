@@ -1,5 +1,5 @@
-use na::{Vector3, Vector4};
-use rendering::{Renderable, StandardPrimitive, Rectangle, AnnularSegment};
+use na::{Vector3};
+use ::rendering::*;
 use ::geometry::Point;
 
 #[derive(Clone, Debug)]
@@ -8,7 +8,7 @@ pub struct BoxBorder {
     pos: Vector3<f64>,
     rect_height: f64,
     rect_width: f64,
-    color: Vector4<f64>,
+    color: Color,
     border_type: BorderType,
     fixed: bool
 }
@@ -19,7 +19,7 @@ impl BoxBorder {
     pos: Vector3<f64>,
     rect_height: f64,
     rect_width: f64,
-    color: Vector4<f64>,
+    color: Color,
     fixed: bool) -> Self {
         Self {
             thickness,
@@ -38,7 +38,7 @@ impl BoxBorder {
         pos: Vector3<f64>,
         rect_height: f64,
         rect_width: f64,
-        color: Vector4<f64>,
+        color: Color,
         fixed: bool) -> Self {
         Self {
             thickness,
@@ -59,10 +59,10 @@ impl BoxBorder {
         let full_width = self.rect_width + self.thickness;
         let full_height = self.rect_height + self.thickness;
 
-        let left_wall = Rectangle::new_regular(self.thickness, full_height, left_pos, self.color, self.fixed);
-        let right_wall = Rectangle::new_regular(self.thickness, full_height, right_pos, self.color, self.fixed);
-        let lower_wall = Rectangle::new_regular(full_width, self.thickness, lower_pos, self.color, self.fixed);
-        let upper_wall = Rectangle::new_regular(full_width, self.thickness, upper_pos, self.color, self.fixed);        
+        let left_wall = RectanglePrimitive::new_regular(self.thickness, full_height, left_pos, self.color, self.fixed);
+        let right_wall = RectanglePrimitive::new_regular(self.thickness, full_height, right_pos, self.color, self.fixed);
+        let lower_wall = RectanglePrimitive::new_regular(full_width, self.thickness, lower_pos, self.color, self.fixed);
+        let upper_wall = RectanglePrimitive::new_regular(full_width, self.thickness, upper_pos, self.color, self.fixed);        
         
         vec![StandardPrimitive::Rect(left_wall), 
         StandardPrimitive::Rect(right_wall), 
@@ -87,10 +87,10 @@ impl BoxBorder {
         let side_width = self.rect_width - 2.0 * border_radius;
         let side_height = self.rect_height - 2.0 * border_radius;
 
-        let left_wall = Rectangle::new_regular(self.thickness, side_height, left_pos, self.color, self.fixed);
-        let right_wall = Rectangle::new_regular(self.thickness, side_height, right_pos, self.color, self.fixed);
-        let lower_wall = Rectangle::new_regular(side_width, self.thickness, lower_pos, self.color, self.fixed);
-        let upper_wall = Rectangle::new_regular(side_width, self.thickness, upper_pos, self.color, self.fixed); 
+        let left_wall = RectanglePrimitive::new_regular(self.thickness, side_height, left_pos, self.color, self.fixed);
+        let right_wall = RectanglePrimitive::new_regular(self.thickness, side_height, right_pos, self.color, self.fixed);
+        let lower_wall = RectanglePrimitive::new_regular(side_width, self.thickness, lower_pos, self.color, self.fixed);
+        let upper_wall = RectanglePrimitive::new_regular(side_width, self.thickness, upper_pos, self.color, self.fixed); 
 
         let corner_radial_dim = Point::new(border_radius - self.thickness / 2.0, border_radius + self.thickness / 2.0);
         let upper_left_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.75, 1.0), upper_left_pos, self.color, self.fixed);

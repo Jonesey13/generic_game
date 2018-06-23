@@ -1,29 +1,27 @@
-use na::{Vector1, Vector3, Vector4, convert};
+use na::{Vector1, Vector3, convert};
 use num::Zero;
-use rendering::primitives::StandardPrimitive;
-use rendering::render_by_shaders::GliumStandardPrimitive;
-use rendering::shaders::Shaders;
+use ::rendering::*;
 use ::geometry::*;
 
 #[derive(Copy, Clone, Debug)]
-pub struct Rectangle {
+pub struct RectanglePrimitive {
     pub length: f64,  /// x-axis
     pub height: f64,  /// y-axis
     pub rot: Rotation,
     pub pos: Vector3<f64>,
-    pub color: Vector4<f64>,
+    pub color: Color,
     pub fixed: bool
 }
 
-impl Rectangle {
+impl RectanglePrimitive {
     pub fn new_regular(
             length: f64, 
             height: f64, 
             pos: Vector3<f64>, 
-            color: Vector4<f64>,
+            color: Color,
             fixed: bool
-        ) -> Rectangle {
-        Rectangle {
+        ) -> Self {
+        Self {
             length,
             height,
             rot: Rotation::new(0.0),
@@ -38,10 +36,10 @@ impl Rectangle {
             height: f64, 
             pos: Vector3<f64>,
             rotation: Rotation,
-            color: Vector4<f64>,
+            color: Color,
             fixed: bool
-        ) -> Rectangle {
-        Rectangle {
+        ) -> Self {
+        Self {
             length,
             height,
             rot: rotation,
@@ -52,7 +50,7 @@ impl Rectangle {
     }
 }
 
-impl GliumStandardPrimitive for Rectangle {
+impl GliumStandardPrimitive for RectanglePrimitive {
     type Vertex = RectangleVertex;
 
     fn get_shaders() -> Shaders {
@@ -77,14 +75,14 @@ pub struct RectangleVertex {
 
 implement_vertex!(RectangleVertex, length, height, rot, pos, color, fixed_pos);
 
-impl From<Rectangle> for RectangleVertex {
-    fn from(rect: Rectangle) -> Self {
+impl From<RectanglePrimitive> for RectangleVertex {
+    fn from(rect: RectanglePrimitive) -> Self {
         RectangleVertex {
             length: rect.length as f32,
             height: rect.height as f32,
             rot: rect.rot.get_matrix_f32(),
             pos: *convert::<_, Vector3<f32>>(rect.pos).as_ref(),
-            color: *convert::<_, Vector4<f32>>(rect.color).as_ref(),
+            color: rect.color.get_array_f32(),
             fixed_pos: rect.fixed as u32
         }
     }

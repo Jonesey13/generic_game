@@ -1,4 +1,3 @@
-use na::{Vector4};
 use geometry::*;
 
 #[derive(Clone)]

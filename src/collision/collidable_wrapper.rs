@@ -1,7 +1,6 @@
 use collision::*;
-use geometry::{TwoDTransformable, Point};
-use rendering::{StandardRenderable, Renderable, StandardPrimitive};
-use na::{Vector4, Rotation};
+use geometry::*;
+use rendering::*;
 
 #[derive(Clone)]
 pub struct CollidableWrapper<C: ToCollisionObjects + Clone, D: Clone + CollisionDataType> {
@@ -11,7 +10,7 @@ pub struct CollidableWrapper<C: ToCollisionObjects + Clone, D: Clone + Collision
     collidable_prev: Option<C>,
     data: D,
     player_controlled: bool,
-    color: Vector4<f64>,
+    color: Color,
     has_collided_in_past: bool,
     last_collision_details: Option<CollisionDetails>
 }
@@ -25,14 +24,14 @@ impl<C: ToCollisionObjects + Clone, D: Clone + CollisionDataType> CollidableWrap
             collidable_prev: None,
             data,
             player_controlled: false,
-            color: Vector4::new(1.0, 1.0, 1.0, 1.0),
+            color: Color::new(1.0, 1.0, 1.0, 1.0),
             has_collided_in_past: false,
             last_collision_details: None,
         }
     }
 
-    pub fn coll_results_color() -> Vector4<f64> {
-        Vector4::new(0.0, 1.0, 0.0, 1.0)
+    pub fn coll_results_color() -> Color {
+        Color::new(0.0, 1.0, 0.0, 1.0)
     }
 }
 
@@ -42,8 +41,8 @@ pub trait CollidableWrapperTrait: TwoDTransformable {
     fn set_player_control(&mut self, flag: bool);
     fn is_player_controlled(&self) -> bool;
     fn get_collidable_index(&self) -> usize;
-    fn get_color(&self) -> Vector4<f64>;
-    fn set_color(&mut self, color: Vector4<f64>);
+    fn get_color(&self) -> Color;
+    fn set_color(&mut self, color: Color);
     fn has_collided_in_past(&self) -> bool;
     fn reset_collision_flag(&mut self);
     fn render_coll_results(&self, depth: f64) -> Vec<Box<StandardRenderable>>;
@@ -88,11 +87,11 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone + CollisionData
         self.collidable_index
     }
 
-    fn get_color(&self) -> Vector4<f64> {
+    fn get_color(&self) -> Color {
         self.color
     }
 
-    fn set_color(&mut self, color: Vector4<f64>) {
+    fn set_color(&mut self, color: Color) {
         self.color = color;
     }
 

@@ -1,4 +1,3 @@
-use na::{Vector4};
 use unicode_normalization;
 use rusttype::{FontCollection, Font, Scale, point, vector, PositionedGlyph};
 use rusttype::gpu_cache::{Cache};
@@ -8,11 +7,7 @@ use glium;
 use glium::{Surface, Display, Frame, DrawParameters, Depth, DepthTest};
 use std::borrow::Cow;
 use super::{RenderText};
-use rendering;
-use rendering::shaders;
-use rendering::glium_buffer::GliumBuffer;
-use rendering::render_by_shaders::GliumStandardPrimitive;
-use rendering::DisplaySettings;
+use rendering::*;
 use games::view_details;
 use std::sync::Mutex;
 use debug::*;
@@ -112,7 +107,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
                 screen_height: height,
                 max_char_height_pix: v_metrics.ascent - v_metrics.descent,
                 aspect_ratio: aspect_ratio as f32,
-                world_view: rendering::glium_renderer::GliumRenderer::create_worldview_mat(view_details, aspect_ratio),      
+                world_view: glium_renderer::GliumRenderer::create_worldview_mat(view_details, aspect_ratio),      
             };
 
             Self::render(&self.vertices, &self.program, target, display, draw_params, &uniforms);

@@ -1,4 +1,4 @@
-use na::{Vector1, Vector3, Vector4, norm, dot};
+use na::{Vector1, Vector3};
 use num::Zero;
 use geometry::average_vec2;
 use geometry::vect::get_normal_2d;
@@ -6,8 +6,7 @@ use geometry::Poly;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
 use geometry::*;
-use rendering;
-use rendering::{StandardRenderable, Polygon};
+use rendering::*;
 use collision::{CollisionObject, CollisionObjectState, ToCollisionObjects};
 use collision;
 
@@ -97,7 +96,7 @@ impl TwoDTransformable for ConPoly {
 }
 
 impl ToRenderables for ConPoly {
-    fn to_renderables(&self, color: Vector4<f64>, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>> {
+    fn to_renderables(&self, color: Color, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>> {
         vec![
             Box::new(Polygon::new_regular(self.corners.clone(), self.get_average(), Vector3::new(0.0, 0.0, depth), color, fixed))
         ]
@@ -105,7 +104,7 @@ impl ToRenderables for ConPoly {
 }
 
 impl ConPoly {
-    pub fn render_collision_details(&self, coll_location: collision::ConPolyInfo, color: Vector4<f64>, depth: f64, fixed: bool) 
+    pub fn render_collision_details(&self, coll_location: collision::ConPolyInfo, color: Color, depth: f64, fixed: bool) 
     -> Vec<Box<StandardRenderable>> {
         let location_renderable: Box<ToRenderables> = match coll_location {
             collision::ConPolyInfo::LineInfo(side, pos) => Box::new(self.get_side(side).unwrap().get_point(pos)),
@@ -119,8 +118,8 @@ impl ConPoly {
             collision::ConPolyInfo::SideInfo(side) => (self.get_side(side).unwrap().get_point(0.5), self.get_normal(side)),
         };
 
-        let direction_renderable: Box<rendering::StandardRenderable> = Box::new(
-            rendering::Arrow::new_for_coll_test(
+        let direction_renderable: Box<StandardRenderable> = Box::new(
+            Arrow::new_for_coll_test(
                     coll_pos,
                     coll_dir,
                     color,

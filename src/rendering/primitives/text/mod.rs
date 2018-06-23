@@ -3,7 +3,6 @@ mod plain_text;
 pub use self::text_buffer::TextBuffer;
 pub use self::plain_text::{PlainText, TextAlign};
 
-use na::{Vector4};
 use unicode_normalization;
 use rusttype::{FontCollection, Font, Scale, point, vector, PositionedGlyph};
 use rusttype::gpu_cache::{Cache};
@@ -13,9 +12,7 @@ use glium;
 use glium::Surface;
 use std::borrow::Cow;
 use games::view_details;
-use rendering::primitives::StandardPrimitive;
-use rendering::render_by_shaders::GliumStandardPrimitive;
-use rendering::shaders::Shaders;
+use ::rendering::*;
 
 pub trait RenderText {
     type TextVert: glium::vertex::Vertex;

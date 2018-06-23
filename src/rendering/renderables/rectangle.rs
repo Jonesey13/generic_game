@@ -1,5 +1,5 @@
-use rendering::{Renderable, StandardPrimitive, Rectangle};
+use rendering::{Renderable, StandardPrimitive, RectanglePrimitive};
 
-impl Renderable<StandardPrimitive> for Rectangle {
+impl Renderable<StandardPrimitive> for RectanglePrimitive {
     fn get_primitives(&mut self) -> Vec<StandardPrimitive> { vec![StandardPrimitive::Rect(self.clone())] }
 }

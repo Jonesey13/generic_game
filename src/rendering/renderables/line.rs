@@ -1,29 +1,29 @@
-use rendering::{Rectangle, Circle, StandardPrimitive, Renderable};
-use na::{Vector3, Vector4};
+use ::rendering::*;
+use na::{Vector3};
 use ::geometry::*;
 
 #[derive(Clone, Debug)]
-pub struct Line {
+pub struct LineRenderable {
     start: Point,
     end: Point,
     thickness: f64,
     shape: LineShape,
-    color: Vector4<f64>,
+    color: Color,
     depth: f64,
     fixed: bool
 }
 
-impl Line {
+impl LineRenderable {
     pub fn new(
         start: Point,
         end: Point,
         thickness: f64,
         shape: LineShape,
-        color: Vector4<f64>,
+        color: Color,
         depth: f64,
         fixed: bool
     ) -> Self {
-        Line {
+        Self {
             start,
             end,
             thickness,
@@ -38,11 +38,11 @@ impl Line {
         start: Point,
         end: Point,
         thickness: f64,
-        color: Vector4<f64>,
+        color: Color,
         depth: f64,
         fixed: bool
     ) -> Self {
-        Line {
+        Self {
             start,
             end,
             thickness,
@@ -57,11 +57,11 @@ impl Line {
         start: Point,
         end: Point,
         thickness: f64,
-        color: Vector4<f64>,
+        color: Color,
         depth: f64,
         fixed: bool
     ) -> Self {
-        Line {
+        Self {
             start,
             end,
             thickness,
@@ -79,13 +79,13 @@ pub enum LineShape {
     Rounded
 }
 
-impl Renderable<StandardPrimitive> for Line {
+impl Renderable<StandardPrimitive> for LineRenderable {
     fn get_primitives(&mut self) -> Vec<StandardPrimitive> { 
         let shifted_end = self.end - self.start;
         let line_angle = shifted_end.y.atan2(shifted_end.x);
         let midpoint = 0.5 * (self.start + self.end);
 
-        let line_middle = Rectangle {
+        let line_middle = RectanglePrimitive {
             length: shifted_end.norm(),
             height: self.thickness,
             pos: Vector3::new(midpoint.x, midpoint.y, self.depth),
@@ -97,14 +97,14 @@ impl Renderable<StandardPrimitive> for Line {
         match self.shape {
             LineShape::Square => return vec![StandardPrimitive::Rect(line_middle)],
             LineShape::Rounded => {
-                let beg_circ = Circle {
+                let beg_circ = CircleRenderable {
                     radius: self.thickness / 2.0,
                     pos: Vector3::new(self.start.x, self.start.y, self.depth),
                     color: self.color,
                     fixed: self.fixed
                 };
 
-                let end_circ = Circle {
+                let end_circ = CircleRenderable {
                     radius: self.thickness / 2.0,
                     pos: Vector3::new(self.end.x, self.end.y, self.depth),
                     color: self.color,
