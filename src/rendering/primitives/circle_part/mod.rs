@@ -1,4 +1,3 @@
-use na::{Vector3, convert};
 use num::Zero;
 use ::rendering::*;
 use ::geometry::*;
@@ -8,7 +7,7 @@ use glium;
 pub struct CirclePart {
     pub radial_dim: Point,
     pub angular_dim: Point,
-    pub pos: Vector3<f64>,
+    pub pos: Point3,
     pub color: Color,
     pub fixed: bool
 }
@@ -47,7 +46,7 @@ impl From<CirclePart> for CircleVertex {
         CircleVertex {
             radial_dim: circ.radial_dim.into(),
             angular_dim: circ.angular_dim.into(),
-            pos: *convert::<_, Vector3<f32>>(circ.pos).as_ref(),
+            pos: circ.pos.into(),
             color: circ.color.get_array_f32(),
             fixed_pos: circ.fixed as u32
         }

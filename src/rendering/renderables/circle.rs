@@ -1,17 +1,16 @@
 use rendering::*;
-use na::{Vector3};
 use ::geometry::*;
 
 #[derive(Clone, Debug)]
 pub struct CircleRenderable {
     pub radius: f64,
-    pub pos: Vector3<f64>,
+    pub pos: Point3,
     pub color: Color,
     pub fixed: bool
 }
 
 impl CircleRenderable {
-    pub fn new(radius: f64, pos: Vector3<f64>, color: Color, fixed: bool) -> Self {
+    pub fn new(radius: f64, pos: Point3, color: Color, fixed: bool) -> Self {
         Self {
             radius,
             pos,

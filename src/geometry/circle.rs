@@ -1,7 +1,5 @@
-use na::{Vector3};
 use std::fmt;
-use geometry::{Line, Point};
-use super::{vect, DualSoln, Poly, TwoDTransformable, ToRenderables};
+use geometry::*;
 use rendering::*;
 use collision::{ToCollisionObjects, CollisionObject};
 
@@ -43,7 +41,7 @@ impl ToRenderables for Circle {
         vec![
             Box::new(CircleRenderable {
                 radius: self.rad,
-                pos: Vector3::new(self.center.x, self.center.y, depth),
+                pos: Point3::new(self.center.x, self.center.y, depth),
                 color,
                 fixed
             })

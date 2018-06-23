@@ -13,7 +13,6 @@ use gg::rendering::{DisplaySettings, StandardPrimitive};
 use std::env;
 use std::io::*;
 mod renderable_test_game;
-use std::f64::consts::PI;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "full");

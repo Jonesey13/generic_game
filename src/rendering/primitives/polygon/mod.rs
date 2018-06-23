@@ -1,5 +1,3 @@
-use na::{Vector1, Vector3, convert};
-use num::Zero;
 use ::rendering::*;
 use ::geometry::*;
 
@@ -9,7 +7,7 @@ pub struct Polygon {
     pub corners: Vec<Point>, /// defined anti-clockwise
     pub center: Point,
     pub rot: Rotation,  /// anti-clockwise angle w.r.t. positive z-axis
-    pub pos: Vector3<f64>,
+    pub pos: Point3,
     pub color: Color,
     pub fixed: bool
 }
@@ -18,7 +16,7 @@ impl Polygon {
     pub fn new_regular(
             corners: Vec<Point>,
             center: Point,
-            pos: Vector3<f64>, 
+            pos: Point3, 
             color: Color,
             fixed: bool
         ) -> Polygon {
@@ -41,7 +39,7 @@ impl Polygon {
                 corner2: corner2.into(),
                 center: self.center.into(),
                 rot: self.rot.get_matrix_f32(),
-                pos: *convert::<_, Vector3<f32>>(self.pos).as_ref(),
+                pos: self.pos.into(),
                 color: self.color.get_array_f32(),
                 fixed_pos: self.fixed as u32
             });

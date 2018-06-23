@@ -1,8 +1,6 @@
 use gg::games::Game;
 use gg::games::GameInput;
 use gg::games::view_details::{ViewDetails2D, ViewDetails};
-use na::{Vector3};
-use num::{Zero};
 use gg::input::keyboard::KeyboardInput;
 use gg::rendering::*;
 use gg::geometry::*;
@@ -44,26 +42,26 @@ impl Game for RenderableTestGame {
         //     length: 1.0,
         //     height: 1.0,
         //     rot: Rotation::new(0.0),
-        //     pos: Vector3::new(0.0, 0.0, 0.1),
+        //     pos: Point3::new(0.0, 0.0, 0.1),
         //     color: Color::new(0.0, 1.0, 0.0, 1.0)
         // };
         let circ = CircleRenderable {
             radius: 0.7,
-            pos: Vector3::new(-0.0, 0.0, 0.1),
+            pos: Point3::new(-0.0, 0.0, 0.1),
             color: Color::new(1.0, 0.0, 0.0, 1.0),
             fixed: true
         };
 
         let ann = Annulus {
             radial_dim: Point::new(0.4, 0.5),
-            pos: Vector3::new(0.2, -0.3, -0.1),
+            pos: Point3::new(0.2, -0.3, -0.1),
             color: Color::new(0.0, 0.0, 1.0, 1.0),
             fixed: false
         };
 
         let text = PlainText {
             content: "llllllll there! |".to_string(),
-            position: Vector3::new(0.0, 0.0, 0.0),
+            position: Point3::new(0.0, 0.0, 0.0),
             scale: Point::new(0.2, 0.2),
             transform: Rotation::new(0.0).get_matrix(),
             color: Color::new(1.0, 1.0, 1.0, 1.0),
@@ -79,7 +77,7 @@ impl Game for RenderableTestGame {
             Point::new(-0.2, -0.2),
             Point::new(0.2, -0.2)
         ];
-        let poly = Polygon::new_regular(poly_corners, Point::zero(), Vector3::zero(), Color::new(1.0, 0.0, 0.0, 1.0), false);
+        let poly = Polygon::new_regular(poly_corners, Point::zero(), Point3::zero(), Color::new(1.0, 0.0, 0.0, 1.0), false);
 
         let line = LineRenderable::new_rounded(
             Point::new(-0.5, -0.5),
@@ -103,8 +101,8 @@ impl Game for RenderableTestGame {
         let tex_rect1 = TextureRect::new_regular(
             0.5, 
             0.5, 
-            Vector3::new(0.5, 0.5, 0.0), 
-            Vector3::new(0.0, 0.0, 0.0),
+            Point3::new(0.5, 0.5, 0.0), 
+            Point3::new(0.0, 0.0, 0.0),
             Point::new(1.0, 1.0),
             false
         );
@@ -112,14 +110,14 @@ impl Game for RenderableTestGame {
         let tex_rect2 = TextureRect::new_regular(
             0.5, 
             0.5, 
-            Vector3::new(-0.5, -0.5, 0.0), 
-            Vector3::new(0.0, 0.0, 1.0),
+            Point3::new(-0.5, -0.5, 0.0), 
+            Point3::new(0.0, 0.0, 1.0),
             Point::new(0.5, 0.5),
             false
         );
 
-        let box_border_fixed = BoxBorder::new_rounded(0.01, 0.1, Vector3::new(0.0, 0.0, -0.2), 0.5, 0.5, Color::new(1.0, 1.0, 0.0, 1.0), true);
-        let box_border = BoxBorder::new_rounded(0.01, 0.1, Vector3::new(0.0, 0.0, -0.2), 0.5, 0.5, Color::new(1.0, 1.0, 0.0, 1.0), false);        
+        let box_border_fixed = BoxBorder::new_rounded(0.01, 0.1, Point3::new(0.0, 0.0, -0.2), 0.5, 0.5, Color::new(1.0, 1.0, 0.0, 1.0), true);
+        let box_border = BoxBorder::new_rounded(0.01, 0.1, Point3::new(0.0, 0.0, -0.2), 0.5, 0.5, Color::new(1.0, 1.0, 0.0, 1.0), false);        
 
         vec![
             Box::new(tex_rect1),

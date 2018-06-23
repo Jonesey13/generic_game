@@ -1,5 +1,4 @@
 use ::rendering::*;
-use na::{Vector3};
 use ::geometry::*;
 
 #[derive(Clone, Debug)]
@@ -88,7 +87,7 @@ impl Renderable<StandardPrimitive> for LineRenderable {
         let line_middle = RectanglePrimitive {
             length: shifted_end.norm(),
             height: self.thickness,
-            pos: Vector3::new(midpoint.x, midpoint.y, self.depth),
+            pos: Point3::new(midpoint.x, midpoint.y, self.depth),
             rot: Rotation::new(line_angle),
             color: self.color,
             fixed: self.fixed
@@ -99,14 +98,14 @@ impl Renderable<StandardPrimitive> for LineRenderable {
             LineShape::Rounded => {
                 let beg_circ = CircleRenderable {
                     radius: self.thickness / 2.0,
-                    pos: Vector3::new(self.start.x, self.start.y, self.depth),
+                    pos: Point3::new(self.start.x, self.start.y, self.depth),
                     color: self.color,
                     fixed: self.fixed
                 };
 
                 let end_circ = CircleRenderable {
                     radius: self.thickness / 2.0,
-                    pos: Vector3::new(self.end.x, self.end.y, self.depth),
+                    pos: Point3::new(self.end.x, self.end.y, self.depth),
                     color: self.color,
                     fixed: self.fixed
                 };

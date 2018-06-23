@@ -1,5 +1,4 @@
 use ::rendering::*;
-use na::{Vector3};
 use geometry::*;
 use geometry;
 
@@ -138,7 +137,7 @@ impl Arrow {
             corners: arrowhead_points,
             center: Point::new(0.0, 0.0),
             rot: Rotation::new(self.get_line_angle()),
-            pos: Vector3::new(arrow_pos.x, arrow_pos.y, self.depth),
+            pos: Point3::new(arrow_pos.x, arrow_pos.y, self.depth),
             color: self.color,
             fixed: self.fixed
         };

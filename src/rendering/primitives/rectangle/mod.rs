@@ -1,4 +1,3 @@
-use na::{Vector1, Vector3, convert};
 use num::Zero;
 use ::rendering::*;
 use ::geometry::*;
@@ -8,7 +7,7 @@ pub struct RectanglePrimitive {
     pub length: f64,  /// x-axis
     pub height: f64,  /// y-axis
     pub rot: Rotation,
-    pub pos: Vector3<f64>,
+    pub pos: Point3,
     pub color: Color,
     pub fixed: bool
 }
@@ -17,7 +16,7 @@ impl RectanglePrimitive {
     pub fn new_regular(
             length: f64, 
             height: f64, 
-            pos: Vector3<f64>, 
+            pos: Point3, 
             color: Color,
             fixed: bool
         ) -> Self {
@@ -34,7 +33,7 @@ impl RectanglePrimitive {
     pub fn new_with_rotation(
             length: f64, 
             height: f64, 
-            pos: Vector3<f64>,
+            pos: Point3,
             rotation: Rotation,
             color: Color,
             fixed: bool
@@ -81,7 +80,7 @@ impl From<RectanglePrimitive> for RectangleVertex {
             length: rect.length as f32,
             height: rect.height as f32,
             rot: rect.rot.get_matrix_f32(),
-            pos: *convert::<_, Vector3<f32>>(rect.pos).as_ref(),
+            pos: rect.pos.into(),
             color: rect.color.get_array_f32(),
             fixed_pos: rect.fixed as u32
         }

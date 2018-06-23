@@ -1,5 +1,5 @@
 /// For use in shaders (projective space transforms)
-use na::{Matrix4, Matrix3, Vector3, Rotation};
+use na::{Matrix4, Matrix3, Point3, Rotation};
 use num::One;
 use std::f64::consts::PI;
 use ::geometry::*;

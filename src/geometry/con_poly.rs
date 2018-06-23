@@ -1,8 +1,3 @@
-use na::{Vector1, Vector3};
-use num::Zero;
-use geometry::average_vec2;
-use geometry::vect::get_normal_2d;
-use geometry::Poly;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
 use geometry::*;
@@ -98,7 +93,7 @@ impl TwoDTransformable for ConPoly {
 impl ToRenderables for ConPoly {
     fn to_renderables(&self, color: Color, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>> {
         vec![
-            Box::new(Polygon::new_regular(self.corners.clone(), self.get_average(), Vector3::new(0.0, 0.0, depth), color, fixed))
+            Box::new(Polygon::new_regular(self.corners.clone(), self.get_average(), Point3::new(0.0, 0.0, depth), color, fixed))
         ]
     }
 }

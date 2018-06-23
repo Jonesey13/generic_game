@@ -1,9 +1,9 @@
-use na::{Vector3, Rotation};
+use ::geometry::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct ViewDetails3D {
-    pub view_dir: Vector3<f64>, // Eye Direction
-    pub up_vector: Vector3<f64>, // Vertical Direction
-    pub eye_position: Vector3<f64>,
+    pub view_dir: Point3, // Eye Direction
+    pub up_vector: Point3, // Vertical Direction
+    pub eye_position: Point3,
     pub scale: f64, // Height of view
 }

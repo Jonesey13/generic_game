@@ -1,11 +1,10 @@
-use na::{Vector3};
 use ::rendering::*;
-use ::geometry::Point;
+use ::geometry::*;
 
 #[derive(Clone, Debug)]
 pub struct BoxBorder {
     pub thickness: f64,
-    pub pos: Vector3<f64>,
+    pub pos: Point3,
     pub rect_height: f64,
     pub rect_width: f64,
     pub color: Color,
@@ -16,7 +15,7 @@ pub struct BoxBorder {
 impl BoxBorder {
     pub fn new(
     thickness: f64,
-    pos: Vector3<f64>,
+    pos: Point3,
     rect_height: f64,
     rect_width: f64,
     color: Color,
@@ -35,7 +34,7 @@ impl BoxBorder {
     pub fn new_rounded(
         thickness: f64,
         corner_radius: f64,
-        pos: Vector3<f64>,
+        pos: Point3,
         rect_height: f64,
         rect_width: f64,
         color: Color,
@@ -52,10 +51,10 @@ impl BoxBorder {
     }
 
     fn get_straight_primitives(&self) -> Vec<StandardPrimitive> {
-        let left_pos = self.pos - self.rect_width / 2.0 * Vector3::x();
-        let right_pos = self.pos + self.rect_width / 2.0 * Vector3::x();
-        let lower_pos = self.pos - self.rect_height / 2.0 * Vector3::y();
-        let upper_pos = self.pos + self.rect_height / 2.0 * Vector3::y();
+        let left_pos = self.pos - self.rect_width / 2.0 * Point3::x();
+        let right_pos = self.pos + self.rect_width / 2.0 * Point3::x();
+        let lower_pos = self.pos - self.rect_height / 2.0 * Point3::y();
+        let upper_pos = self.pos + self.rect_height / 2.0 * Point3::y();
         let full_width = self.rect_width + self.thickness;
         let full_height = self.rect_height + self.thickness;
 
@@ -71,10 +70,10 @@ impl BoxBorder {
     }
 
     fn get_rounded_primitives(&self, border_radius: f64) -> Vec<StandardPrimitive> {
-        let x_shift = self.rect_width / 2.0 * Vector3::x();
-        let y_shift = self.rect_height / 2.0 * Vector3::y();
-        let x_radius_shift = border_radius * Vector3::x();
-        let y_radius_shift = border_radius * Vector3::y();
+        let x_shift = self.rect_width / 2.0 * Point3::x();
+        let y_shift = self.rect_height / 2.0 * Point3::y();
+        let x_radius_shift = border_radius * Point3::x();
+        let y_radius_shift = border_radius * Point3::y();
 
         let left_pos = self.pos - x_shift;
         let right_pos = self.pos + x_shift;

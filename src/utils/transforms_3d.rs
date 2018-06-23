@@ -1,9 +1,10 @@
 /// For use in shaders (projective space transforms)
-use na::{Matrix4, Vector3, Vector4, dot, normalize};
+use na::{Matrix4, Vector4};
 use num::One;
+use ::geometry::*;
 
 /// Translation by the three_vec
-pub fn translation_mat(three_vec: Vector3<f64>) -> Matrix4<f64>{
+pub fn translation_mat(three_vec: Point3) -> Matrix4<f64>{
     return Matrix4::new(
         1.0, 0.0, 0.0, three_vec.x,
         0.0, 1.0, 0.0, three_vec.y,
@@ -14,7 +15,7 @@ pub fn translation_mat(three_vec: Vector3<f64>) -> Matrix4<f64>{
 
 /// Rotation by axis through angle theta
 /// Follows the Rodrigues formula
-pub fn rotation_mat(axis: Vector3<f64>, theta: f64) -> Matrix4<f64> {
+pub fn rotation_mat(axis: Point3, theta: f64) -> Matrix4<f64> {
     let identity_mat = Matrix4::<f64>::one();
     let cross_prod_mat = Matrix4::new(
         0.0, -axis.z, axis.y, 0.0,
@@ -41,29 +42,29 @@ pub fn perspective_mat(fov: f64, aspect_ratio: f64) -> Matrix4<f64> {
 pub fn build_worldview_mat(
     fov: f64,
     aspect_ratio: f64,
-    eye_position: Vector3<f64>,
-    view_axis: Vector3<f64>,
-    up_vec: Vector3<f64>,
+    eye_position: Point3,
+    view_axis: Point3,
+    up_vec: Point3,
 ) -> Matrix4<f64> {
-    let correct_eye_position = translation_mat(eye_position * -1.0);
+    let correct_eye_position = translation_mat(-eye_position);
 
-    let axis_reg = normalize(&view_axis);
-    let ez = Vector3::new(0.0, 0.0, 1.0);
+    let axis_reg = view_axis.normalized();
+    let ez = Point3::new(0.0, 0.0, 1.0);
     let axis_to_ez_cross = axis_reg.cross(&ez);
-    let axis_to_ez_angle = dot(&axis_reg, &ez);
+    let axis_to_ez_angle = axis_reg.dot(&ez);
     let correct_axis_rotation = rotation_mat(axis_to_ez_cross, axis_to_ez_angle);
 
-    let up_vec_reg = normalize(&up_vec);
+    let up_vec_reg = up_vec.normalized();
     let up_vec_rot_reg_4vec = correct_axis_rotation * Vector4::new(up_vec_reg.x, up_vec_reg.y, up_vec_reg.z, 1.0);
-    let up_vec_rot_reg = Vector3::new(up_vec_rot_reg_4vec.x, up_vec_rot_reg_4vec.y, up_vec_rot_reg_4vec.z);
-    let ey = Vector3::new(0.0, 1.0, 0.0);
+    let up_vec_rot_reg = Point3::new(up_vec_rot_reg_4vec.x, up_vec_rot_reg_4vec.y, up_vec_rot_reg_4vec.z);
+    let ey = Point3::new(0.0, 1.0, 0.0);
     let up_vec_to_ey_cross = up_vec_rot_reg.cross(&ey);
-    let up_vec_to_ey_angle = dot(&up_vec_rot_reg, &ey);
+    let up_vec_to_ey_angle = up_vec_rot_reg.dot(&ey);
     let correct_up_vec_rotation = rotation_mat(up_vec_to_ey_cross, up_vec_to_ey_angle);
 
     let half_fov = fov / 2.0;
     let eye_distance = 1.0 / half_fov.tan();
-    let correct_eye_distance = translation_mat(ez * eye_distance * -1.0);
+    let correct_eye_distance = translation_mat(-eye_distance * ez);
 
     let persp_mat = perspective_mat(fov, aspect_ratio);
 

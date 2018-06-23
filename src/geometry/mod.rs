@@ -1,4 +1,5 @@
 pub mod point;
+pub mod point3;
 pub mod rotation;
 pub mod line;
 pub mod circle;
@@ -24,6 +25,7 @@ use num::Zero;
 pub use self::interval::{Interval, IntervalEnd, IntervalCollisionObject};
 pub use self::interval_collection::IntervalCollection;
 pub use self::point::Point;
+pub use self::point3::Point3;
 pub use self::rotation::Rotation;
 pub use self::circle::Circle;
 pub use self::line::{Line, line_line_intersect_2d};

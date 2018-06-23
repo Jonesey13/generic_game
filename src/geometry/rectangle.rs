@@ -1,4 +1,3 @@
-use na::{Vector3};
 use geometry::*;
 use rendering::*;
 use std::f64::consts::PI;
@@ -97,7 +96,7 @@ impl ToRenderables for Rectangle {
                     length: self.length,
                     height: self.height,
                     rot: self.rot,
-                    pos: Vector3::new(self.pos.x, self.pos.y, depth),
+                    pos: Point3::new(self.pos.x, self.pos.y, depth),
                     color: color,
                     fixed: fixed,
                 }
