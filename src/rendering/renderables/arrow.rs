@@ -7,12 +7,12 @@ use geometry;
 pub struct Arrow {
     pub start: Point,
     pub end: Point,
-    thickness: f64,
-    arrow_dim: Point,
-    color: Color,
-    depth: f64,
-    fixed: bool,
-    shape: ArrowHeadShape
+    pub thickness: f64,
+    pub arrow_dim: Point,
+    pub color: Color,
+    pub depth: f64,
+    pub fixed: bool,
+    pub shape: ArrowHeadShape
 }
 
 #[derive(Clone, Debug)]
@@ -105,28 +105,28 @@ impl Arrow {
         )
     }
 
-    fn get_center_line(&self) -> geometry::Line {
+    pub fn get_center_line(&self) -> geometry::Line {
         geometry::Line::new(self.start, self.end)
     }
 
-    fn get_length(&self) -> f64 {
+    pub fn get_length(&self) -> f64 {
         let shifted_end = self.end - self.start;
         shifted_end.norm()
     }
 
-    fn get_line_angle(&self) -> f64 {
+    pub fn get_line_angle(&self) -> f64 {
         let shifted_end = self.end - self.start;
         shifted_end.y.atan2(shifted_end.x)
     }
 
-    fn generate_arrow_head(&self) -> Vec<StandardPrimitive> {
+    pub fn generate_arrow_head(&self) -> Vec<StandardPrimitive> {
         match self.shape {
             ArrowHeadShape::Flat => self.generate_arrow_head_flat(),
             ArrowHeadShape::RoundedLine => self.generate_arrow_head_rounded()
         }
     }
 
-    fn generate_arrow_head_flat(&self) -> Vec<StandardPrimitive> {
+    pub fn generate_arrow_head_flat(&self) -> Vec<StandardPrimitive> {
         let arrowhead_points = vec![
             Point::new(0.0, -self.arrow_dim.y), 
             Point::new(self.arrow_dim.x, 0.0),

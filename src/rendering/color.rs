@@ -23,6 +23,15 @@ impl Color {
     pub fn get_array_f32(&self) -> [f32; 4] {
         [self.r as f32, self.g as f32, self.b as f32, self.a as f32]
     }
+
+    pub fn zero() -> Self {
+        Self {
+            r: 0.0,
+            g: 0.0,
+            b: 0.0,
+            a: 0.0
+        }
+    }
 }
 
 impl From<[f64; 4]> for Color {

@@ -4,13 +4,13 @@ use ::geometry::Point;
 
 #[derive(Clone, Debug)]
 pub struct BoxBorder {
-    thickness: f64,
-    pos: Vector3<f64>,
-    rect_height: f64,
-    rect_width: f64,
-    color: Color,
-    border_type: BorderType,
-    fixed: bool
+    pub thickness: f64,
+    pub pos: Vector3<f64>,
+    pub rect_height: f64,
+    pub rect_width: f64,
+    pub color: Color,
+    pub border_type: BoxBorderType,
+    pub fixed: bool
 }
 
 impl BoxBorder {
@@ -27,7 +27,7 @@ impl BoxBorder {
             rect_height,  
             rect_width,
             color,
-            border_type: BorderType::Straight,
+            border_type: BoxBorderType::Straight,
             fixed,
         }
     }
@@ -46,7 +46,7 @@ impl BoxBorder {
             rect_height,  
             rect_width,
             color,
-            border_type: BorderType::Round(corner_radius),
+            border_type: BoxBorderType::Round(corner_radius),
             fixed
         }
     }
@@ -112,14 +112,14 @@ impl BoxBorder {
 impl Renderable<StandardPrimitive> for BoxBorder {
     fn get_primitives(&mut self) -> Vec<StandardPrimitive> {
         match self.border_type {
-            BorderType::Straight => self.get_straight_primitives(),
-            BorderType::Round(radius) => self.get_rounded_primitives(radius)
+            BoxBorderType::Straight => self.get_straight_primitives(),
+            BoxBorderType::Round(radius) => self.get_rounded_primitives(radius)
         }
     }
 }
 
 #[derive(Copy, Clone, Debug)]
-pub enum BorderType {
+pub enum BoxBorderType {
     Straight,
     Round(f64) // Radius
 }

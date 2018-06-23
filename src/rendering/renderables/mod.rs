@@ -11,11 +11,11 @@ pub mod texture_rect;
 use super::primitives::StandardPrimitive;
 
 pub use self::line::*;
-pub use self::arrow::Arrow;
+pub use self::arrow::*;
 pub use self::circle::*;
 pub use self::annulus::Annulus;
 pub use self::annular_segment::AnnularSegment;
-pub use self::box_border::BoxBorder;
+pub use self::box_border::*;
 
 pub trait Renderable<Prim> {
     fn get_primitives(&mut self) -> Vec<Prim>;

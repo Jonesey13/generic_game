@@ -4,13 +4,13 @@ use ::geometry::*;
 
 #[derive(Clone, Debug)]
 pub struct LineRenderable {
-    start: Point,
-    end: Point,
-    thickness: f64,
-    shape: LineShape,
-    color: Color,
-    depth: f64,
-    fixed: bool
+    pub start: Point,
+    pub end: Point,
+    pub thickness: f64,
+    pub shape: LineShape,
+    pub color: Color,
+    pub depth: f64,
+    pub fixed: bool
 }
 
 impl LineRenderable {
