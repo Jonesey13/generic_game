@@ -11,6 +11,8 @@ pub struct MultiInput {
     raw_manager: RawInputManager,
     escape_key_switch: bool_switch::BoolSwitch,
     backtick_key_switch: bool_switch::BoolSwitch,
+    f8_key_switch: bool_switch::BoolSwitch,
+    f9_key_switch: bool_switch::BoolSwitch
 }
 
 #[derive(Default)]
@@ -57,7 +59,9 @@ impl MultiInput {
             raw_states: raw_states,
             raw_manager: raw_manager,
             escape_key_switch: bool_switch::BoolSwitch::new(),
-            backtick_key_switch: bool_switch::BoolSwitch::new(),            
+            backtick_key_switch: bool_switch::BoolSwitch::new(),
+            f8_key_switch: bool_switch::BoolSwitch::new(),    
+            f9_key_switch: bool_switch::BoolSwitch::new(),    
         }
     }
 }
@@ -86,17 +90,26 @@ impl InputHandler for MultiInput {
         for index in 0..raw_states.device_stats.number_of_keyboards {
             if let Some(&state) = raw_states.key_states.get(&Key(index, KeyId::Escape)) {
                 self.escape_key_switch.update_state(state);
-            }
-            else {
+            } else {
                 self.escape_key_switch.clear_switch();
             }
-        }
-        for index in 0..raw_states.device_stats.number_of_keyboards {
+
             if let Some(&state) = raw_states.key_states.get(&Key(index, KeyId::BackTick)) {
                 self.backtick_key_switch.update_state(state);
-            }
-            else {
+            } else {
                 self.backtick_key_switch.clear_switch();
+            }
+            
+            if let Some(&state) = raw_states.key_states.get(&Key(index, KeyId::F8)) {
+                self.f8_key_switch.update_state(state);
+            } else {
+                self.f8_key_switch.clear_switch();
+            }
+
+            if let Some(&state) = raw_states.key_states.get(&Key(index, KeyId::F9)) {
+                self.f9_key_switch.update_state(state);
+            } else {
+                self.f9_key_switch.clear_switch();
             }
         }
     }
@@ -222,6 +235,9 @@ impl InputHandler for MultiInput {
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Z)) {
                         kbds.devices[index].z = val;
                     }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Pause)) {
+                        kbds.devices[index].pause = val;
+                    }
                 }
             }
 
@@ -335,6 +351,14 @@ impl InputHandler for MultiInput {
         self.escape_key_switch.pressed()
     }
 
+    fn f8_key_pressed(&self) -> bool {
+        self.f8_key_switch.pressed()
+    }
+
+    fn f9_key_pressed(&self) -> bool {
+        self.f9_key_switch.pressed()
+    }
+    
     fn backtick_key_pressed(&self) -> bool {
         self.backtick_key_switch.pressed()
     }

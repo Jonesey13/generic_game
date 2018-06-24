@@ -32,6 +32,10 @@ impl BoolSwitch {
         false
     }
 
+    pub fn currently_pressed(&self) -> bool {
+        self.press_state == PressState::Pressed
+    }
+
     // Use as a press/release state has been read
     pub fn clear_switch(&mut self) {
         self.switch_flag = None

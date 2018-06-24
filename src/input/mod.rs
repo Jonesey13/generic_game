@@ -16,6 +16,8 @@ pub trait InputHandler {
     fn pass_on_input<'a>(&self, Option<&'a mut GameInput>) {}
     fn escape_key_pressed(&self) -> bool { false }
     fn backtick_key_pressed(&self) -> bool { false }
+    fn f8_key_pressed(&self) -> bool { false }
+    fn f9_key_pressed(&self) -> bool { false }    
     fn flush_input(&mut self) {}
 }
 
