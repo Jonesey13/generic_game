@@ -49,6 +49,10 @@ impl Point3 {
         Self::new(0.0, 0.0, 0.0)
     }
 
+    pub fn one() -> Self {
+        Self::new(1.0, 1.0, 1.0)
+    }
+
     pub fn x() -> Self {
         Self::new(1.0, 0.0, 0.0)
     }

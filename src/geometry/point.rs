@@ -38,6 +38,10 @@ impl Point {
         Point::new(0.0, 0.0)
     }
 
+    pub fn one() -> Point {
+        Point::new(1.0, 1.0)
+    }
+
     pub fn x() -> Point {
         Self::new(1.0, 0.0)
     }

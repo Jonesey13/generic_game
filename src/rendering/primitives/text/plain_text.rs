@@ -23,6 +23,20 @@ pub struct PlainText {
     pub align: TextAlign
 }
 
+impl Default for PlainText {
+    fn default() -> Self {
+        Self {
+            content: "".to_string(),
+            position: Point3::zero(),
+            scale: Point::one(), // Applied First
+            transform: [[1.0, 0.0], [0.0, 1.0]], //Applied Second
+            color: Color::white(),
+            fixed: true,
+            align: TextAlign::Centered
+        }
+    }
+}
+
 impl RenderText for PlainText {
     type TextVert = TextVertex;
     
