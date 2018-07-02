@@ -253,7 +253,7 @@ impl InputHandler for MultiInput {
                         mice.devices[index].left = val;
                     }
                     if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Right)) {
-                        mice.devices[index].left = val;
+                        mice.devices[index].right = val;
                     }
                     if let Some(&val) = self.raw_states.mouse_button_states.get(&MouseAndButton(index, MouseButton::Middle)) {
                         mice.devices[index].middle = val;
