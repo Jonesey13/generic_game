@@ -67,6 +67,17 @@ impl MultiInput {
 }
 
 impl InputHandler for MultiInput {
+    fn reset(&mut self) {
+        self.raw_manager = RawInputManager::new().unwrap();
+        self.raw_manager.register_devices(DeviceType::Keyboards);
+        self.raw_manager.register_devices(DeviceType::Mice);
+        self.raw_manager.register_devices(DeviceType::Joysticks(XInputInclude::True));
+        self.raw_states = RawStates{
+            device_stats: self.raw_manager.get_device_stats(),
+            ..Default::default()
+        };
+    }
+
     fn receive_input(&mut self) {
         let raw_states = &mut self.raw_states;
         while let Some(event) = self.raw_manager.get_event() {

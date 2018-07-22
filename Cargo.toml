@@ -4,7 +4,7 @@ version = "0.0.3"
 authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 
 [dependencies]
-multiinput = "0.0.9"
+multiinput = "0.0.13"
 nalgebra = "*"
 glium = { version = "*", features = ["glutin"] }
 num = "*"

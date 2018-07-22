@@ -6,6 +6,7 @@ use games::Game;
 use time;
 use debug::*;
 use winapi;
+use input::multihandler::MultiInput;
 
 use libloading::{Library, Symbol};
 
@@ -88,6 +89,7 @@ impl<Prim> Handler for HandlerBasic<Prim> {
             debug_clock_start("Render");
             if let Some(display_settings) = self.game.change_display_settings() {
                 self.renderer.reset(display_settings);
+                self.input_handler.reset();
             }
             let window_spec = self.renderer.get_window_spec();
             self.renderer.load_renderables(self.game.get_renderables(window_spec));
