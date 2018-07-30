@@ -1,6 +1,7 @@
 use super::{Interval, IntervalEnd, IntervalCollisionObject};
 use collision::Collidable;
 use ::geometry::*;
+use std::f64::consts::PI;
 
 #[derive(Debug, Clone)]
 pub struct IntervalCollection {
@@ -18,6 +19,13 @@ impl IntervalCollection {
             end,
             intervals
         }
+    }
+
+    pub fn full_interval() -> Self {
+        IntervalCollection::new(
+            IntervalEnd::Closed(-PI),  
+            IntervalEnd::Closed(PI),
+            vec![Interval::new_closed(-PI, PI)])
     }
 
     fn relative_error_margin(&self) -> f64 {
