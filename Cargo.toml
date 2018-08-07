@@ -1,10 +1,10 @@
 [package]
 name = "generic_game"
-version = "0.0.3"
+version = "0.0.4"
 authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 
 [dependencies]
-multiinput = "0.0.13"
+multiinput = "0.0.14"
 nalgebra = "*"
 glium = { version = "*", features = ["glutin"] }
 num = "*"
