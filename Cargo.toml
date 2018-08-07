@@ -1,13 +1,11 @@
 [package]
 name = "generic_game"
-version = "0.0.4"
+version = "0.0.5"
 authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 
 [dependencies]
 multiinput = "0.0.14"
-nalgebra = "*"
 glium = { version = "*", features = ["glutin"] }
-num = "*"
 time = "*"
 unicode-normalization = "*"
 rusttype = { git = "https://github.com/Jonesey13/rusttype.git", rev = "a809432" }
@@ -18,6 +16,6 @@ winapi = { version = "0.3", features = ["winnt", "shellscalingapi"] }
 image = "*"
 
 [dependencies.bitflags]
-version = "*"
+version = "1.0.3"
 
 

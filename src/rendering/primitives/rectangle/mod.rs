@@ -1,4 +1,3 @@
-use num::Zero;
 use ::rendering::*;
 use ::geometry::*;
 

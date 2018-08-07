@@ -1,4 +1,3 @@
-pub mod transforms_3d;
 pub mod transforms_2d;
 
 use std::iter::{Zip, Cycle, Skip};

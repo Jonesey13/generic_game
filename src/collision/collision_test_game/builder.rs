@@ -1,5 +1,3 @@
-use na::{Rotation};
-use num::Zero;
 use super::{CollisionTestGame, CollisionTestObject};
 use collision::collidable_wrapper::{CollidableWrapper, CollidableWrapperTrait};
 use collision::Collider;

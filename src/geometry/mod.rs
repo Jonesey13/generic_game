@@ -1,5 +1,7 @@
 pub mod point;
 pub mod point3;
+pub mod matrix3;
+pub mod matrix4;
 pub mod rotation;
 pub mod line;
 pub mod circle;
@@ -19,13 +21,12 @@ pub mod legendre;
 pub mod polynomial;
 pub mod polynomial2d;
 
-use na::{norm, dot};
-use num::Zero;
-
 pub use self::interval::{Interval, IntervalEnd, IntervalCollisionObject};
 pub use self::interval_collection::IntervalCollection;
 pub use self::point::Point;
 pub use self::point3::Point3;
+pub use self::matrix3::Matrix3;
+pub use self::matrix4::Matrix4;
 pub use self::rotation::Rotation;
 pub use self::circle::Circle;
 pub use self::line::{Line, line_line_intersect_2d};

@@ -1,11 +1,9 @@
 /// For use in shaders (projective space transforms)
-use na::{Matrix4, Matrix3, Point3, Rotation};
-use num::One;
 use std::f64::consts::PI;
 use ::geometry::*;
 
 /// Translation by the three_vec
-pub fn translation_mat(two_vec: Point) -> Matrix3<f64>{
+pub fn translation_mat(two_vec: Point) -> Matrix3 {
     return Matrix3::new(
         1.0, 0.0, two_vec.x,
         0.0, 1.0, two_vec.y,
@@ -15,7 +13,7 @@ pub fn translation_mat(two_vec: Point) -> Matrix3<f64>{
 
 /// Rotation by axis through angle theta
 /// +ve theta <=> anticlockwise rotation
-pub fn rotation_mat(theta: f64) -> Matrix3<f64> {
+pub fn rotation_mat(theta: f64) -> Matrix3 {
     Matrix3::new(
         theta.cos(), -theta.sin(), 0.0,
         theta.sin(), theta.cos(), 0.0,
@@ -23,7 +21,7 @@ pub fn rotation_mat(theta: f64) -> Matrix3<f64> {
     )
 }
 
-pub fn scaling_mat(scale: Point) -> Matrix3<f64> {
+pub fn scaling_mat(scale: Point) -> Matrix3 {
     Matrix3::new(
         scale.x, 0.0, 0.0,
         0.0, scale.y, 0.0,
@@ -38,7 +36,7 @@ pub fn build_worldview_mat(
     aspect_ratio: f64,
     up_vector: Point,
     use_aspect: bool
-) -> Matrix4<f64> {
+) -> Matrix4 {
     let trans_mat = translation_mat(-position);
     let scaling = match use_aspect {
         true => Point::new(1.0 / (aspect_ratio * view_length), 1.0 / view_height),
@@ -52,9 +50,9 @@ pub fn build_worldview_mat(
     let three_mat = scale_mat * rot_mat * trans_mat;
 
     Matrix4::new(
-        three_mat.m11, three_mat.m12, 0.0, three_mat.m13,
-        three_mat.m21, three_mat.m22, 0.0, three_mat.m23,
+        three_mat.xx, three_mat.xy, 0.0, three_mat.xz,
+        three_mat.yx, three_mat.yy, 0.0, three_mat.yz,
         0.0, 0.0, 1.0, 0.0,
-        three_mat.m31, three_mat.m32, 0.0, three_mat.m33,
+        three_mat.zx, three_mat.zy, 0.0, three_mat.zz,
     )
 }

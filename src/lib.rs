@@ -2,8 +2,6 @@
 #![allow(unused_imports)]
 
 extern crate multiinput;
-extern crate nalgebra as na;
-extern crate num;
 #[macro_use]
 extern crate glium;
 extern crate time;
@@ -28,7 +26,6 @@ pub mod debug;
 pub mod window;
 pub mod animation;
 
-use na::{Vector1, Rotation};
 use debug::*;
 use std::env;
 use std::io::*;

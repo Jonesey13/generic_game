@@ -1,15 +1,13 @@
 use super::Renderer;
 use super::shaders::make_program_from_shaders;
 use ::rendering::*;
+use ::geometry::*;
 use glium;
 use glium::Frame;
 use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
 use glium::texture;
 use glium::glutin::EventsLoop;
 use std::io::Cursor;
-use na;
-use na::Matrix4;
-use num::One;
 use rusttype;
 use games::view_details;
 use utils::transforms_2d;
@@ -108,7 +106,7 @@ impl<'a> GliumRenderer<'a> {
         self.text_processor.flush_buffer();
     }
     
-    pub fn create_worldview_mat(view_details: view_details::ViewDetails, aspect_ratio: f64) ->  [[f32;4]; 4] {
+    pub fn create_worldview_mat(view_details: view_details::ViewDetails, aspect_ratio: f64) ->  [[f32; 4]; 4] {
         let view_mat = match
             view_details {
                 view_details::ViewDetails::TwoDim(ref view) =>
@@ -122,8 +120,7 @@ impl<'a> GliumRenderer<'a> {
                 view_details::ViewDetails::ThreeDim(_) => panic!("3D mode not supported!"),
                 _ => Matrix4::one()
             };
-        let single_mat: Matrix4<f32> = na::convert(view_mat);
-        *single_mat.as_ref()
+        view_mat.as_32_array()
     }
 
     pub fn new_with_textures(settings: DisplaySettings, mut image_array: Vec<image::DynamicImage>) -> Self {

@@ -7,7 +7,6 @@ use glium;
 use glium::Surface;
 use std::borrow::Cow;
 use games::view_details;
-use na;
 use super::RenderText;
 use ::rendering::*;
 use ::geometry::*;

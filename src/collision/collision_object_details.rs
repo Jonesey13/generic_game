@@ -1,5 +1,4 @@
 use geometry::*;
-use na::{normalize, dot, abs};
 
 pub enum CollisionObjectState {
     None,

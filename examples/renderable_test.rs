@@ -1,8 +1,6 @@
 #![feature(set_stdio)]
 extern crate generic_game as gg;
-extern crate nalgebra as na;
 extern crate time;
-extern crate num;
 extern crate image;
 extern crate glium;
 

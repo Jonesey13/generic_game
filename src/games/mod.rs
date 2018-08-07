@@ -4,8 +4,6 @@ use rendering::Renderable;
 use input::keyboard::KeyboardInput;
 use input::mouse::MouseInput;
 use input::joystick::JoystickInput;
-use na::{Matrix4, Point};
-use num::{One, Zero};
 use rendering::{DisplaySettings, WindowSpec};
 
 pub use self::view_details::{ViewDetails, ViewDetails2D, ViewDetails3D};

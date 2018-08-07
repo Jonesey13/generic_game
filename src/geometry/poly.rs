@@ -1,5 +1,3 @@
-use na::{Vector1, Rotation, norm, dot};
-use num::Zero;
 use geometry::*;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
