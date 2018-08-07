@@ -1,6 +1,6 @@
 [package]
 name = "generic_game"
-version = "0.0.5"
+version = "0.0.6"
 authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 
 [dependencies]
@@ -8,7 +8,7 @@ multiinput = "0.0.14"
 glium = { version = "*", features = ["glutin"] }
 time = "*"
 unicode-normalization = "*"
-rusttype = { git = "https://github.com/Jonesey13/rusttype.git", rev = "a809432" }
+rusttype = { version = "*", features = ["gpu_cache"] }
 rand = "*"
 lazy_static = "*"
 libloading = "*"

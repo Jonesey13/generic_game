@@ -1,6 +1,6 @@
 use unicode_normalization;
 use rusttype::{FontCollection, Font, Scale, point, vector, PositionedGlyph};
-use rusttype::gpu_cache::{Cache};
+use rusttype::gpu_cache::CacheBuilder;
 use rusttype;
 use rusttype::Rect;
 use glium;
@@ -15,12 +15,12 @@ use debug::*;
 pub const OPEN_SANS: &'static[u8] = include_bytes!("OpenSans.ttf");
 
 lazy_static! {
-    static ref OPEN_SANS_FONT: Mutex<Font<'static>> = Mutex::new(FontCollection::from_bytes(OPEN_SANS).into_font().unwrap());
+    static ref OPEN_SANS_FONT: Mutex<Font<'static>> = Mutex::new(FontCollection::from_bytes(OPEN_SANS).unwrap().into_font().unwrap());
 }
 
 pub struct TextBuffer<'a, T: RenderText> {
     vertices: Vec<T::TextVert>,
-    text_cache: rusttype::gpu_cache::Cache,
+    text_cache: rusttype::gpu_cache::Cache<'a>,
     program: glium::Program,
     cache_tex: glium::texture::Texture2d,
     font: Font<'a>,
@@ -32,7 +32,13 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
         let dpi_factor = display.gl_window().hidpi_factor();
 
         let (cache_width, cache_height) = (10000 * dpi_factor as u32, 10000 * dpi_factor as u32);
-        let cache = rusttype::gpu_cache::Cache::new(cache_width, cache_height, 0.1, 0.1);
+        let cache = CacheBuilder {
+            width: cache_width,
+            height: cache_height,
+            scale_tolerance: 0.1,
+            position_tolerance: 0.1,
+            pad_glyphs: true,
+        }.build();
         let cache_tex = glium::texture::Texture2d::with_format(
             display,
             glium::texture::RawImage2d {
@@ -49,7 +55,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
             text_cache: cache,
             cache_tex: cache_tex,
             program: shaders::make_program_from_shaders(T::get_shaders(), &display),
-            font: FontCollection::from_bytes(OPEN_SANS).into_font().unwrap(),
+            font: FontCollection::from_bytes(OPEN_SANS).unwrap().into_font().unwrap(),
             glyph_scale: settings.text_glyph_detail * dpi_factor
         }
     }
@@ -125,7 +131,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
 
         debug_clock_start("Render::glium_load::text::queue_glyph");
         for glyph in &glyphs {
-            self.text_cache.queue_glyph(0, glyph);
+            self.text_cache.queue_glyph(0, glyph.clone());
         }
         debug_clock_stop("Render::glium_load::text::queue_glyph");
 
@@ -146,8 +152,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
                     height: rect.height(),
                     format: glium::texture::ClientFormat::U8
                 });
-            },
-            10).unwrap();
+            }).unwrap();
         debug_clock_stop("Render::glium_load::text::queue_cache");
 
         debug_clock_start("Render::glium_load::text::glyph_pos_data");
@@ -178,7 +183,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
     }
 }
 
-fn layout_paragraph<'a>(font: &'a Font,
+fn layout_paragraph<'a>(font: &Font<'a>,
                         scale: Scale,
                         text: &str) -> Vec<PositionedGlyph<'a>> {
     use unicode_normalization::UnicodeNormalization;
@@ -198,11 +203,7 @@ fn layout_paragraph<'a>(font: &'a Font,
             // }
             continue;
         }
-        let base_glyph = if let Some(glyph) = font.glyph(c) {
-            glyph
-        } else {
-            continue;
-        };
+        let base_glyph =  font.glyph(c);
         if let Some(id) = last_glyph_id.take() {
             caret.x += font.pair_kerning(scale, id, base_glyph.id());
         }
