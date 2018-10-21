@@ -94,8 +94,8 @@ impl BoxBorder {
         let corner_radial_dim = Point::new(border_radius - self.thickness / 2.0, border_radius + self.thickness / 2.0);
         let upper_left_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.25, 0.5), upper_left_pos, self.color, self.fixed);
         let upper_right_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.0, 0.25), upper_right_pos, self.color, self.fixed);
-        let lower_right_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.25, 0.5), lower_right_pos, self.color, self.fixed);
-        let lower_left_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.75, 1.0), lower_left_pos, self.color, self.fixed);
+        let lower_right_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.75, 1.0), lower_right_pos, self.color, self.fixed);
+        let lower_left_circ = AnnularSegment::new(corner_radial_dim, Point::new(0.5, 0.75), lower_left_pos, self.color, self.fixed);
         
         vec![StandardPrimitive::Rect(left_wall), 
         StandardPrimitive::Rect(right_wall), 
