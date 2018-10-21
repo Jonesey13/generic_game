@@ -1,7 +1,9 @@
 [package]
 name = "generic_game"
-version = "0.0.7"
+version = "0.0.8"
 authors = ["Jonesey13 <adj27@cam.ac.uk>"]
+description = "A generic game engine library"
+license = "MIT"
 
 [dependencies]
 multiinput = "0.0.14"
