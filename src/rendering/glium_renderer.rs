@@ -209,4 +209,12 @@ impl<'a> Renderer for GliumRenderer<'a> {
             aspect_ratio: inner_size.width as f64 / inner_size.height as f64
         }
     }
+
+    fn reset(&mut self, settings: DisplaySettings) {
+        let window = Self::build_window(settings, &self.events_loop);
+        
+        let context = Self::build_context(settings);
+
+        self.display.rebuild(window, context, &self.events_loop).unwrap();
+    }
 }
