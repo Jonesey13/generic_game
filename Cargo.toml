@@ -1,21 +1,19 @@
 [package]
 name = "generic_game"
-version = "0.0.6"
+version = "0.0.7"
 authors = ["Jonesey13 <adj27@cam.ac.uk>"]
 
 [dependencies]
 multiinput = "0.0.14"
-glium = { version = "*", features = ["glutin"] }
-time = "*"
-unicode-normalization = "*"
-rusttype = { version = "*", features = ["gpu_cache"] }
-rand = "*"
-lazy_static = "*"
-libloading = "*"
+glium = { version = "0.22", features = ["glutin"] }
+time = "0.1.40"
+unicode-normalization = "0.1.7"
+rusttype = { version = "0.7.2", features = ["gpu_cache"] }
+rand = "0.5.5"
+lazy_static = "1.1.0"
+libloading = "0.5.0"
 winapi = { version = "0.3", features = ["winnt", "shellscalingapi"] }
-image = "*"
+image = "0.20"
 
 [dependencies.bitflags]
 version = "1.0.3"
-
-

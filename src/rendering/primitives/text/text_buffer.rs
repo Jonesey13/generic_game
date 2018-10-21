@@ -1,6 +1,6 @@
 use unicode_normalization;
 use rusttype::{FontCollection, Font, Scale, point, vector, PositionedGlyph};
-use rusttype::gpu_cache::CacheBuilder;
+use rusttype::gpu_cache::Cache;
 use rusttype;
 use rusttype::Rect;
 use glium;
@@ -29,16 +29,12 @@ pub struct TextBuffer<'a, T: RenderText> {
 
 impl<'a, T: RenderText> TextBuffer<'a, T> {
     pub fn new(display: &Display, settings: DisplaySettings) -> Self {
-        let dpi_factor = display.gl_window().hidpi_factor();
+        let dpi_factor = display.gl_window().get_hidpi_factor();
 
         let (cache_width, cache_height) = (10000 * dpi_factor as u32, 10000 * dpi_factor as u32);
-        let cache = CacheBuilder {
-            width: cache_width,
-            height: cache_height,
-            scale_tolerance: 0.1,
-            position_tolerance: 0.1,
-            pad_glyphs: true,
-        }.build();
+        let cache = Cache::builder()
+            .dimensions(cache_width, cache_height)
+            .build();
         let cache_tex = glium::texture::Texture2d::with_format(
             display,
             glium::texture::RawImage2d {
@@ -56,7 +52,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
             cache_tex: cache_tex,
             program: shaders::make_program_from_shaders(T::get_shaders(), &display),
             font: FontCollection::from_bytes(OPEN_SANS).unwrap().into_font().unwrap(),
-            glyph_scale: settings.text_glyph_detail * dpi_factor
+            glyph_scale: settings.text_glyph_detail * dpi_factor as f32
         }
     }
 

@@ -5,6 +5,7 @@ use ::geometry::*;
 use glium;
 use glium::Frame;
 use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
+use glium::glutin::dpi::LogicalSize;
 use glium::texture;
 use glium::glutin::EventsLoop;
 use std::io::Cursor;
@@ -85,7 +86,7 @@ impl<'a> GliumRenderer<'a> {
 
     fn build_window(settings: DisplaySettings, events_loop: &glium::glutin::EventsLoop) -> glium::glutin::WindowBuilder {
         let mut window = glium::glutin::WindowBuilder::new()
-            .with_dimensions(settings.res.0, settings.res.1);
+            .with_dimensions(LogicalSize::new(settings.res.0 as f64, settings.res.1 as f64));
 
         if settings.fullscreen { 
             window = window.with_fullscreen(Some(events_loop.get_primary_monitor())); 
@@ -202,10 +203,10 @@ impl<'a> Renderer for GliumRenderer<'a> {
     }
 
     fn get_window_spec(&self) -> super::WindowSpec {
-        let (width, height) = self.display.gl_window().get_inner_size().unwrap();
+        let inner_size = self.display.gl_window().get_inner_size().unwrap();
 
         super::WindowSpec {
-            aspect_ratio: width as f64 / height as f64
+            aspect_ratio: inner_size.width as f64 / inner_size.height as f64
         }
     }
 }
