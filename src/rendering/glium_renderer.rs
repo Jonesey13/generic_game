@@ -80,6 +80,7 @@ impl<'a> GliumRenderer<'a> {
         
         let context = Self::build_context(settings);
         let display = glium::Display::new(window, context, &events_loop).unwrap();
+        display.gl_window().hide_cursor(true);
 
         (display, events_loop)
     }
