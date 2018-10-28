@@ -26,7 +26,8 @@ pub struct GliumRenderer<'a> {
     text_processor: TextBuffer<'a, PlainText>,
     view_details: view_details::ViewDetails,
     display_settings: DisplaySettings,
-    texture_array: texture::srgb_texture2d_array::SrgbTexture2dArray
+    texture_array: texture::srgb_texture2d_array::SrgbTexture2dArray,
+    hidden_cursor: bool,
 }
 
 impl<'a> GliumRenderer<'a> {
@@ -41,7 +42,7 @@ impl<'a> GliumRenderer<'a> {
             ..Default::default()
         };
 
-        GliumRenderer {
+        let mut output = GliumRenderer {
             display: Box::new(display.clone()),
             events_loop: Box::new(events_loop),
             draw_params: draw_params,
@@ -52,8 +53,11 @@ impl<'a> GliumRenderer<'a> {
             text_processor: TextBuffer::new(&display, settings),
             view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default()),
             display_settings: settings,
-            texture_array: texture::srgb_texture2d_array::SrgbTexture2dArray::empty(&display, 1024, 1024, 1).unwrap()
-        }
+            texture_array: texture::srgb_texture2d_array::SrgbTexture2dArray::empty(&display, 1024, 1024, 1).unwrap(),
+            hidden_cursor: false,
+        };
+
+        output
     }
 
     pub fn reset(&mut self, settings: DisplaySettings) {
@@ -80,7 +84,6 @@ impl<'a> GliumRenderer<'a> {
         
         let context = Self::build_context(settings);
         let display = glium::Display::new(window, context, &events_loop).unwrap();
-        display.gl_window().hide_cursor(true);
 
         (display, events_loop)
     }
@@ -192,6 +195,12 @@ impl<'a> Renderer for GliumRenderer<'a> {
         }
         
         self.flush_buffers();
+
+        if !self.hidden_cursor {
+            self.display.gl_window().hide_cursor(true);
+            self.hidden_cursor = true;
+        }
+
         debug_clock_stop("Render::glium_render");
     }
 

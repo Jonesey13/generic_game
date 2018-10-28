@@ -22,7 +22,7 @@ fn main() {
     let display_settings = DisplaySettings {
         res: (1920, 1080),
         multisample_level: 8,
-        fullscreen: false,
+        fullscreen: true,
             ..Default::default()
     };
 
