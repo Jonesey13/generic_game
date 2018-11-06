@@ -64,6 +64,10 @@ impl MultiInput {
             f9_key_switch: bool_switch::BoolSwitch::new(),    
         }
     }
+
+    fn get_current_mouse_move(move_states: &HashMap<usize, (i32, i32)>, num: usize) -> (i32, i32) {
+        move_states.get(&num).unwrap_or(&(0, 0)).clone()
+    }
 }
 
 impl InputHandler for MultiInput {
@@ -87,7 +91,11 @@ impl InputHandler for MultiInput {
                 RawEvent::MouseButtonEvent(num, mouse_button, state)
                     => {raw_states.mouse_button_states.insert(MouseAndButton(num, mouse_button), state == State::Pressed);},
                 RawEvent::MouseMoveEvent(num, x, y)
-                    => {raw_states.mouse_move_states.insert(num, (x, y));},
+                    => {
+                        let current_mouse_movement = Self::get_current_mouse_move(&raw_states.mouse_move_states, num);
+                        let new_mouse_move = (current_mouse_movement.0 + x, current_mouse_movement.1 + y);
+                        raw_states.mouse_move_states.insert(num, (new_mouse_move.0, new_mouse_move.1));
+                        },
                 RawEvent::JoystickButtonEvent(num, button_num, state)
                     => {raw_states.joystick_button_states.insert(JoystickButton(num, button_num), state == State::Pressed);},
                 RawEvent::JoystickAxisEvent(num, axis, value)

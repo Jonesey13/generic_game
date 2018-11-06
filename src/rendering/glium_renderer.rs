@@ -42,7 +42,7 @@ impl<'a> GliumRenderer<'a> {
             ..Default::default()
         };
 
-        let mut output = GliumRenderer {
+        let output = GliumRenderer {
             display: Box::new(display.clone()),
             events_loop: Box::new(events_loop),
             draw_params: draw_params,
