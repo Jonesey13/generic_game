@@ -10,4 +10,5 @@ pub trait WindowHandler {
     fn receive_input(&mut self, &mut EventsLoop) {}
     fn flush_input(&mut self) {}
     fn is_focused(&self) -> bool { true }
+    fn request_close(&self) -> bool { false }
 }

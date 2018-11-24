@@ -100,7 +100,7 @@ impl<Prim> Handler for HandlerBasic<Prim> {
     }
 
     fn should_exit(&self) -> bool {
-        self.game.should_exit()
+        self.window_handler.request_close() || self.game.should_exit()
     }
 
     fn on_exit(&mut self) {
