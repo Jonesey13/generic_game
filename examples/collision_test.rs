@@ -1,4 +1,3 @@
-#![feature(set_stdio)]
 extern crate generic_game as gg;
 extern crate time;
 
@@ -16,8 +15,6 @@ fn main() {
     env::set_var("RUST_BACKTRACE", "full");
     debug::set_flags(DebugFlags::DEFAULTDEBUG);
     debug(&format!("Starting Up - Date: {}", time::now_utc().ctime()));
-    let error_writer = Box::new(ErrorWriter::new());
-    set_panic(Some(error_writer));
 
     let display_settings = DisplaySettings {
         res: (1920, 1080),

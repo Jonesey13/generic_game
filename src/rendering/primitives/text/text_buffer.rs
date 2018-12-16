@@ -14,10 +14,6 @@ use debug::*;
 
 pub const OPEN_SANS: &'static[u8] = include_bytes!("OpenSans.ttf");
 
-lazy_static! {
-    static ref OPEN_SANS_FONT: Mutex<Font<'static>> = Mutex::new(FontCollection::from_bytes(OPEN_SANS).unwrap().into_font().unwrap());
-}
-
 pub struct TextBuffer<'a, T: RenderText> {
     vertices: Vec<T::TextVert>,
     text_cache: rusttype::gpu_cache::Cache<'a>,
