@@ -24,7 +24,7 @@ pub struct TextBuffer<'a, T: RenderText> {
 }
 
 impl<'a, T: RenderText> TextBuffer<'a, T> {
-    pub fn new(display: &Display, settings: DisplaySettings) -> Self {
+    pub fn new(display: &Display, settings: DisplaySettings, font_bytes: &'a [u8]) -> Self {
         let dpi_factor = display.gl_window().get_hidpi_factor();
 
         let (cache_width, cache_height) = (10000 * dpi_factor as u32, 10000 * dpi_factor as u32);
@@ -47,7 +47,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
             text_cache: cache,
             cache_tex: cache_tex,
             program: shaders::make_program_from_shaders(T::get_shaders(), &display),
-            font: FontCollection::from_bytes(OPEN_SANS).unwrap().into_font().unwrap(),
+            font: FontCollection::from_bytes(font_bytes).unwrap().into_font().unwrap(),
             glyph_scale: settings.text_glyph_detail * dpi_factor as f32
         }
     }

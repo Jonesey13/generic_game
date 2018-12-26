@@ -9,7 +9,6 @@ use gg::collision::CollisionTestBuilder;
 use gg::handler_basic::HandlerBasic;
 use gg::geometry::{ConPoly, Circle, Line, Point};
 use std::env;
-use std::io::*;
 
 fn main() {
     env::set_var("RUST_BACKTRACE", "full");

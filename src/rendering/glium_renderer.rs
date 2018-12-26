@@ -2,6 +2,7 @@ use super::Renderer;
 use super::shaders::make_program_from_shaders;
 use ::rendering::*;
 use ::geometry::*;
+use ::rendering::text_buffer::OPEN_SANS;
 use glium;
 use glium::Frame;
 use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
@@ -50,7 +51,7 @@ impl<'a> GliumRenderer<'a> {
             texture_rect_buffer: BasicBuffer::<TextureRect>::new(&display),
             circ_buffer: BasicBuffer::<CirclePart>::new(&display),
             polygon_buffer: BasicBuffer::<Polygon>::new(&display),
-            text_processor: TextBuffer::new(&display, settings),
+            text_processor: TextBuffer::new(&display, settings, OPEN_SANS),
             view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default()),
             display_settings: settings,
             texture_array: texture::srgb_texture2d_array::SrgbTexture2dArray::empty(&display, 1024, 1024, 1).unwrap(),
@@ -74,7 +75,7 @@ impl<'a> GliumRenderer<'a> {
         self.texture_rect_buffer = BasicBuffer::<TextureRect>::new(display);
         self.circ_buffer = BasicBuffer::<CirclePart>::new(display);
         self.polygon_buffer = BasicBuffer::<Polygon>::new(display);
-        self.text_processor = TextBuffer::new(display, self.display_settings);
+        self.text_processor = TextBuffer::new(display, self.display_settings, OPEN_SANS);
     }
 
     fn build_display_and_events_loop(settings: DisplaySettings) -> (Display, EventsLoop) {

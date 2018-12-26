@@ -45,21 +45,21 @@ impl Game for RenderableTestGame {
         //     pos: Point3::new(0.0, 0.0, 0.1),
         //     color: Color::new(0.0, 1.0, 0.0, 1.0)
         // };
-        let circ = CircleRenderable {
+        let _circ = CircleRenderable {
             radius: 0.7,
             pos: Point3::new(-0.0, 0.0, 0.1),
             color: Color::new(1.0, 0.0, 0.0, 1.0),
             fixed: true
         };
 
-        let ann = Annulus {
+        let _ann = Annulus {
             radial_dim: Point::new(0.4, 0.5),
             pos: Point3::new(0.2, -0.3, -0.1),
             color: Color::new(0.0, 0.0, 1.0, 1.0),
             fixed: false
         };
 
-        let text = PlainText {
+        let _text = PlainText {
             content: "llllllll there! |".to_string(),
             position: Point3::new(0.0, 0.0, 0.0),
             scale: Point::new(0.2, 0.2),
@@ -77,9 +77,9 @@ impl Game for RenderableTestGame {
             Point::new(-0.2, -0.2),
             Point::new(0.2, -0.2)
         ];
-        let poly = Polygon::new_regular(poly_corners, Point::zero(), Point3::zero(), Color::new(1.0, 0.0, 0.0, 1.0), false);
+        let _poly = Polygon::new_regular(poly_corners, Point::zero(), Point3::zero(), Color::new(1.0, 0.0, 0.0, 1.0), false);
 
-        let line = LineRenderable::new_rounded(
+        let _line = LineRenderable::new_rounded(
             Point::new(-0.5, -0.5),
             Point::new(0.5, -0.25),
             0.05,
@@ -88,7 +88,7 @@ impl Game for RenderableTestGame {
             false
         );
 
-        let arrow = Arrow::new_rounded(
+        let _arrow = Arrow::new_rounded(
             Point::new(0.5, 0.0),
             Point::new(-0.5, 0.0),
             0.05,
@@ -116,8 +116,8 @@ impl Game for RenderableTestGame {
             false
         );
 
-        let box_border_fixed = BoxBorder::new_rounded(0.01, 0.1, Point3::new(0.0, 0.0, -0.2), 0.5, 0.5, Color::new(1.0, 1.0, 0.0, 1.0), true);
-        let box_border = BoxBorder::new_rounded(0.01, 0.1, Point3::new(0.0, 0.0, -0.2), 0.5, 0.5, Color::new(1.0, 1.0, 0.0, 1.0), false);        
+        let _box_border_fixed = BoxBorder::new_rounded(0.01, 0.1, Point3::new(0.0, 0.0, -0.2), 0.5, 0.5, Color::new(1.0, 1.0, 0.0, 1.0), true);
+        let _box_border = BoxBorder::new_rounded(0.01, 0.1, Point3::new(0.0, 0.0, -0.2), 0.5, 0.5, Color::new(1.0, 1.0, 0.0, 1.0), false);        
 
         vec![
             Box::new(tex_rect1),

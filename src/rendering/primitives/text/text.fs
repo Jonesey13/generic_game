@@ -6,7 +6,7 @@ in vec4 rect_pos;
 out vec4 f_color;
 
 void main() {
-  if (texture(tex, tex_pos).r + texture(tex, tex_pos).g + texture(tex, tex_pos).b > 0.1)
+  if (texture(tex, tex_pos).r + texture(tex, tex_pos).g + texture(tex, tex_pos).b > 0.5)
   {
     f_color = color_ges * vec4(1.0, 1.0, 1.0, texture(tex, tex_pos).r);
   } else {
