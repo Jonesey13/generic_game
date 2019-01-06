@@ -257,6 +257,48 @@ impl InputHandler for MultiInput {
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Pause)) {
                         kbds.devices[index].pause = val;
                     }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::CapsLock)) {
+                        kbds.devices[index].capslock = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::PageUp)) {
+                        kbds.devices[index].pageup = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::PageDown)) {
+                        kbds.devices[index].pagedown = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::PrintScreen)) {
+                        kbds.devices[index].printscreen = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Insert)) {
+                        kbds.devices[index].insert = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::End)) {
+                        kbds.devices[index].end = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Home)) {
+                        kbds.devices[index].home = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Delete)) {
+                        kbds.devices[index].delete = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Add)) {
+                        kbds.devices[index].add = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Subtract)) {
+                        kbds.devices[index].subtract = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Multiply)) {
+                        kbds.devices[index].multiply = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Separator)) {
+                        kbds.devices[index].separator = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Decimal)) {
+                        kbds.devices[index].decimal = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Divide)) {
+                        kbds.devices[index].divide = val;
+                    }
                 }
             }
 
