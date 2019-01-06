@@ -204,6 +204,45 @@ impl KeyboardInput {
     pub fn get_divide(&self) -> bool {
         self.devices.iter().fold(false, |acc, device| {acc || device.divide})
     }
+    pub fn get_backslash(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.backslash})
+    }
+    pub fn get_forwardslash(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.forwardslash})
+    }
+    pub fn get_plus(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.plus})
+    }
+    pub fn get_minus(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.minus})
+    }
+    pub fn get_fullstop(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.fullstop})
+    }
+    pub fn get_comma(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.comma})
+    }
+    pub fn get_tab(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.tab})
+    }
+    pub fn get_numlock(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.numlock})
+    }
+    pub fn get_leftsquarebracket(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.leftsquarebracket})
+    }
+    pub fn get_rightsquarebracket(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.rightsquarebracket})
+    }
+    pub fn get_semicolon(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.semicolon})
+    }
+    pub fn get_apostrophe(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.apostrophe})
+    }
+    pub fn get_hash(&self) -> bool {
+        self.devices.iter().fold(false, |acc, device| {acc || device.hash})
+    }
 }
 
 #[derive(Copy, Clone, Default)]
