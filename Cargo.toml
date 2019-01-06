@@ -1,12 +1,12 @@
 [package]
 name = "generic_game"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Alexander Jones <alexander.jones@softwire.com>"]
 description = "A generic game engine library"
 license = "MIT"
 
 [dependencies]
-multiinput = "0.0.14"
+multiinput = "0.0.15"
 glium = { version = "0.22", features = ["glutin"] }
 time = "0.1.40"
 unicode-normalization = "0.1.7"

@@ -299,6 +299,45 @@ impl InputHandler for MultiInput {
                     if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Divide)) {
                         kbds.devices[index].divide = val;
                     }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::BackSlash)) {
+                        kbds.devices[index].backslash = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::ForwardSlash)) {
+                        kbds.devices[index].forwardslash = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Plus)) {
+                        kbds.devices[index].plus = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Minus)) {
+                        kbds.devices[index].minus = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::FullStop)) {
+                        kbds.devices[index].fullstop = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Comma)) {
+                        kbds.devices[index].comma = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Tab)) {
+                        kbds.devices[index].tab = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Numlock)) {
+                        kbds.devices[index].numlock = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::LeftSquareBracket)) {
+                        kbds.devices[index].leftsquarebracket = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::RightSquareBracket)) {
+                        kbds.devices[index].rightsquarebracket = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::SemiColon)) {
+                        kbds.devices[index].semicolon = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Apostrophe)) {
+                        kbds.devices[index].apostrophe = val;
+                    }
+                    if let Some(&val) = self.raw_states.key_states.get(&Key(index, KeyId::Hash)) {
+                        kbds.devices[index].hash = val;
+                    }
                 }
             }
 
