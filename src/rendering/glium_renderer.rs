@@ -27,7 +27,7 @@ pub struct GliumRenderer<'a> {
     text_processor: TextBuffer<'a, PlainText>,
     view_details: view_details::ViewDetails,
     display_settings: DisplaySettings,
-    texture_array: texture::srgb_texture2d_array::SrgbTexture2dArray,
+    texture_array: texture::texture2d_array::Texture2dArray,
     hidden_cursor: bool,
 }
 
@@ -54,7 +54,7 @@ impl<'a> GliumRenderer<'a> {
             text_processor: TextBuffer::new(&display, settings, OPEN_SANS),
             view_details: view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default()),
             display_settings: settings,
-            texture_array: texture::srgb_texture2d_array::SrgbTexture2dArray::empty(&display, 1024, 1024, 1).unwrap(),
+            texture_array: texture::texture2d_array::Texture2dArray::empty(&display, 1024, 1024, 1).unwrap(),
             hidden_cursor: false,
         };
 
@@ -141,7 +141,7 @@ impl<'a> GliumRenderer<'a> {
 
         let mut renderer = GliumRenderer::new(settings);
 
-        let texture = glium::texture::srgb_texture2d_array::SrgbTexture2dArray::new(renderer.display.as_ref(), texture_array).unwrap();
+        let texture = glium::texture::texture2d_array::Texture2dArray::new(renderer.display.as_ref(), texture_array).unwrap();
 
         renderer.texture_array = texture;
     

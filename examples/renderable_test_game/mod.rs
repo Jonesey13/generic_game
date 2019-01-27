@@ -88,12 +88,12 @@ impl Game for RenderableTestGame {
             false
         );
 
-        let _arrow = Arrow::new_rounded(
+        let arrow = Arrow::new_rounded(
             Point::new(0.5, 0.0),
             Point::new(-0.5, 0.0),
             0.05,
             Point::new(0.2, 0.2),
-            Color::new(0.5, 0.5, 1.0, 1.0),
+            Color::new_rgba(0xb81412ff),
             0.0,
             false
         );
@@ -121,7 +121,8 @@ impl Game for RenderableTestGame {
 
         vec![
             Box::new(tex_rect1),
-            Box::new(tex_rect2)
+            Box::new(tex_rect2),
+            Box::new(arrow),
         ]
     }
 
