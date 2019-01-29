@@ -24,6 +24,19 @@ impl Rectangle {
         }
     }
 
+    pub fn new_corner(
+            length: f64, 
+            height: f64, 
+            corner_pos: Point, 
+        ) -> Rectangle {
+        Rectangle {
+            length,
+            height,
+            rot: Rotation::new(0.0),
+            pos: Point::new(corner_pos.x + length / 2.0, corner_pos.y + height / 2.0),
+        }
+    }
+
     pub fn new_with_rotation(
             length: f64, 
             height: f64, 
@@ -35,6 +48,20 @@ impl Rectangle {
             height,
             rot: rotation,
             pos,
+        }
+    }
+
+    pub fn new_corner_with_rotation(
+            length: f64, 
+            height: f64, 
+            corner_pos: Point,
+            rotation: Rotation,
+        ) -> Rectangle {
+        Rectangle {
+            length,
+            height,
+            rot: rotation,
+            pos: Point::new(corner_pos.x + length / 2.0, corner_pos.y + height / 2.0),            
         }
     }
 
