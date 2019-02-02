@@ -69,7 +69,7 @@ impl ConPoly {
         }
     }
 
-    pub fn get_average(&self) -> Point {
+    pub fn center(&self) -> Point {
         (1.0 / self.corners.len() as f64) * self.corners.iter().fold(Point::zero(), |acc, v| {acc + v})
     }
 }
@@ -83,9 +83,21 @@ impl TwoDTransformable for ConPoly {
 
     fn rotate(&mut self, rot_angle: f64) {
         let rot_mat = Rotation::new(rot_angle);
-        let center = self.get_average();
+        let center = self.center();
         for corner in &mut self.corners {
             *corner = rot_mat * (*corner - center) + center;
+        }
+    }
+
+    fn get_center(&self) -> Point {
+        self.center()
+    }
+
+    fn scale_by(&mut self, scale_factor: f64) {
+        let center = self.get_center();
+
+        for mut point in &mut self.corners {
+            *point = scale_factor * (*point - center) + center;
         }
     }
 }
@@ -93,7 +105,7 @@ impl TwoDTransformable for ConPoly {
 impl ToRenderables for ConPoly {
     fn to_renderables(&self, color: Color, depth: f64, fixed: bool) -> Vec<Box<StandardRenderable>> {
         vec![
-            Box::new(Polygon::new_regular(self.corners.clone(), self.get_average(), Point3::new(0.0, 0.0, depth), color, fixed))
+            Box::new(Polygon::new_regular(self.corners.clone(), self.get_center(), Point3::new(0.0, 0.0, depth), color, fixed))
         ]
     }
 }
@@ -155,6 +167,22 @@ fn point_inside_poly_test() {
     assert!(overlap.is_some());
 
     assert!((overlap.unwrap() - Point::new(-0.2, 0.0)).norm() < 0.00001);
+}
+
+#[test]
+fn scale_poly_test() {
+    let corners = vec![
+        Point::new(-1.0, -1.0),
+        Point::new(1.0, -1.0),
+        Point::new(1.0, 1.0),
+        Point::new(-1.0, 1.0)
+    ];
+    
+    let mut test_poly = ConPoly::new(corners);
+
+    test_poly.scale_by(2.0);
+
+    assert!((test_poly.corners[0] - Point::new(-2.0, -2.0)).norm() < 0.0001);
 }
 
 impl From<Rectangle> for ConPoly {

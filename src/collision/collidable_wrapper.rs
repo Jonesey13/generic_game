@@ -140,4 +140,12 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone + CollisionData
     fn rotate(&mut self, rot_angle: f64) {
         self.collidable.rotate(rot_angle);
     }
+
+    fn get_center(&self) -> Point {
+        self.collidable.get_center()
+    }
+
+    fn scale_by(&mut self, scale_factor: f64) {
+        self.collidable.scale_by(scale_factor)
+    }
 }

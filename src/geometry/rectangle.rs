@@ -113,6 +113,16 @@ impl TwoDTransformable for Rectangle {
         let rot_mat = Rotation::new(rot_angle);
         self.rot = rot_mat * self.rot;
     }
+
+    fn get_center(&self) -> Point {
+        self.pos
+    }
+
+    fn scale_by(&mut self, scale_factor: f64)
+    {
+        self.length = scale_factor * self.length;
+        self.height = scale_factor * self.height;
+    }
 }
 
 impl ToRenderables for Rectangle {

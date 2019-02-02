@@ -34,6 +34,14 @@ impl TwoDTransformable for Circle {
     }
 
     fn rotate(&mut self, _: f64) {}
+
+    fn get_center(&self) -> Point {
+        self.center
+    }
+
+    fn scale_by(&mut self, scale_factor: f64) {
+        self.rad = self.rad * scale_factor;
+    }
 }
 
 impl ToRenderables for Circle {

@@ -185,6 +185,12 @@ impl TwoDTransformable for Point {
     }
 
     fn rotate(&mut self, _: f64) {}
+
+    fn get_center(&self) -> Point {
+        *self
+    }
+
+    fn scale_by(&mut self, _scale_factor: f64) {}
 }
 
 impl ToRenderables for Point {

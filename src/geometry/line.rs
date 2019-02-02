@@ -94,6 +94,17 @@ impl TwoDTransformable for Line {
         self.beg = rot_mat * (self.beg - center) + center;
         self.end = rot_mat * (self.end - center) + center;
     }
+
+    fn get_center(&self) -> Point {
+        self.get_midpoint()
+    }
+
+    fn scale_by(&mut self, scale_factor: f64) {
+        let center = self.get_midpoint();
+
+        self.beg = scale_factor * (self.beg - center) + center;
+        self.end = scale_factor * (self.end - center) + center;
+    }
 }
 
 impl ToRenderables for Line {
