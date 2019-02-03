@@ -8,7 +8,7 @@ pub trait TwoDTransformable {
 }
 
 pub trait HasTwoDTransformable {
-    type Transformable;
+    type Transformable: TwoDTransformable;
 
     fn get_transformable(&self) -> &Self::Transformable;
     fn get_transformable_mut(&mut self) -> &mut Self::Transformable;
