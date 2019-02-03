@@ -35,7 +35,7 @@ pub use self::bezier_patch::BezierPatch;
 pub use self::bezier_2d::BezierQuad;
 pub use self::con_poly::ConPoly;
 pub use self::poly::Poly;
-pub use self::twodtransformable::TwoDTransformable;
+pub use self::twodtransformable::{HasTwoDTransformable, TwoDTransformable};
 pub use self::to_renderables::ToRenderables;
 pub use self::cartesian_rectangle::CartesianRectangle;
 pub use self::rectangle::Rectangle;
