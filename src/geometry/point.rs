@@ -77,6 +77,28 @@ impl Div<f64> for Point {
     }
 }
 
+impl Div<Point> for f64 {
+    type Output = Point;
+
+    fn div(self, point: Point) -> Point {
+        Point {
+            x: self / point.x,
+            y: self / point.y,
+        }
+    }
+}
+
+impl Div<Point> for Point {
+    type Output = Point;
+
+    fn div(self, point: Point) -> Point {
+        Point {
+            x: self.x / point.x,
+            y: self.y / point.y,
+        }
+    }
+}
+
 impl<'a> Mul<&'a Point> for f64 {
     type Output = Point;
 
