@@ -38,6 +38,17 @@ impl Color {
         Self::new_rgba_comp(r, g, b, a)
     }
 
+    pub fn new_rgb(rgb: u32) -> Self {
+        let mut rem = rgb;
+        let b = (rem % 256) as u8;
+        rem = rem / 256;
+        let g = (rem % 256) as u8;
+        rem = rem / 256;
+        let r = (rem % 256) as u8;
+
+        Self::new_rgba_comp(r, g, b, 0xFF)
+    }
+
     pub fn get_array(&self) -> [f64; 4] {
         [self.r, self.g, self.b, self.a]
     }
