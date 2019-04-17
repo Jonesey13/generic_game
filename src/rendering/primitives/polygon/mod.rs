@@ -2,7 +2,7 @@ use ::rendering::*;
 use ::geometry::*;
 
 /// IMPORTANT: Must form a star domain at its center
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Polygon {
     pub corners: Vec<Point>, /// defined anti-clockwise
     pub center: Point,

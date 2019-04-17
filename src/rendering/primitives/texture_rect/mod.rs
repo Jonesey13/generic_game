@@ -1,7 +1,7 @@
 use ::rendering::*;
 use ::geometry::*;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct TextureRect {
     pub length: f64,  /// x-axis
     pub height: f64,  /// y-axis

@@ -2,7 +2,7 @@ use ::rendering::*;
 use ::geometry::*;
 use glium;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct CirclePart {
     pub radial_dim: Point,
     pub angular_dim: Point,

@@ -11,7 +11,7 @@ use super::RenderText;
 use ::rendering::*;
 use ::geometry::*;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct PlainText {
     pub content: String,
     pub position: Point3,
@@ -127,14 +127,14 @@ impl PlainText {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum TextAlign {
     Centered,
     BaseLine,
     LeftBaseLine
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct TextVertex {
     length: f32,
     height: f32,
