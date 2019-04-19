@@ -70,6 +70,16 @@ impl Point3 {
     }
 }
 
+impl Default for Point3 {
+    fn default() -> Self {
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0
+        }
+    }
+}
+
 impl Mul<Point3> for f64 {
     type Output = Point3;
 
