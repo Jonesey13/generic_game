@@ -1,7 +1,7 @@
 use super::{CollisionTestGame, CollisionTestObject};
-use collision::collidable_wrapper::{CollidableWrapper, CollidableWrapperTrait};
-use collision::Collider;
-use geometry::{ConPoly, Line, Circle, Point};
+use crate::collision::collidable_wrapper::{CollidableWrapper, CollidableWrapperTrait};
+use crate::collision::Collider;
+use crate::geometry::{ConPoly, Line, Circle, Point};
 
 pub struct CollisionTestBuilder {
     polys: Vec<CollidableWrapper<ConPoly, CollisionTestObject>>,

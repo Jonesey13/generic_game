@@ -1,12 +1,12 @@
-extern crate generic_game as gg;
-extern crate time;
-extern crate image;
-extern crate glium;
+use generic_game as gg;
+use time;
+use image;
 
-use gg::debug::*;
-use gg::{debug, rendering, input, window, games, Handler};
-use gg::handler_basic::HandlerBasic;
-use gg::rendering::{DisplaySettings, StandardPrimitive};
+
+use crate::gg::debug::*;
+use crate::gg::{debug, rendering, input, window, games, Handler};
+use crate::gg::handler_basic::HandlerBasic;
+use crate::gg::rendering::{DisplaySettings, StandardPrimitive};
 use std::env;
 use std::io::*;
 mod renderable_test_game;
@@ -28,10 +28,10 @@ fn main() {
     let texture_array = vec![image1];
 
     let renderer = Box::new(rendering::GliumRenderer::new_with_textures(display_settings, texture_array));
-    let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
-    let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
-    let game: Box<games::Game<Primitive=StandardPrimitive>> = Box::new(renderable_test_game::RenderableTestGame::default());
-    let mut handler: Box<Handler> = Box::new(HandlerBasic::new(renderer, input_handler, window_handler, game));
+    let input_handler: Box<dyn input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
+    let window_handler: Box<dyn window::WindowHandler> = Box::new(window::GlutinInput::new());
+    let game: Box<dyn games::Game<Primitive=StandardPrimitive>> = Box::new(renderable_test_game::RenderableTestGame::default());
+    let mut handler: Box<dyn Handler> = Box::new(HandlerBasic::new(renderer, input_handler, window_handler, game));
 
     handler.init();
     while !handler.should_exit() {

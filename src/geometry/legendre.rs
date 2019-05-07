@@ -1,4 +1,4 @@
-use ::geometry::{Polynomial, Polynomial2d, Point};
+use crate::geometry::{Polynomial, Polynomial2d, Point};
 
 pub fn build_interpolating_poly(knots: Vec<f64>, values: Vec<f64>) -> Polynomial {
     if knots.len() != values.len() {
@@ -49,7 +49,7 @@ fn get_knot_poly_product_for_knot(index: usize, knots: Vec<f64>) -> Polynomial {
 #[cfg(test)]
 mod tests {
     use std::f64::consts::PI;
-    use ::geometry::build_interpolating_poly;
+    use crate::geometry::build_interpolating_poly;
 
     #[test]
     fn interpolation_test_linear() {

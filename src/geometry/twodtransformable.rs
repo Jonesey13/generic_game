@@ -1,4 +1,4 @@
-use ::geometry::Point;
+use crate::geometry::Point;
 
 pub trait TwoDTransformable {
     fn shift_by(&mut self, shift: Point);

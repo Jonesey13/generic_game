@@ -1,6 +1,6 @@
 use std::ops::{Add, Mul};
-use ::geometry::Point;
-use geometry::Polynomial;
+use crate::geometry::Point;
+use crate::geometry::Polynomial;
 
 #[derive(Clone, Debug)]
 pub struct Polynomial2d {

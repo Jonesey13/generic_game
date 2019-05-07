@@ -1,5 +1,5 @@
-use ::rendering::*;
-use ::geometry::*;
+use crate::rendering::*;
+use crate::geometry::*;
 
 #[derive(Clone, Debug)]
 pub struct AnnularSegment {

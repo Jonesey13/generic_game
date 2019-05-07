@@ -1,5 +1,5 @@
 use std::ops::Mul;
-use ::geometry::*;
+use crate::geometry::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Rotation {

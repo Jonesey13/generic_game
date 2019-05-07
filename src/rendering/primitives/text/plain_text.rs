@@ -6,10 +6,10 @@ use rusttype::Rect;
 use glium;
 use glium::Surface;
 use std::borrow::Cow;
-use games::view_details;
+use crate::games::view_details;
 use super::RenderText;
-use ::rendering::*;
-use ::geometry::*;
+use crate::rendering::*;
+use crate::geometry::*;
 
 #[derive(Clone, Debug)]
 pub struct PlainText {

@@ -1,5 +1,5 @@
-use ::rendering::*;
-use ::geometry::*;
+use crate::rendering::*;
+use crate::geometry::*;
 
 /// IMPORTANT: Must form a star domain at its center
 #[derive(Clone, Debug)]

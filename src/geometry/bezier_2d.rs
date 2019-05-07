@@ -1,4 +1,4 @@
-use geometry::*;
+use crate::geometry::*;
 
 #[derive(Clone)]
 pub struct BezierQuad {

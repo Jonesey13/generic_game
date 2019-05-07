@@ -7,10 +7,10 @@ use glium;
 use glium::{Surface, Display, Frame, DrawParameters, Depth, DepthTest};
 use std::borrow::Cow;
 use super::{RenderText};
-use rendering::*;
-use games::view_details;
+use crate::rendering::*;
+use crate::games::view_details;
 use std::sync::Mutex;
-use debug::*;
+use crate::debug::*;
 
 pub const OPEN_SANS: &'static[u8] = include_bytes!("OpenSans.ttf");
 
@@ -57,7 +57,7 @@ impl<'a, T: RenderText> TextBuffer<'a, T> {
         program: &glium::Program,
         target: &mut Frame,
         display: &Display,
-        _: &DrawParameters,
+        _: &DrawParameters<'_>,
         uniforms: &Unif)
     {
         let vertex_buffer = glium::VertexBuffer::new(
@@ -86,7 +86,7 @@ impl<'a, T: RenderText> GliumBuffer<T> for TextBuffer<'a, T> {
         target: &mut Frame,
         display: &Display,
         view_details: view_details::ViewDetails,
-        draw_params: &DrawParameters,
+        draw_params: &DrawParameters<'_>,
         _: &Unif
     ) {
         if !self.vertices.is_empty() {

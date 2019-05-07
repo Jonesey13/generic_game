@@ -1,6 +1,6 @@
 /// For use in shaders (projective space transforms)
 use std::f64::consts::PI;
-use ::geometry::*;
+use crate::geometry::*;
 
 /// Translation by the three_vec
 pub fn translation_mat(two_vec: Point) -> Matrix3 {

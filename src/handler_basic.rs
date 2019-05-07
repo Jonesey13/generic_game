@@ -1,22 +1,22 @@
-use Handler;
-use rendering::{GliumRenderer, Renderer, StandardPrimitive};
-use input::InputHandler;
-use window::WindowHandler;
-use games::Game;
+use crate::Handler;
+use crate::rendering::{GliumRenderer, Renderer, StandardPrimitive};
+use crate::input::InputHandler;
+use crate::window::WindowHandler;
+use crate::games::Game;
 use time;
-use debug::*;
+use crate::debug::*;
 use winapi;
-use input::multihandler::MultiInput;
+use crate::input::multihandler::MultiInput;
 
 use libloading::{Library, Symbol};
 
 type SetProcessDpiAwareness<'a> = Symbol<'a, unsafe extern "system" fn(awareness: winapi::um::shellscalingapi::PROCESS_DPI_AWARENESS) -> winapi::um::winnt::HRESULT>;
 
 pub struct HandlerBasic<Prim> {
-    renderer: Box<Renderer<Primitive=Prim>>,
-    input_handler: Box<InputHandler>,
-    window_handler: Box<WindowHandler>,
-    game: Box<Game<Primitive=Prim>>,
+    renderer: Box<dyn Renderer<Primitive=Prim>>,
+    input_handler: Box<dyn InputHandler>,
+    window_handler: Box<dyn WindowHandler>,
+    game: Box<dyn Game<Primitive=Prim>>,
     last_time: f64,
     pause_active_flag: bool,
     increment_frame: bool
@@ -24,10 +24,10 @@ pub struct HandlerBasic<Prim> {
 
 impl<Prim> HandlerBasic<Prim> {
     pub fn new(
-        renderer: Box<Renderer<Primitive=Prim>>,
-        input_handler: Box<InputHandler>,
-        window_handler: Box<WindowHandler>,
-        game: Box<Game<Primitive=Prim>>) -> Self {
+        renderer: Box<dyn Renderer<Primitive=Prim>>,
+        input_handler: Box<dyn InputHandler>,
+        window_handler: Box<dyn WindowHandler>,
+        game: Box<dyn Game<Primitive=Prim>>) -> Self {
         HandlerBasic {
             renderer: renderer,
             input_handler: input_handler,
@@ -112,7 +112,7 @@ fn set_process_dpi_aware() {
     match Library::new("Shcore.dll") {
         Ok(shcore_lib) => {
             unsafe {
-                match shcore_lib.get::<SetProcessDpiAwareness>(b"SetProcessDpiAwareness") {
+                match shcore_lib.get::<SetProcessDpiAwareness<'_>>(b"SetProcessDpiAwareness") {
                     Ok(set_aware) => {
                         set_aware(winapi::um::shellscalingapi::PROCESS_PER_MONITOR_DPI_AWARE);
                     },

@@ -1,13 +1,13 @@
-extern crate generic_game as gg;
-extern crate time;
+use generic_game as gg;
+use time;
 
-use gg::debug::*;
-use gg::debug;
-use gg::{rendering, input, window, Handler, games};
-use gg::rendering::{DisplaySettings, StandardPrimitive};
-use gg::collision::CollisionTestBuilder;
-use gg::handler_basic::HandlerBasic;
-use gg::geometry::{ConPoly, Circle, Line, Point};
+use crate::gg::debug::*;
+use crate::gg::debug;
+use crate::gg::{rendering, input, window, Handler, games};
+use crate::gg::rendering::{DisplaySettings, StandardPrimitive};
+use crate::gg::collision::CollisionTestBuilder;
+use crate::gg::handler_basic::HandlerBasic;
+use crate::gg::geometry::{ConPoly, Circle, Line, Point};
 use std::env;
 
 fn main() {
@@ -22,10 +22,10 @@ fn main() {
             ..Default::default()
     };
 
-    let renderer: Box<rendering::Renderer<Primitive=StandardPrimitive>> = Box::new(rendering::glium_renderer::GliumRenderer::new(display_settings));
-    let input_handler: Box<input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
-    let window_handler: Box<window::WindowHandler> = Box::new(window::GlutinInput::new());
-    let game: Box<games::Game<Primitive=StandardPrimitive>> = Box::new(
+    let renderer: Box<dyn rendering::Renderer<Primitive=StandardPrimitive>> = Box::new(rendering::glium_renderer::GliumRenderer::new(display_settings));
+    let input_handler: Box<dyn input::InputHandler> = Box::new(input::multihandler::MultiInput::new());
+    let window_handler: Box<dyn window::WindowHandler> = Box::new(window::GlutinInput::new());
+    let game: Box<dyn games::Game<Primitive=StandardPrimitive>> = Box::new(
          CollisionTestBuilder::init()
             .add_line(Line::new(Point::new(-0.5, -0.2), Point::new(-0.5, -0.5)))
             .add_line(Line::new(Point::new(-0.8, -0.8), Point::new(-0.6, -0.6)))
@@ -49,7 +49,7 @@ fn main() {
             ]))
             .build_game());
 
-    let mut handler: Box<Handler> = Box::new(HandlerBasic::new(renderer, input_handler, window_handler, game));
+    let mut handler: Box<dyn Handler> = Box::new(HandlerBasic::new(renderer, input_handler, window_handler, game));
 
     handler.init();
     while !handler.should_exit() {

@@ -1,4 +1,4 @@
-use debug::*;
+use crate::debug::*;
 use std::collections::HashMap;
 use time;
 

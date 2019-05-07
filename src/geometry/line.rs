@@ -1,7 +1,7 @@
-use ::geometry::*;
-use ::rendering::*;
-use collision::{ToCollisionObjects, CollisionObject};
-use collision;
+use crate::geometry::*;
+use crate::rendering::*;
+use crate::collision::{ToCollisionObjects, CollisionObject};
+use crate::collision;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Line {
@@ -119,7 +119,7 @@ impl ToRenderables for Line {
 impl Line {
     pub fn render_collision_details(&self, line_info: collision::LineInfo, color: Color, depth: f64, fixed: bool) 
     -> Vec<Box<StandardRenderable>> {
-        let coll_pos_rendering: Box<ToRenderables> = match line_info {
+        let coll_pos_rendering: Box<dyn ToRenderables> = match line_info {
             collision::LineInfo::LineBeg(_) => Box::new(self.beg),
             collision::LineInfo::LineEnd(_) => Box::new(self.end),
             collision::LineInfo::Point(x, collision::LineSide::Left) => Box::new(self.get_point(1.0 - x)),
@@ -179,7 +179,7 @@ pub fn line_line_intersect_2d(line1: &Line, line2: &Line) -> DualSoln {
 #[cfg(test)]
 mod tests
 {
-    use ::geometry::{line_line_intersect_2d, Line, Point};
+    use crate::geometry::{line_line_intersect_2d, Line, Point};
 
     #[test]
     fn line_line_intersect() {

@@ -1,4 +1,4 @@
-use geometry::*;
+use crate::geometry::*;
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
 
@@ -25,7 +25,7 @@ pub trait Poly : TwoDTransformable {
         self.sides_iter().nth(index).and_then(|(beg, end)| {Some(Line::new(beg, end))})
     }
 
-    fn sides_iter<'a>(&'a self) -> Box<Iterator<Item=(Point, Point)> + 'a> {
+    fn sides_iter<'a>(&'a self) -> Box<dyn Iterator<Item=(Point, Point)> + 'a> {
         let corners_it_shift = self.get_corners().into_iter().cycle().skip(1);
         Box::new(self.get_corners().into_iter().zip(corners_it_shift).map(|(beg, end)| {(beg, end)}))
     }
@@ -46,14 +46,14 @@ pub trait Poly : TwoDTransformable {
         self.get_corners().len()
     }
 
-    fn get_corner_lines(&self, other: &Poly) -> Vec<Line> {
+    fn get_corner_lines(&self, other: &dyn Poly) -> Vec<Line> {
         self.get_corners().into_iter()
         .zip(other.get_corners().into_iter())
         .map(|(beg, end)| { Line::new(beg, end) })
         .collect()
     }
 
-    fn get_shift(&self, other: &Poly) -> Point {
+    fn get_shift(&self, other: &dyn Poly) -> Point {
         other.get_corners()[0] - self.get_corners()[0]
     }
 }

@@ -1,4 +1,4 @@
-use ::animation::{AnimationWindow, AnimationType, AnimationTime};
+use crate::animation::{AnimationWindow, AnimationType, AnimationTime};
 
 pub struct AnimationSpec<Stage: Clone> {
     windows: Vec<AnimationWindow<Stage>>,

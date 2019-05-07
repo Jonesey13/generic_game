@@ -1,11 +1,11 @@
-use collision::{CollisionObjectResults, Collidable, CollisionDetails, CollisionObjectState, 
+use crate::collision::{CollisionObjectResults, Collidable, CollisionDetails, CollisionObjectState, 
                 CollisionDataType, collision_logic, CollisionResults};
-use debug::*;
+use crate::debug::*;
 
 pub struct Collider;
 
 impl Collider {
-    pub fn process_all<T: Clone + CollisionDataType> (mut collidables: Vec<&mut Collidable<Data=T>>) {
+    pub fn process_all<T: Clone + CollisionDataType> (mut collidables: Vec<&mut dyn Collidable<Data=T>>) {
         loop {
             if let Some ((first_collidable, rest)) = collidables.split_last_mut() {
                 for second_collidable in rest.into_iter() {
@@ -14,13 +14,13 @@ impl Collider {
                         let data2 = second_collidable.get_own_collision_data();
 
                         if T::can_collide(&data1, &data2) {
-                            if let Some((mut details1, mut details2)) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable) {
+                            if let Some((details1, details2)) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable) {
                                 first_collidable.add_collision_results(CollisionResults::new(details1, data2));
                                 second_collidable.add_collision_results(CollisionResults::new(details2, data1));
                             }
                         }
                     } else {
-                        if let Some((mut details1, mut details2)) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable) {
+                        if let Some((details1, details2)) = Collider::process_pair_of_collidables(*first_collidable, *second_collidable) {
                             let data1 = first_collidable.get_own_collision_data();
                             let data2 = second_collidable.get_own_collision_data();
 
@@ -37,7 +37,7 @@ impl Collider {
         }
     }
 
-    fn process_pair_of_collidables<T: Clone> (first: &Collidable<Data=T>, second: &Collidable<Data=T>) 
+    fn process_pair_of_collidables<T: Clone> (first: &dyn Collidable<Data=T>, second: &dyn Collidable<Data=T>) 
         -> Option<(CollisionDetails, CollisionDetails)> {
 
         let mut results: Option<(CollisionObjectResults, CollisionObjectResults)> = None;

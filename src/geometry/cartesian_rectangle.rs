@@ -1,4 +1,4 @@
-use ::geometry::Point;
+use crate::geometry::Point;
 
 pub struct CartesianRectangle {
     center: Point,

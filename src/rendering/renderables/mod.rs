@@ -21,4 +21,4 @@ pub trait Renderable<Prim> {
     fn get_primitives(&mut self) -> Vec<Prim>;
 }
 
-pub type StandardRenderable = Renderable<StandardPrimitive>;
+pub type StandardRenderable = dyn Renderable<StandardPrimitive>;

@@ -1,6 +1,6 @@
 use super::{Interval, IntervalEnd, IntervalCollisionObject};
-use collision::Collidable;
-use ::geometry::*;
+use crate::collision::Collidable;
+use crate::geometry::*;
 use std::f64::consts::PI;
 
 #[derive(Debug, Clone)]

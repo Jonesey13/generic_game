@@ -1,4 +1,4 @@
-use ::geometry::*;
+use crate::geometry::*;
 
 /// Anticlockwise rotation
 pub fn get_normal_2d(vect: Point) -> Point  {

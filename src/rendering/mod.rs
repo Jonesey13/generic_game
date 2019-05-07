@@ -9,7 +9,7 @@ pub mod color;
 
 use glium::Display;
 
-pub use rendering::primitives::*;
+pub use crate::rendering::primitives::*;
 pub use self::renderables::*;
 pub use self::display_settings::DisplaySettings;
 pub use self::glium_renderer::{GliumRenderer};
@@ -19,13 +19,13 @@ pub use self::render_by_shaders::*;
 pub use self::glium_buffer::*;
 pub use self::renderables::text::*;
 
-use games::view_details;
+use crate::games::view_details;
 use glium::glutin::EventsLoop;
 
 pub trait Renderer {
     type Primitive;
     fn init(&mut self) {}
-    fn load_renderables(&mut self, _: Vec<Box<renderables::Renderable<Self::Primitive>>>) {}
+    fn load_renderables(&mut self, _: Vec<Box<dyn renderables::Renderable<Self::Primitive>>>) {}
     fn render(&mut self) {}
     fn set_worldview(&mut self, _: view_details::ViewDetails) {}
     fn get_events_loop(&mut self) -> Option<&mut EventsLoop> { None }

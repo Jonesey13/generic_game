@@ -1,7 +1,7 @@
 use std::ops::Mul;
 use super::{Point, Line};
 use std::ops::Rem;
-use ::geometry::*;
+use crate::geometry::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Interval {

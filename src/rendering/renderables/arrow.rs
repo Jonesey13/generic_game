@@ -1,6 +1,6 @@
-use ::rendering::*;
-use geometry::*;
-use geometry;
+use crate::rendering::*;
+use crate::geometry::*;
+use crate::geometry;
 
 #[derive(Clone, Debug)]
 pub struct Arrow {

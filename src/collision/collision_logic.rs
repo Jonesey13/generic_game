@@ -1,5 +1,5 @@
 use std::cmp::Ordering::{Equal, Less, Greater};
-use geometry::*;
+use crate::geometry::*;
 use super::{CollisionObjectResults, CollisionObjectDetails};
 use super::ConPolyInfo;
 
@@ -192,7 +192,7 @@ fn poly_poly_coll_corners<P1: Poly + Clone, P2: Poly + Clone>(poly1_next: &P1, p
 /// Check collisions of sides of poly1 on sides of poly2
 /// (assuming a corner collision has already occured on corner corner_num of poly1
 /// so that we don't have to worry about prev/next)
-fn poly_poly_coll_sides(poly1: &Poly, poly2: &Poly, corner_num: usize, side_num: usize, time: f64)
+fn poly_poly_coll_sides(poly1: &dyn Poly, poly2: &dyn Poly, corner_num: usize, side_num: usize, time: f64)
                         -> Option<(CollisionObjectDetails, CollisionObjectDetails, f64)> {
     if let (Some((side1, index1, side2, index2)), Some(poly2_side))
         = (poly1.get_adjacent_sides(corner_num), poly2.get_side(side_num)) {
@@ -210,7 +210,7 @@ fn poly_poly_coll_sides(poly1: &Poly, poly2: &Poly, corner_num: usize, side_num:
     None
 }
 
-pub fn poly_point_coll(poly_next: &Poly, poly_prev: &Poly, point_next: Point, point_prev: Point)
+pub fn poly_point_coll(poly_next: &dyn Poly, poly_prev: &dyn Poly, point_next: Point, point_prev: Point)
                          -> Option<(CollisionObjectResults, CollisionObjectResults)> {
     let poly_shift = poly_prev.get_shift(poly_next);
 
@@ -231,7 +231,7 @@ pub fn poly_point_coll(poly_next: &Poly, poly_prev: &Poly, point_next: Point, po
 ///         poly -> polygon
 /// Output: Some(point number, side number, time of collision, side_position) <-> Collision occured
 ///         None <-> No collision
-fn points_side_coll(lines: &Vec<Line>, poly: &Poly) -> Option<(usize, usize, f64, f64)> {
+fn points_side_coll(lines: &Vec<Line>, poly: &dyn Poly) -> Option<(usize, usize, f64, f64)> {
 
     let mut collisions: Vec<(usize, usize, f64, f64)> = Vec::new();
 
@@ -251,7 +251,7 @@ fn points_side_coll(lines: &Vec<Line>, poly: &Poly) -> Option<(usize, usize, f64
 ///         poly -> polygon
 /// Output: Some(side number, time of collision, side position) <-> Collision occured
 ///         None <-> No collision
-fn point_side_coll(line: &Line, poly: &Poly) -> Option<(usize, f64, f64)> {
+fn point_side_coll(line: &Line, poly: &dyn Poly) -> Option<(usize, f64, f64)> {
     let mut collisions: Vec<(usize, f64, f64)> = Vec::new();
 
     for ((index, side), normal) in (0..poly.total_sides()).zip(poly.sides()).zip(poly.normals()) {

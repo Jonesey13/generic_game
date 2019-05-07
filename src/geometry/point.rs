@@ -1,8 +1,8 @@
 use std::fmt;
-use ::rendering::*;
-use collision::{ToCollisionObjects, CollisionObject};
+use crate::rendering::*;
+use crate::collision::{ToCollisionObjects, CollisionObject};
 use std::ops::{Add, AddAssign, Sub, SubAssign, Mul, Neg, Div};
-use ::geometry::*;
+use crate::geometry::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Point {

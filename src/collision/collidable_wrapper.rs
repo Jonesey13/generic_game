@@ -1,6 +1,6 @@
-use collision::*;
-use geometry::*;
-use rendering::*;
+use crate::collision::*;
+use crate::geometry::*;
+use crate::rendering::*;
 
 #[derive(Clone)]
 pub struct CollidableWrapper<C: ToCollisionObjects + Clone, D: Clone + CollisionDataType> {

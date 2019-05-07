@@ -1,8 +1,8 @@
 use super::Renderer;
 use super::shaders::make_program_from_shaders;
-use ::rendering::*;
-use ::geometry::*;
-use ::rendering::text_buffer::OPEN_SANS;
+use crate::rendering::*;
+use crate::geometry::*;
+use crate::rendering::text_buffer::OPEN_SANS;
 use glium;
 use glium::Frame;
 use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
@@ -11,9 +11,9 @@ use glium::texture;
 use glium::glutin::EventsLoop;
 use std::io::Cursor;
 use rusttype;
-use games::view_details;
-use utils::transforms_2d;
-use debug::*;
+use crate::games::view_details;
+use crate::utils::transforms_2d;
+use crate::debug::*;
 use image;
 
 pub struct GliumRenderer<'a> {

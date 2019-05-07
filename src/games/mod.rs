@@ -1,10 +1,10 @@
 pub mod view_details;
 
-use rendering::Renderable;
-use input::keyboard::KeyboardInput;
-use input::mouse::MouseInput;
-use input::joystick::JoystickInput;
-use rendering::{DisplaySettings, WindowSpec};
+use crate::rendering::Renderable;
+use crate::input::keyboard::KeyboardInput;
+use crate::input::mouse::MouseInput;
+use crate::input::joystick::JoystickInput;
+use crate::rendering::{DisplaySettings, WindowSpec};
 
 pub use self::view_details::{ViewDetails, ViewDetails2D, ViewDetails3D};
 
@@ -15,15 +15,15 @@ pub trait Game {
     fn update_input(&mut self) {}
     #[allow(unused_variables)]
     fn update_logic(&mut self, t_step: f64) {}
-    fn get_renderables(&mut self, _window_spec: WindowSpec) -> Vec<Box<Renderable<Self::Primitive>>> { Vec::new() }
-    fn get_input<'a>(&'a mut self) -> Option<&'a mut GameInput> { None }
+    fn get_renderables(&mut self, _window_spec: WindowSpec) -> Vec<Box<dyn Renderable<Self::Primitive>>> { Vec::new() }
+    fn get_input<'a>(&'a mut self) -> Option<&'a mut dyn GameInput> { None }
     fn get_view(&self) -> view_details::ViewDetails {
         view_details::ViewDetails::TwoDim(view_details::ViewDetails2D::default())
     }
     fn should_exit(&self) -> bool {false}
     fn on_exit(&mut self) {}
     fn get_console_logs(&mut self) -> Vec<String> { vec![] }
-    fn write_to_log(&mut self, &str) {}
+    fn write_to_log(&mut self, _: &str) {}
     fn change_display_settings(&mut self) -> Option<DisplaySettings> {None}
 }
 

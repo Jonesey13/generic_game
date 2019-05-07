@@ -1,4 +1,4 @@
-use ::geometry::*;
+use crate::geometry::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct ViewDetails3D {

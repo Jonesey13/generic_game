@@ -1,5 +1,5 @@
 use time;
-use debug::*;
+use crate::debug::*;
 
 pub struct Clock {
     name: String,

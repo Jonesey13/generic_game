@@ -1,4 +1,4 @@
-use ::animation::animation_functions::*;
+use crate::animation::animation_functions::*;
 
 #[derive(Copy, Clone, Debug)]
 pub enum AnimationFunctionEnum {
@@ -9,7 +9,7 @@ pub enum AnimationFunctionEnum {
 }
 
 impl AnimationFunctionEnum {
-    pub fn build_function(self) -> Box<Fn(f64) -> f64> {
+    pub fn build_function(self) -> Box<dyn Fn(f64) -> f64> {
         match self {
             AnimationFunctionEnum::SlowInSlowOut => Box::new(interpolation_cubic),
             AnimationFunctionEnum::SlowOut => Box::new(reversed_quadratic),

@@ -11,8 +11,8 @@ use rusttype::Rect;
 use glium;
 use glium::Surface;
 use std::borrow::Cow;
-use games::view_details;
-use ::rendering::*;
+use crate::games::view_details;
+use crate::rendering::*;
 
 pub trait RenderText {
     type TextVert: glium::vertex::Vertex;

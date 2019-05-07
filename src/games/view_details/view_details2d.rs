@@ -1,5 +1,5 @@
 use std::f64::consts::PI;
-use geometry::*;
+use crate::geometry::*;
 
 #[derive(Copy, Clone, Debug)]
 pub struct ViewDetails2D {

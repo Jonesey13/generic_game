@@ -1,7 +1,7 @@
 use std::fmt;
-use geometry::*;
-use rendering::*;
-use collision::{ToCollisionObjects, CollisionObject};
+use crate::geometry::*;
+use crate::rendering::*;
+use crate::collision::{ToCollisionObjects, CollisionObject};
 
 #[derive(Clone)]
 pub struct Circle{
@@ -61,7 +61,7 @@ impl Circle {
     pub fn render_collision_details(&self, coll_dir: Point, color: Color, depth: f64, fixed: bool) 
     -> Vec<Box<StandardRenderable>> {
         let coll_location = self.center + self.rad * coll_dir;
-        let location_renderable: Box<ToRenderables> = Box::new(coll_location);
+        let location_renderable: Box<dyn ToRenderables> = Box::new(coll_location);
 
         let direction_renderable: Box<StandardRenderable> = Box::new(
             Arrow::new_for_coll_test(
@@ -88,7 +88,7 @@ impl ToCollisionObjects for Circle {
 }
 
 impl fmt::Debug for Circle {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Circle: radius: {}, center: {{ x: {}, y: {} }}", self.rad, self.center.x, self.center.y)
     }
 }

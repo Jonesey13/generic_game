@@ -1,14 +1,14 @@
-use collision::{Collider, Collidable};
-use games::Game;
-use rendering::*;
-use input::mouse::MouseInput;
-use input::keyboard::KeyboardInput;
-use input::bool_switch::BoolSwitch;
-use games;
-use geometry::{ConPoly, Line, Circle, Point};
+use crate::collision::{Collider, Collidable};
+use crate::games::Game;
+use crate::rendering::*;
+use crate::input::mouse::MouseInput;
+use crate::input::keyboard::KeyboardInput;
+use crate::input::bool_switch::BoolSwitch;
+use crate::games;
+use crate::geometry::{ConPoly, Line, Circle, Point};
 use std::slice::IterMut;
-use collision::collidable_wrapper::{CollidableWrapper, CollidableWrapperTrait};
-use collision::CollisionDataType;
+use crate::collision::collidable_wrapper::{CollidableWrapper, CollidableWrapperTrait};
+use crate::collision::CollisionDataType;
 
 pub mod builder;
 
@@ -81,7 +81,7 @@ impl Game for CollisionTestGame {
         output
     }
 
-    fn get_input<'a>(&'a mut self) -> Option<&'a mut games::GameInput> {
+    fn get_input<'a>(&'a mut self) -> Option<&'a mut dyn games::GameInput> {
         Some(&mut self.external_input)
     }
 }
@@ -99,25 +99,25 @@ impl CollisionTestGame {
         }
     }
 
-    fn get_collidables_mut<'a>(&'a mut self) -> impl Iterator<Item = &'a mut Collidable<Data = CollisionTestObject>> {
-        self.polys.iter_mut().map(|it| -> &'a mut Collidable<Data = CollisionTestObject> {it})
-        .chain(self.lines.iter_mut().map(|it| -> &'a mut Collidable<Data = CollisionTestObject> {it}))
-        .chain(self.circles.iter_mut().map(|it| -> &'a mut Collidable<Data = CollisionTestObject> {it}))
-        .chain(self.points.iter_mut().map(|it| -> &'a mut Collidable<Data = CollisionTestObject> {it}))    
+    fn get_collidables_mut<'a>(&'a mut self) -> impl Iterator<Item = &'a mut dyn Collidable<Data = CollisionTestObject>> {
+        self.polys.iter_mut().map(|it| -> &'a mut dyn Collidable<Data = CollisionTestObject> {it})
+        .chain(self.lines.iter_mut().map(|it| -> &'a mut dyn Collidable<Data = CollisionTestObject> {it}))
+        .chain(self.circles.iter_mut().map(|it| -> &'a mut dyn Collidable<Data = CollisionTestObject> {it}))
+        .chain(self.points.iter_mut().map(|it| -> &'a mut dyn Collidable<Data = CollisionTestObject> {it}))    
     }
 
-    fn get_collision_wrappers_mut<'a>(&'a mut self) -> impl Iterator<Item = &'a mut CollidableWrapperTrait> {
-        self.polys.iter_mut().map(|it| -> &'a mut CollidableWrapperTrait{it})
-        .chain(self.lines.iter_mut().map(|it| -> &'a mut CollidableWrapperTrait{it}))
-        .chain(self.circles.iter_mut().map(|it| -> &'a mut CollidableWrapperTrait{it}))
-        .chain(self.points.iter_mut().map(|it| -> &'a mut CollidableWrapperTrait{it}))    
+    fn get_collision_wrappers_mut<'a>(&'a mut self) -> impl Iterator<Item = &'a mut dyn CollidableWrapperTrait> {
+        self.polys.iter_mut().map(|it| -> &'a mut dyn CollidableWrapperTrait{it})
+        .chain(self.lines.iter_mut().map(|it| -> &'a mut dyn CollidableWrapperTrait{it}))
+        .chain(self.circles.iter_mut().map(|it| -> &'a mut dyn CollidableWrapperTrait{it}))
+        .chain(self.points.iter_mut().map(|it| -> &'a mut dyn CollidableWrapperTrait{it}))    
     }
 
-    fn get_collision_wrappers<'a>(&'a self) -> impl Iterator<Item = &'a CollidableWrapperTrait> {
-        self.polys.iter().map(|it| -> &'a CollidableWrapperTrait{it})
-        .chain(self.lines.iter().map(|it| -> &'a CollidableWrapperTrait{it}))        
-        .chain(self.circles.iter().map(|it| -> &'a CollidableWrapperTrait{it}))        
-        .chain(self.points.iter().map(|it| -> &'a CollidableWrapperTrait{it}))        
+    fn get_collision_wrappers<'a>(&'a self) -> impl Iterator<Item = &'a dyn CollidableWrapperTrait> {
+        self.polys.iter().map(|it| -> &'a dyn CollidableWrapperTrait{it})
+        .chain(self.lines.iter().map(|it| -> &'a dyn CollidableWrapperTrait{it}))        
+        .chain(self.circles.iter().map(|it| -> &'a dyn CollidableWrapperTrait{it}))        
+        .chain(self.points.iter().map(|it| -> &'a dyn CollidableWrapperTrait{it}))        
     }
 
     fn get_total_collidables(&self) -> usize {

@@ -1,11 +1,11 @@
 use super::shaders::make_program_from_shaders;
-use ::rendering::*;
+use crate::rendering::*;
 use glium;
 use glium::Frame;
 use glium::{Display, Surface, DrawParameters, Depth, DepthTest, Program};
 use rusttype;
-use games::view_details::ViewDetails;
-use utils::transforms_2d;
+use crate::games::view_details::ViewDetails;
+use crate::utils::transforms_2d;
 
 pub trait GliumBuffer<T: GliumStandardPrimitive> {
     fn load_renderable(&mut self, renderable: T) {
@@ -19,7 +19,7 @@ pub trait GliumBuffer<T: GliumStandardPrimitive> {
         target: &mut Frame,
         display: &Display,
         view_details: ViewDetails,
-        draw_params: &DrawParameters,
+        draw_params: &DrawParameters<'_>,
         uniforms: &Unif,
     );
 
@@ -43,7 +43,7 @@ impl<T: GliumStandardPrimitive> GliumBuffer<T> for BasicBuffer<T> {
         target: &mut Frame,
         display: &Display,
         _: ViewDetails,
-        draw_params: &DrawParameters,
+        draw_params: &DrawParameters<'_>,
         uniforms: &Unif,
     ) {
         if !self.vertices.is_empty() {

@@ -1,5 +1,5 @@
-use ::rendering::*;
-use ::geometry::*;
+use crate::rendering::*;
+use crate::geometry::*;
 use glium;
 
 #[derive(Copy, Clone, Debug)]

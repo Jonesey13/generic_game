@@ -1,7 +1,7 @@
 use super::CollisionObjectState;
 use super::CollisionObjectDetails;
-use rendering::*;
-use geometry::*;
+use crate::rendering::*;
+use crate::geometry::*;
 
 pub trait ToCollisionObjects {
     fn to_collision_objects(&self) -> Vec<CollisionObject>;

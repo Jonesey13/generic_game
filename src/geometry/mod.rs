@@ -135,7 +135,7 @@ impl HasAngle for Point {
 }
 
 pub trait FromAngle {
-    fn from_angle(f64) -> Self;
+    fn from_angle(_: f64) -> Self;
 }
 
 impl FromAngle for Point {

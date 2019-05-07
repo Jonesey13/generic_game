@@ -1,8 +1,8 @@
 use std::cell::RefCell;
 use std::iter::{Repeat, repeat};
 use std::cmp::Ordering::{Equal, Less, Greater};
-use geometry::*;
-use debug::*;
+use crate::geometry::*;
+use crate::debug::*;
 pub mod collision_object;
 pub mod collidable_wrapper;
 pub mod collision_test_game;
@@ -28,7 +28,7 @@ pub trait Collidable {
     type Data: Clone;
     fn get_collision_objects(&self) -> Vec<CollisionObjectState> { vec![] }
     fn get_earliest_collision_results(&self) -> Option<CollisionResults<Self::Data>>;
-    fn add_collision_results(&mut self, CollisionResults<Self::Data>);
+    fn add_collision_results(&mut self, _: CollisionResults<Self::Data>);
     fn get_own_collision_data(&self) -> Self::Data;
     fn resolve_collision_results(&mut self) {}
 

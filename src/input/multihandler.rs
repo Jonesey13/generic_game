@@ -2,8 +2,8 @@ use multiinput::manager::{RawInputManager, DeviceType, XInputInclude,DeviceStats
 use multiinput::event::{RawEvent, KeyId, State, MouseButton, Axis};
 use multiinput::devices::HatSwitch;
 use std::collections::HashMap;
-use games::GameInput;
-use input;
+use crate::games::GameInput;
+use crate::input;
 use super::{InputHandler, bool_switch};
 
 pub struct MultiInput {
@@ -133,7 +133,7 @@ impl InputHandler for MultiInput {
         }
     }
 
-    fn pass_on_input<'a>(&self, game_input: Option<&'a mut GameInput>) {
+    fn pass_on_input<'a>(&self, game_input: Option<&'a mut dyn GameInput>) {
         if let Some(input) = game_input {
             if let Some(kbds) = input.get_kbd_inp() {
                 for index in 0..self.raw_states.device_stats.number_of_keyboards {

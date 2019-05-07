@@ -1,9 +1,9 @@
 use std::f64::consts;
 use std::iter::{Repeat, repeat};
-use geometry::*;
-use rendering::*;
-use collision::{CollisionObject, CollisionObjectState, ToCollisionObjects};
-use collision;
+use crate::geometry::*;
+use crate::rendering::*;
+use crate::collision::{CollisionObject, CollisionObjectState, ToCollisionObjects};
+use crate::collision;
 
 /// A (formally convex) polygon for collision detection
 #[derive(Clone, Debug)]
@@ -96,7 +96,7 @@ impl TwoDTransformable for ConPoly {
     fn scale_by(&mut self, scale_factor: f64) {
         let center = self.get_center();
 
-        for mut point in &mut self.corners {
+        for point in &mut self.corners {
             *point = scale_factor * (*point - center) + center;
         }
     }
@@ -113,7 +113,7 @@ impl ToRenderables for ConPoly {
 impl ConPoly {
     pub fn render_collision_details(&self, coll_location: collision::ConPolyInfo, color: Color, depth: f64, fixed: bool) 
     -> Vec<Box<StandardRenderable>> {
-        let location_renderable: Box<ToRenderables> = match coll_location {
+        let location_renderable: Box<dyn ToRenderables> = match coll_location {
             collision::ConPolyInfo::LineInfo(side, pos) => Box::new(self.get_side(side).unwrap().get_point(pos)),
             collision::ConPolyInfo::CornerInfo(num, _) => Box::new(self.get_corners()[num]),
             collision::ConPolyInfo::SideInfo(side) => Box::new(self.get_side(side).unwrap()),

@@ -1,5 +1,5 @@
-use geometry::*;
-use rendering::*;
+use crate::geometry::*;
+use crate::rendering::*;
 use std::f64::consts::PI;
 
 #[derive(Copy, Clone, Debug)]

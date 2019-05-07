@@ -1,19 +1,19 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-extern crate multiinput;
+
 #[macro_use]
 extern crate glium;
-extern crate time;
+use time;
 #[macro_use]
 extern crate bitflags;
-extern crate unicode_normalization;
-extern crate rusttype;
+use unicode_normalization;
+use rusttype;
 #[macro_use]
 extern crate lazy_static;
-extern crate libloading;
-extern crate winapi;
-extern crate image;
+
+use winapi;
+use image;
 
 pub mod rendering;
 pub mod input;
@@ -26,7 +26,7 @@ pub mod debug;
 pub mod window;
 pub mod animation;
 
-use debug::*;
+use crate::debug::*;
 use std::env;
 use std::io::*;
 

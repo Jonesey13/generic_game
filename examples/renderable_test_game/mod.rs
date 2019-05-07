@@ -1,9 +1,9 @@
-use gg::games::Game;
-use gg::games::GameInput;
-use gg::games::view_details::{ViewDetails2D, ViewDetails};
-use gg::input::keyboard::KeyboardInput;
-use gg::rendering::*;
-use gg::geometry::*;
+use crate::gg::games::Game;
+use crate::gg::games::GameInput;
+use crate::gg::games::view_details::{ViewDetails2D, ViewDetails};
+use crate::gg::input::keyboard::KeyboardInput;
+use crate::gg::rendering::*;
+use crate::gg::geometry::*;
 
 #[allow(dead_code)]
 #[derive(Default, Clone)]
@@ -126,7 +126,7 @@ impl Game for RenderableTestGame {
         ]
     }
 
-    fn get_input<'a>(&'a mut self) -> Option <&'a mut GameInput> {
+    fn get_input<'a>(&'a mut self) -> Option <&'a mut dyn GameInput> {
         Some(&mut self.external_input)
     }
 }
