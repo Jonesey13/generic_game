@@ -70,6 +70,10 @@ impl Line {
     pub fn get_lines_to(&self, other: Line) -> (Line, Line) {
         (Line::new(self.beg, other.beg), Line::new(self.end, other.end))
     }
+
+    pub fn flipped(&self) -> Line {
+        Line::new(self.end, self.beg)
+    }
 }
 
 impl Poly for Line {
