@@ -141,6 +141,28 @@ impl<'a> Mul<&'a Point> for Point {
     }
 }
 
+impl Mul<f64> for Point {
+    type Output = Point;
+
+    fn mul(self, scale: f64) -> Point {
+        Point {
+            x: self.x * scale,
+            y: self.y * scale
+        }
+    }
+}
+
+impl<'a> Mul<&'a f64> for Point {
+    type Output = Point;
+
+    fn mul(self, scale: &'a f64) -> Point {
+        Point {
+            x: self.x * scale,
+            y: self.y * scale
+        }
+    }
+}
+
 impl Add<Point> for Point {
     type Output = Point;
 
