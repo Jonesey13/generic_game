@@ -305,3 +305,12 @@ impl From<Point> for [f32; 2] {
         [point.x as f32, point.y as f32]
     }
 }
+
+impl From<Point3> for Point {
+    fn from(point: Point3) -> Self {
+        Self {
+            x: point.x,
+            y: point.y
+        }
+    }
+}
