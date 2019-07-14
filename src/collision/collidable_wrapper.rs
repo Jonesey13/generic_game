@@ -137,8 +137,12 @@ impl<C: Clone + ToCollisionObjects + TwoDTransformable, D: Clone + CollisionData
         self.collidable.shift_by(shift);
     }
 
-    fn rotate(&mut self, rot_angle: f64) {
-        self.collidable.rotate(rot_angle);
+    fn rotate_at_center(&mut self, rot_angle: f64) {
+        self.collidable.rotate_at_center(rot_angle);
+    }
+
+    fn rotate_at_origin(&mut self, rot_angle: f64) {
+        self.collidable.rotate_at_origin(rot_angle);
     }
 
     fn get_center(&self) -> Point {

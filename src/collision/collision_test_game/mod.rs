@@ -63,7 +63,7 @@ impl Game for CollisionTestGame {
             obj.set_prev();
             if obj.is_player_controlled() {
                 obj.shift_by(t_step * 0.4 * Point::new(mov_horizontal as f64, mov_vertical as f64));
-                obj.rotate(t_step * rot as f64);
+                obj.rotate_at_center(t_step * rot as f64);
             }
         }
 

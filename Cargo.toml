@@ -1,6 +1,6 @@
 [package]
 name = "generic_game"
-version = "0.4.2"
+version = "0.5.0"
 authors = ["Alexander Jones <alexander.jones@softwire.com>"]
 description = "A generic game engine library"
 license = "MIT"

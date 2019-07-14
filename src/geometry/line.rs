@@ -92,11 +92,17 @@ impl TwoDTransformable for Line {
         self.end += shift;
     }
 
-    fn rotate(&mut self, rot_angle: f64) {
+    fn rotate_at_center(&mut self, rot_angle: f64) {
         let rot_mat = Rotation::new(rot_angle);
         let center = self.get_point(0.5);
         self.beg = rot_mat * (self.beg - center) + center;
         self.end = rot_mat * (self.end - center) + center;
+    }
+
+    fn rotate_at_origin(&mut self, rot_angle: f64) {
+        let rot_mat = Rotation::new(rot_angle);
+        self.beg = rot_mat * self.beg;
+        self.end = rot_mat * self.end;
     }
 
     fn get_center(&self) -> Point {

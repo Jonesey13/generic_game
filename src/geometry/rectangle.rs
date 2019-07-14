@@ -109,9 +109,15 @@ impl TwoDTransformable for Rectangle {
         self.pos += shift;
     }
 
-    fn rotate(&mut self, rot_angle: f64) {
+    fn rotate_at_center(&mut self, rot_angle: f64) {
         let rot_mat = Rotation::new(rot_angle);
         self.rot = rot_mat * self.rot;
+    }
+
+    fn rotate_at_origin(&mut self, rot_angle: f64) {
+        let rot_mat = Rotation::new(rot_angle);
+        self.rot = rot_mat * self.rot;
+        self.pos = rot_mat * self.pos;
     }
 
     fn get_center(&self) -> Point {

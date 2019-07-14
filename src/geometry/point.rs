@@ -237,7 +237,11 @@ impl TwoDTransformable for Point {
         *self += shift;
     }
 
-    fn rotate(&mut self, _: f64) {}
+    fn rotate_at_center(&mut self, _: f64) {}
+
+    fn rotate_at_origin(&mut self, rotation_angle: f64) {
+        *self = Rotation::new(rotation_angle) * *self;
+    }
 
     fn get_center(&self) -> Point {
         *self

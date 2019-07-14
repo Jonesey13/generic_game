@@ -265,7 +265,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "generic_game"
-version = "0.4.2"
+version = "0.5.0"
 dependencies = [
  "bitflags 1.0.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "glium 0.24.0 (registry+https://github.com/rust-lang/crates.io-index)",

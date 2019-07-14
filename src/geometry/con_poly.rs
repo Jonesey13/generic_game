@@ -81,11 +81,18 @@ impl TwoDTransformable for ConPoly {
         }
     }
 
-    fn rotate(&mut self, rot_angle: f64) {
+    fn rotate_at_center(&mut self, rot_angle: f64) {
         let rot_mat = Rotation::new(rot_angle);
         let center = self.center();
         for corner in &mut self.corners {
             *corner = rot_mat * (*corner - center) + center;
+        }
+    }
+
+    fn rotate_at_origin(&mut self, rot_angle: f64) {
+        let rot_mat = Rotation::new(rot_angle);
+        for corner in &mut self.corners {
+            *corner = rot_mat * (*corner);
         }
     }
 
