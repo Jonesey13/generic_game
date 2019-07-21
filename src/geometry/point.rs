@@ -53,6 +53,20 @@ impl Point {
     pub fn interpolate(&self, other: &Point, point: f64) -> Self {
         (1.0 - point) * self + point * other
     }
+
+    pub fn get_angle(&self) -> f64 {
+        self.y.atan2(self.x)
+    }
+
+    pub fn get_angle_between(&self, other: Point) -> f64 {
+        let other_angle = other.get_angle();
+
+        let rotation = Rotation::new(other_angle);
+
+        let corrected_point = rotation * self.clone();
+
+        corrected_point.get_angle()
+    }
 }
 
 impl Default for Point {
