@@ -1,3 +1,5 @@
+use std::hash::Hash;
+
 pub struct SoundData<S: Eq + Hash> {
     pub id: S,
     pub file: &'static[u8],
