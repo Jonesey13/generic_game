@@ -25,6 +25,7 @@ pub mod utils;
 pub mod debug;
 pub mod window;
 pub mod animation;
+pub mod sound;
 
 use crate::debug::*;
 use std::env;
