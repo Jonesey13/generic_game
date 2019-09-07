@@ -74,6 +74,28 @@ impl Color {
             a: 1.0
         }
     }
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            r: self.r + other.r, 
+            g: self.g + other.g, 
+            b: self.b + other.b, 
+            a: self.a + other.a, 
+        }
+    }
+
+    fn multiply(self, t: f64) -> Self {
+        Self {
+            r: t * self.r,
+            g: t * self.g,
+            b: t * self.b,
+            a: t * self.a,
+        }
+    }
+
+    pub fn interpolate(self, other: Self, t: f64) -> Self {
+        self.multiply(1.0 - t).add(other.multiply(t))
+    }
 }
 
 impl From<[f64; 4]> for Color {
