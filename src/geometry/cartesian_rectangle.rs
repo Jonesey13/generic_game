@@ -7,6 +7,14 @@ pub struct CartesianRectangle {
 }
 
 impl CartesianRectangle {
+    fn new(center: Point, width: f64, height: f64) -> Self {
+        Self {
+            center,
+            width,
+            height
+        }
+    }
+
     pub fn x_bounds(&self) -> Point {
         Point::new(self.center.x - self.width / 2.0, self.center.x + self.width / 2.0)
     }
